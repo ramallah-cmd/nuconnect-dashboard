@@ -853,13 +853,19 @@
                     body: JSON.stringify(requestBody)
                 });
 
+                const data = await response.json();
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    console.error('Airtable API Error:', data);
+                    console.error('Status:', response.status);
+                    console.error('Request body:', requestBody);
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${JSON.stringify(data)}`);
                 }
 
-                return await response.json();
+                return data;
             } catch (error) {
                 console.error(`Error with ${tableName}:`, error);
+                console.error('Full error details:', error.message);
                 return null;
             }
         }
@@ -965,47 +971,74 @@
         }
 
         async function createContact(contactData) {
-            const response = await fetchFromAirtable('Contacts', 'POST', {
-                fields: contactData
-            });
-            
-            if (response) {
-                await loadContacts();
-                closeModal();
-                renderView('contacts');
-                alert('Contact created successfully!');
-            } else {
-                alert('Failed to create contact');
+            try {
+                const response = await fetchFromAirtable('Contacts', 'POST', {
+                    fields: contactData
+                });
+                
+                console.log('Create contact response:', response);
+                
+                if (response && !response.error) {
+                    await loadContacts();
+                    closeModal();
+                    renderView('contacts');
+                    alert('Contact created successfully!');
+                } else {
+                    const errorMsg = response?.error?.message || response?.error || 'Unknown error';
+                    console.error('Failed to create contact:', errorMsg);
+                    alert('Failed to create contact: ' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Error creating contact:', error);
+                alert('Error creating contact: ' + error.message);
             }
         }
 
         async function createAccount(accountData) {
-            const response = await fetchFromAirtable('Accounts', 'POST', {
-                fields: accountData
-            });
-            
-            if (response) {
-                await loadAccounts();
-                closeModal();
-                renderView('accounts');
-                alert('Account created successfully!');
-            } else {
-                alert('Failed to create account');
+            try {
+                const response = await fetchFromAirtable('Accounts', 'POST', {
+                    fields: accountData
+                });
+                
+                console.log('Create account response:', response);
+                
+                if (response && !response.error) {
+                    await loadAccounts();
+                    closeModal();
+                    renderView('accounts');
+                    alert('Account created successfully!');
+                } else {
+                    const errorMsg = response?.error?.message || response?.error || 'Unknown error';
+                    console.error('Failed to create account:', errorMsg);
+                    alert('Failed to create account: ' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Error creating account:', error);
+                alert('Error creating account: ' + error.message);
             }
         }
 
         async function createTask(taskData) {
-            const response = await fetchFromAirtable('Tasks', 'POST', {
-                fields: taskData
-            });
-            
-            if (response) {
-                await loadTasks();
-                closeModal();
-                renderView('tasks');
-                alert('Task created successfully!');
-            } else {
-                alert('Failed to create task');
+            try {
+                const response = await fetchFromAirtable('Tasks', 'POST', {
+                    fields: taskData
+                });
+                
+                console.log('Create task response:', response);
+                
+                if (response && !response.error) {
+                    await loadTasks();
+                    closeModal();
+                    renderView('tasks');
+                    alert('Task created successfully!');
+                } else {
+                    const errorMsg = response?.error?.message || response?.error || 'Unknown error';
+                    console.error('Failed to create task:', errorMsg);
+                    alert('Failed to create task: ' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Error creating task:', error);
+                alert('Error creating task: ' + error.message);
             }
         }
 
@@ -1023,10 +1056,6 @@
                         <div class="form-group">
                             <label>Deal Name *</label>
                             <input type="text" id="dealName" placeholder="Enter deal name">
-                        </div>
-                        <div class="form-group">
-                            <label>Account *</label>
-                            <input type="text" id="dealAccount" placeholder="Enter account name">
                         </div>
                         <div class="form-group">
                             <label>Tier *</label>
@@ -1049,7 +1078,7 @@
                         </div>
                         <div class="form-group">
                             <label>Deal Value *</label>
-                            <input type="number" id="dealValue" placeholder="Enter amount">
+                            <input type="number" id="dealValue" placeholder="Enter amount (e.g., 2000)">
                         </div>
                         <div class="form-group">
                             <label>Event Name</label>
@@ -1070,6 +1099,9 @@
                                 <option value="Floor Price">Floor Price</option>
                             </select>
                         </div>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            Note: Link to account/contact in Airtable after creating
+                        </p>
                         <div class="modal-actions">
                             <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                             <button class="btn btn-primary" onclick="saveDeal()">Create Deal</button>
@@ -1100,13 +1132,12 @@
                             <input type="tel" id="contactPhone" placeholder="Enter phone">
                         </div>
                         <div class="form-group">
-                            <label>Company</label>
-                            <input type="text" id="contactCompany" placeholder="Enter company">
-                        </div>
-                        <div class="form-group">
                             <label>Role</label>
                             <input type="text" id="contactRole" placeholder="Enter role">
                         </div>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            Note: Link to company in Airtable after creating
+                        </p>
                         <div class="modal-actions">
                             <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                             <button class="btn btn-primary" onclick="saveContact()">Create Contact</button>
@@ -1182,31 +1213,31 @@
 
         function saveDeal() {
             const dealName = document.getElementById('dealName').value;
-            const dealAccount = document.getElementById('dealAccount').value;
-            const dealValue = parseFloat(document.getElementById('dealValue').value) || 0;
+            const dealValue = parseFloat(document.getElementById('dealValue')?.value) || 0;
 
             if (!dealName || !dealValue) {
-                alert('Please fill in Deal Name and Deal Value');
+                alert('Please enter Deal Name and Deal Value');
                 return;
             }
 
-            // Try multiple field name variations to match different Airtable setups
+            // Send ONLY the essential fields
             const dealData = {
-                'Name': dealName,  // Try "Name" first
-                'Deal Name': dealName,  // Also try "Deal Name"
-                'Account': dealAccount,
+                'Deal Name': dealName,
                 'Owner': state.currentUser.name,
                 'Tier': document.getElementById('dealTier').value,
-                'Stage': document.getElementById('dealStage').value,
                 'Deal Stage': document.getElementById('dealStage').value,
-                'Value': dealValue,
                 'Deal Value': dealValue,
-                'Amount': dealValue,
-                'Event Name': document.getElementById('dealEventName').value,
-                'Event Date': document.getElementById('dealEventDate').value,
-                'Close Date': document.getElementById('dealCloseDate').value,
                 'Pricing Type': document.getElementById('dealPricing').value
             };
+
+            // Add optional fields only if they have values
+            const eventName = document.getElementById('dealEventName')?.value;
+            const eventDate = document.getElementById('dealEventDate')?.value;
+            const closeDate = document.getElementById('dealCloseDate')?.value;
+
+            if (eventName) dealData['Event Name'] = eventName;
+            if (eventDate) dealData['Event Date'] = eventDate;
+            if (closeDate) dealData['Close Date'] = closeDate;
 
             console.log('Attempting to create deal with data:', dealData);
             createDeal(dealData);
@@ -1217,8 +1248,8 @@
                 'Name': document.getElementById('contactName').value,
                 'Email': document.getElementById('contactEmail').value,
                 'Phone': document.getElementById('contactPhone').value,
-                'Company': document.getElementById('contactCompany').value,
                 'Role': document.getElementById('contactRole').value
+                // NOTE: Company is a linked record field - link it manually in Airtable after creating
             };
 
             if (!contactData['Name'] || !contactData['Email']) {
