@@ -941,17 +941,26 @@
         // CREATE FUNCTIONS
         // ========================================
         async function createDeal(dealData) {
-            const response = await fetchFromAirtable('Deals', 'POST', {
-                fields: dealData
-            });
-            
-            if (response) {
-                await loadDeals();
-                closeModal();
-                renderView('pipeline');
-                alert('Deal created successfully!');
-            } else {
-                alert('Failed to create deal');
+            try {
+                const response = await fetchFromAirtable('Deals', 'POST', {
+                    fields: dealData
+                });
+                
+                console.log('Create deal response:', response);
+                
+                if (response && !response.error) {
+                    await loadDeals();
+                    closeModal();
+                    renderView('pipeline');
+                    alert('Deal created successfully!');
+                } else {
+                    const errorMsg = response?.error?.message || response?.error || 'Unknown error';
+                    console.error('Failed to create deal:', errorMsg);
+                    alert('Failed to create deal: ' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Error creating deal:', error);
+                alert('Error creating deal: ' + error.message);
             }
         }
 
@@ -1172,24 +1181,34 @@
         }
 
         function saveDeal() {
+            const dealName = document.getElementById('dealName').value;
+            const dealAccount = document.getElementById('dealAccount').value;
+            const dealValue = parseFloat(document.getElementById('dealValue').value) || 0;
+
+            if (!dealName || !dealValue) {
+                alert('Please fill in Deal Name and Deal Value');
+                return;
+            }
+
+            // Try multiple field name variations to match different Airtable setups
             const dealData = {
-                'Deal Name': document.getElementById('dealName').value,
-                'Account': document.getElementById('dealAccount').value,
+                'Name': dealName,  // Try "Name" first
+                'Deal Name': dealName,  // Also try "Deal Name"
+                'Account': dealAccount,
                 'Owner': state.currentUser.name,
                 'Tier': document.getElementById('dealTier').value,
+                'Stage': document.getElementById('dealStage').value,
                 'Deal Stage': document.getElementById('dealStage').value,
-                'Deal Value': parseFloat(document.getElementById('dealValue').value) || 0,
+                'Value': dealValue,
+                'Deal Value': dealValue,
+                'Amount': dealValue,
                 'Event Name': document.getElementById('dealEventName').value,
                 'Event Date': document.getElementById('dealEventDate').value,
                 'Close Date': document.getElementById('dealCloseDate').value,
                 'Pricing Type': document.getElementById('dealPricing').value
             };
 
-            if (!dealData['Deal Name'] || !dealData['Deal Value']) {
-                alert('Please fill in required fields');
-                return;
-            }
-
+            console.log('Attempting to create deal with data:', dealData);
             createDeal(dealData);
         }
 
