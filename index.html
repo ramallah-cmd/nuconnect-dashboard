@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NuConnect CRM - Secure</title>
+    <title>NuConnect CRM - Complete System</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -268,6 +268,88 @@
             align-items: center;
         }
 
+        /* Daily Scorecard */
+        .daily-scorecard {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .scorecard-header {
+            margin-bottom: 20px;
+        }
+
+        .scorecard-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .scorecard-status {
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .scorecard-goals {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .goal-item {
+            padding: 16px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--border);
+        }
+
+        .goal-item.complete {
+            border-left-color: var(--success);
+            background: #f0fdf4;
+        }
+
+        .goal-item.incomplete {
+            border-left-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        .goal-item.partial {
+            border-left-color: var(--warning);
+            background: #fffbeb;
+        }
+
+        .goal-label {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .goal-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .goal-value.complete {
+            color: var(--success);
+        }
+
+        .goal-value.incomplete {
+            color: var(--danger);
+        }
+
+        .goal-value.partial {
+            color: var(--warning);
+        }
+
+        .goal-target {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
         /* KPI Cards */
         .kpi-grid {
             display: grid;
@@ -365,6 +447,10 @@
             color: var(--success);
         }
 
+        .kpi-change.warning {
+            color: var(--warning);
+        }
+
         /* Cards */
         .card {
             background: var(--white);
@@ -439,6 +525,51 @@
             position: relative;
             height: 300px;
             margin-top: 20px;
+        }
+
+        /* Deal List */
+        .deal-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .deal-item {
+            padding: 16px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .deal-item:hover {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            transform: translateX(4px);
+        }
+
+        .deal-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .deal-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        .deal-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
         }
 
         /* Grid Layout */
@@ -555,6 +686,30 @@
             color: var(--text-gray);
             margin-bottom: 24px;
         }
+
+        /* Activity Grid */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .activity-stat {
+            text-align: center;
+        }
+
+        .activity-label {
+            color: var(--text-gray);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .activity-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -576,9 +731,6 @@
             </div>
             <div id="loginError" class="hidden" style="color: var(--danger); margin-bottom: 16px; font-size: 14px;"></div>
             <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
-            <p style="margin-top: 20px; font-size: 13px; color: var(--text-gray);">
-                Default password: <strong>nuconnect2024</strong> (Leadership: <strong>admin2024</strong>)
-            </p>
         </div>
     </div>
 
@@ -633,11 +785,15 @@
                 contacts: [],
                 accounts: [],
                 teamMembers: [],
-                pricingRules: [],
-                floorPriceApprovals: []
+                pricingRules: []
             },
-            charts: {},
-            notifications: []
+            dailyMetrics: {
+                touchpoints: 0,
+                newLeads: 0,
+                discoveryCalls: 0,
+                dealsMoved: 0
+            },
+            charts: {}
         };
 
         // Password storage
@@ -650,6 +806,14 @@
             'Keyna': 'admin2024'
         };
 
+        // Deal value by tier
+        const tierPricing = {
+            'Starter': 750,
+            'Growth': 1250,
+            'Pro': 2000,
+            'Enterprise': 4200
+        };
+
         // Navigation Items
         const repNavItems = [
             { id: 'dashboard', icon: '📊', label: 'Dashboard' },
@@ -657,12 +821,12 @@
             { id: 'tasks', icon: '✅', label: 'Tasks' },
             { id: 'contacts', icon: '👥', label: 'Contacts' },
             { id: 'accounts', icon: '🏢', label: 'Accounts' },
+            { id: 'activity', icon: '📝', label: 'Log Activity' },
             { id: 'reports', icon: '📑', label: 'Reports' }
         ];
 
         const leadershipNavItems = [
             { id: 'leadership', icon: '👔', label: 'Leadership' },
-            { id: 'approvals', icon: '✓', label: 'Approvals' },
             { id: 'team', icon: '👨‍👩‍👧‍👦', label: 'Team Overview' }
         ];
 
@@ -798,8 +962,12 @@
             document.getElementById('currentUserName').textContent = state.currentUser.name;
             buildNavigation();
             await loadAllData();
+            calculateDailyMetrics();
             renderView('dashboard');
-            setInterval(() => loadAllData(), 5 * 60 * 1000);
+            setInterval(async () => {
+                await loadAllData();
+                calculateDailyMetrics();
+            }, 5 * 60 * 1000);
         }
 
         function buildNavigation() {
@@ -853,19 +1021,13 @@
                     body: JSON.stringify(requestBody)
                 });
 
-                const data = await response.json();
-                
                 if (!response.ok) {
-                    console.error('Airtable API Error:', data);
-                    console.error('Status:', response.status);
-                    console.error('Request body:', requestBody);
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${JSON.stringify(data)}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                return data;
+                return await response.json();
             } catch (error) {
                 console.error(`Error with ${tableName}:`, error);
-                console.error('Full error details:', error.message);
                 return null;
             }
         }
@@ -874,6 +1036,7 @@
             try {
                 await Promise.all([
                     loadDeals(),
+                    loadActivities(),
                     loadTasks(),
                     loadContacts(),
                     loadAccounts()
@@ -903,6 +1066,20 @@
             }
         }
 
+        async function loadActivities() {
+            const response = await fetchFromAirtable('Activities');
+            if (response && response.records) {
+                state.data.activities = response.records.map(r => ({
+                    id: r.id,
+                    type: r.fields['Activity Type'] || '',
+                    date: r.fields['Date/Time'] || r.fields.Date || '',
+                    owner: r.fields.Owner || '',
+                    outcome: r.fields.Outcome || '',
+                    createdTime: r.createdTime
+                }));
+            }
+        }
+
         async function loadTasks() {
             const response = await fetchFromAirtable('Tasks');
             if (response && response.records) {
@@ -912,7 +1089,8 @@
                     owner: r.fields.Owner || '',
                     dueDate: r.fields['Due Date'] || '',
                     status: r.fields.Status || 'Open',
-                    type: r.fields.Type || ''
+                    type: r.fields.Type || '',
+                    completedDate: r.fields['Completed Date'] || ''
                 }));
             }
         }
@@ -926,7 +1104,8 @@
                     email: r.fields.Email || '',
                     phone: r.fields.Phone || '',
                     company: Array.isArray(r.fields.Company) ? r.fields.Company[0] : r.fields.Company || '',
-                    role: r.fields.Role || ''
+                    role: r.fields.Role || '',
+                    createdTime: r.createdTime
                 }));
             }
         }
@@ -938,9 +1117,44 @@
                     id: r.id,
                     name: r.fields.Name || '',
                     industry: r.fields.Industry || '',
-                    owner: r.fields.Owner || ''
+                    owner: r.fields.Owner || '',
+                    createdTime: r.createdTime
                 }));
             }
+        }
+
+        // ========================================
+        // DAILY METRICS CALCULATION
+        // ========================================
+        function calculateDailyMetrics() {
+            const today = new Date().toISOString().split('T')[0];
+            const userActivities = state.data.activities.filter(a => 
+                a.owner === state.currentUser.name && 
+                a.createdTime && 
+                a.createdTime.split('T')[0] === today
+            );
+            
+            // Touchpoints = all activities today
+            state.dailyMetrics.touchpoints = userActivities.length;
+            
+            // New leads = contacts + accounts created today
+            const newContactsToday = state.data.contacts.filter(c => 
+                c.createdTime && c.createdTime.split('T')[0] === today
+            ).length;
+            const newAccountsToday = state.data.accounts.filter(a => 
+                a.createdTime && a.createdTime.split('T')[0] === today
+            ).length;
+            state.dailyMetrics.newLeads = newContactsToday + newAccountsToday;
+            
+            // Discovery calls = activities with type "Discovery Call" today
+            state.dailyMetrics.discoveryCalls = userActivities.filter(a => 
+                a.type && a.type.toLowerCase().includes('discovery')
+            ).length;
+            
+            // Deals moved = count of stage changes today (track via activities)
+            state.dailyMetrics.dealsMoved = userActivities.filter(a => 
+                a.type && a.type.toLowerCase().includes('stage change')
+            ).length;
         }
 
         // ========================================
@@ -976,20 +1190,17 @@
                     fields: contactData
                 });
                 
-                console.log('Create contact response:', response);
-                
                 if (response && !response.error) {
                     await loadContacts();
+                    calculateDailyMetrics(); // Recount new leads
                     closeModal();
                     renderView('contacts');
-                    alert('Contact created successfully!');
+                    alert('Contact created successfully! +1 New Lead Added today!');
                 } else {
                     const errorMsg = response?.error?.message || response?.error || 'Unknown error';
-                    console.error('Failed to create contact:', errorMsg);
                     alert('Failed to create contact: ' + errorMsg);
                 }
             } catch (error) {
-                console.error('Error creating contact:', error);
                 alert('Error creating contact: ' + error.message);
             }
         }
@@ -1000,20 +1211,17 @@
                     fields: accountData
                 });
                 
-                console.log('Create account response:', response);
-                
                 if (response && !response.error) {
                     await loadAccounts();
+                    calculateDailyMetrics(); // Recount new leads
                     closeModal();
                     renderView('accounts');
-                    alert('Account created successfully!');
+                    alert('Account created successfully! +1 New Lead Added today!');
                 } else {
                     const errorMsg = response?.error?.message || response?.error || 'Unknown error';
-                    console.error('Failed to create account:', errorMsg);
                     alert('Failed to create account: ' + errorMsg);
                 }
             } catch (error) {
-                console.error('Error creating account:', error);
                 alert('Error creating account: ' + error.message);
             }
         }
@@ -1024,8 +1232,6 @@
                     fields: taskData
                 });
                 
-                console.log('Create task response:', response);
-                
                 if (response && !response.error) {
                     await loadTasks();
                     closeModal();
@@ -1033,12 +1239,31 @@
                     alert('Task created successfully!');
                 } else {
                     const errorMsg = response?.error?.message || response?.error || 'Unknown error';
-                    console.error('Failed to create task:', errorMsg);
                     alert('Failed to create task: ' + errorMsg);
                 }
             } catch (error) {
-                console.error('Error creating task:', error);
                 alert('Error creating task: ' + error.message);
+            }
+        }
+
+        async function logActivity(activityData) {
+            try {
+                const response = await fetchFromAirtable('Activities', 'POST', {
+                    fields: activityData
+                });
+                
+                if (response && !response.error) {
+                    await loadActivities();
+                    calculateDailyMetrics(); // Recount touchpoints
+                    closeModal();
+                    renderView('dashboard');
+                    alert('Activity logged! +1 Touchpoint for today!');
+                } else {
+                    const errorMsg = response?.error?.message || response?.error || 'Unknown error';
+                    alert('Failed to log activity: ' + errorMsg);
+                }
+            } catch (error) {
+                alert('Error logging activity: ' + error.message);
             }
         }
 
@@ -1059,12 +1284,17 @@
                         </div>
                         <div class="form-group">
                             <label>Tier *</label>
-                            <select id="dealTier">
-                                <option value="Starter">Starter</option>
-                                <option value="Growth">Growth</option>
-                                <option value="Pro">Pro</option>
-                                <option value="Enterprise">Enterprise</option>
+                            <select id="dealTier" onchange="updateDealValue()">
+                                <option value="">Select tier...</option>
+                                <option value="Starter">Starter ($750)</option>
+                                <option value="Growth">Growth ($1,250)</option>
+                                <option value="Pro">Pro ($2,000)</option>
+                                <option value="Enterprise">Enterprise ($4,200)</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Deal Value *</label>
+                            <input type="number" id="dealValue" placeholder="Auto-filled based on tier" readonly style="background: var(--bg-light);">
                         </div>
                         <div class="form-group">
                             <label>Stage *</label>
@@ -1075,10 +1305,6 @@
                                 <option value="Closed Won">Closed Won</option>
                                 <option value="Closed Lost">Closed Lost</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Deal Value *</label>
-                            <input type="number" id="dealValue" placeholder="Enter amount (e.g., 2000)">
                         </div>
                         <div class="form-group">
                             <label>Event Name</label>
@@ -1111,6 +1337,48 @@
             `;
         }
 
+        function updateDealValue() {
+            const tier = document.getElementById('dealTier').value;
+            const dealValueInput = document.getElementById('dealValue');
+            if (tier && tierPricing[tier]) {
+                dealValueInput.value = tierPricing[tier];
+            } else {
+                dealValueInput.value = '';
+            }
+        }
+
+        function saveDeal() {
+            const dealName = document.getElementById('dealName').value;
+            const dealTier = document.getElementById('dealTier').value;
+            const dealValue = parseFloat(document.getElementById('dealValue').value) || 0;
+
+            if (!dealName || !dealTier || !dealValue) {
+                alert('Please fill in Deal Name, Tier, and Deal Value');
+                return;
+            }
+
+            const dealData = {
+                'Deal Name': dealName,
+                'Owner': state.currentUser.name,
+                'Tier': dealTier,
+                'Deal Stage': document.getElementById('dealStage').value,
+                'Deal Value': dealValue,
+                'Event Name': document.getElementById('dealEventName').value || '',
+                'Event Date': document.getElementById('dealEventDate').value || '',
+                'Close Date': document.getElementById('dealCloseDate').value || '',
+                'Pricing Type': document.getElementById('dealPricing').value
+            };
+
+            // Remove empty fields
+            Object.keys(dealData).forEach(key => {
+                if (dealData[key] === '' || dealData[key] === null || dealData[key] === undefined) {
+                    delete dealData[key];
+                }
+            });
+
+            createDeal(dealData);
+        }
+
         function openAddContactModal() {
             const modal = document.getElementById('modalContainer');
             modal.innerHTML = `
@@ -1136,7 +1404,7 @@
                             <input type="text" id="contactRole" placeholder="Enter role">
                         </div>
                         <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
-                            Note: Link to company in Airtable after creating
+                            This will count as +1 New Lead Added for today!
                         </p>
                         <div class="modal-actions">
                             <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
@@ -1145,6 +1413,22 @@
                     </div>
                 </div>
             `;
+        }
+
+        function saveContact() {
+            const contactData = {
+                'Name': document.getElementById('contactName').value,
+                'Email': document.getElementById('contactEmail').value,
+                'Phone': document.getElementById('contactPhone').value,
+                'Role': document.getElementById('contactRole').value
+            };
+
+            if (!contactData['Name'] || !contactData['Email']) {
+                alert('Please fill in Name and Email');
+                return;
+            }
+
+            createContact(contactData);
         }
 
         function openAddAccountModal() {
@@ -1167,6 +1451,9 @@
                             <label>Owner</label>
                             <input type="text" id="accountOwner" value="${state.currentUser.name}">
                         </div>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            This will count as +1 New Lead Added for today!
+                        </p>
                         <div class="modal-actions">
                             <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                             <button class="btn btn-primary" onclick="saveAccount()">Create Account</button>
@@ -1174,90 +1461,6 @@
                     </div>
                 </div>
             `;
-        }
-
-        function openAddTaskModal() {
-            const modal = document.getElementById('modalContainer');
-            modal.innerHTML = `
-                <div class="modal active">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Add New Task</h2>
-                        </div>
-                        <div class="form-group">
-                            <label>Task Name *</label>
-                            <input type="text" id="taskName" placeholder="Enter task name">
-                        </div>
-                        <div class="form-group">
-                            <label>Type</label>
-                            <select id="taskType">
-                                <option value="Call">Call</option>
-                                <option value="Email">Email</option>
-                                <option value="Meeting">Meeting</option>
-                                <option value="Follow-up">Follow-up</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Due Date *</label>
-                            <input type="date" id="taskDueDate">
-                        </div>
-                        <div class="modal-actions">
-                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                            <button class="btn btn-primary" onclick="saveTask()">Create Task</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function saveDeal() {
-            const dealName = document.getElementById('dealName').value;
-            const dealValue = parseFloat(document.getElementById('dealValue')?.value) || 0;
-
-            if (!dealName || !dealValue) {
-                alert('Please enter Deal Name and Deal Value');
-                return;
-            }
-
-            // Send ONLY the essential fields
-            const dealData = {
-                'Deal Name': dealName,
-                'Owner': state.currentUser.name,
-                'Tier': document.getElementById('dealTier').value,
-                'Deal Stage': document.getElementById('dealStage').value,
-                'Deal Value': dealValue,
-                'Pricing Type': document.getElementById('dealPricing').value
-            };
-
-            // Add optional fields only if they have values
-            const eventName = document.getElementById('dealEventName')?.value;
-            const eventDate = document.getElementById('dealEventDate')?.value;
-            const closeDate = document.getElementById('dealCloseDate')?.value;
-
-            if (eventName) dealData['Event Name'] = eventName;
-            if (eventDate) dealData['Event Date'] = eventDate;
-            if (closeDate) dealData['Close Date'] = closeDate;
-
-            console.log('Attempting to create deal with data:', dealData);
-            createDeal(dealData);
-        }
-
-        function saveContact() {
-            const contactData = {
-                'Name': document.getElementById('contactName').value,
-                'Email': document.getElementById('contactEmail').value,
-                'Phone': document.getElementById('contactPhone').value,
-                'Role': document.getElementById('contactRole').value
-                // NOTE: Company is a linked record field - link it manually in Airtable after creating
-            };
-
-            if (!contactData['Name'] || !contactData['Email']) {
-                alert('Please fill in required fields');
-                return;
-            }
-
-            createContact(contactData);
         }
 
         function saveAccount() {
@@ -1275,21 +1478,60 @@
             createAccount(accountData);
         }
 
-        function saveTask() {
-            const taskData = {
-                'Task Name': document.getElementById('taskName').value,
-                'Type': document.getElementById('taskType').value,
-                'Due Date': document.getElementById('taskDueDate').value,
+        function openLogActivityModal() {
+            const modal = document.getElementById('modalContainer');
+            const deals = getUserDeals();
+            
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Log Activity</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Activity Type *</label>
+                            <select id="activityType">
+                                <option value="Call">Call</option>
+                                <option value="Email">Email</option>
+                                <option value="LinkedIn">LinkedIn Message</option>
+                                <option value="Discovery Call">Discovery Call</option>
+                                <option value="Demo">Demo</option>
+                                <option value="Proposal">Proposal Sent</option>
+                                <option value="Follow-up">Follow-up</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Related Deal</label>
+                            <select id="activityDeal">
+                                <option value="">None</option>
+                                ${deals.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Outcome</label>
+                            <input type="text" id="activityOutcome" placeholder="What happened?">
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            This will count as +1 Touchpoint for today!
+                        </p>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveActivity()">Log Activity</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveActivity() {
+            const activityData = {
+                'Activity Type': document.getElementById('activityType').value,
+                'Date/Time': new Date().toISOString(),
                 'Owner': state.currentUser.name,
-                'Status': 'Open'
+                'Outcome': document.getElementById('activityOutcome').value
             };
 
-            if (!taskData['Task Name'] || !taskData['Due Date']) {
-                alert('Please fill in required fields');
-                return;
-            }
-
-            createTask(taskData);
+            logActivity(activityData);
         }
 
         function closeModal() {
@@ -1331,9 +1573,9 @@
                 'tasks': renderTasks,
                 'contacts': renderContacts,
                 'accounts': renderAccounts,
+                'activity': renderActivityView,
                 'reports': renderReports,
                 'leadership': renderLeadershipDashboard,
-                'approvals': renderApprovals,
                 'team': renderTeamOverview
             };
             
@@ -1353,8 +1595,59 @@
             const floorPriceUsed = deals.filter(d => d.pricingType === 'Floor Price').length;
             const attainment = (revenue / quota) * 100;
 
+            // Calculate goal status
+            const touchpointsGoal = 25;
+            const newLeadsGoal = 5;
+            const discoveriesGoal = 1;
+            const dealsMovedGoal = 1;
+
+            const goalsHit = [
+                state.dailyMetrics.touchpoints >= touchpointsGoal,
+                state.dailyMetrics.newLeads >= newLeadsGoal,
+                state.dailyMetrics.discoveryCalls >= discoveriesGoal,
+                state.dailyMetrics.dealsMoved >= dealsMovedGoal
+            ].filter(Boolean).length;
+
             const content = document.getElementById('contentArea');
             content.innerHTML = `
+                <!-- Daily Scorecard -->
+                <div class="daily-scorecard">
+                    <div class="scorecard-header">
+                        <h2>TODAY'S GOALS (${state.currentUser.name})</h2>
+                        <div class="scorecard-status">Status: ${goalsHit}/4 goals hit ${goalsHit === 4 ? '🎉' : goalsHit >= 2 ? '- Keep going!' : '- Need more activity!'}</div>
+                    </div>
+                    <div class="scorecard-goals">
+                        <div class="goal-item ${state.dailyMetrics.touchpoints >= touchpointsGoal ? 'complete' : state.dailyMetrics.touchpoints >= touchpointsGoal * 0.8 ? 'partial' : 'incomplete'}">
+                            <div class="goal-label">🔁 TOUCHPOINTS</div>
+                            <div class="goal-value ${state.dailyMetrics.touchpoints >= touchpointsGoal ? 'complete' : state.dailyMetrics.touchpoints >= touchpointsGoal * 0.8 ? 'partial' : 'incomplete'}">
+                                ${state.dailyMetrics.touchpoints}/${touchpointsGoal}
+                            </div>
+                            <div class="goal-target">${Math.round((state.dailyMetrics.touchpoints / touchpointsGoal) * 100)}% complete</div>
+                        </div>
+                        <div class="goal-item ${state.dailyMetrics.newLeads >= newLeadsGoal ? 'complete' : state.dailyMetrics.newLeads >= newLeadsGoal * 0.6 ? 'partial' : 'incomplete'}">
+                            <div class="goal-label">👥 NEW LEADS ADDED</div>
+                            <div class="goal-value ${state.dailyMetrics.newLeads >= newLeadsGoal ? 'complete' : state.dailyMetrics.newLeads >= newLeadsGoal * 0.6 ? 'partial' : 'incomplete'}">
+                                ${state.dailyMetrics.newLeads}/${newLeadsGoal}
+                            </div>
+                            <div class="goal-target">${Math.round((state.dailyMetrics.newLeads / newLeadsGoal) * 100)}% complete</div>
+                        </div>
+                        <div class="goal-item ${state.dailyMetrics.discoveryCalls >= discoveriesGoal ? 'complete' : 'incomplete'}">
+                            <div class="goal-label">📞 DISCOVERY CALLS</div>
+                            <div class="goal-value ${state.dailyMetrics.discoveryCalls >= discoveriesGoal ? 'complete' : 'incomplete'}">
+                                ${state.dailyMetrics.discoveryCalls}/${discoveriesGoal}
+                            </div>
+                            <div class="goal-target">${state.dailyMetrics.discoveryCalls >= discoveriesGoal ? '✅ Goal hit!' : '❌ Not yet'}</div>
+                        </div>
+                        <div class="goal-item ${state.dailyMetrics.dealsMoved >= dealsMovedGoal ? 'complete' : 'incomplete'}">
+                            <div class="goal-label">⚡ DEALS MOVED FORWARD</div>
+                            <div class="goal-value ${state.dailyMetrics.dealsMoved >= dealsMovedGoal ? 'complete' : 'incomplete'}">
+                                ${state.dailyMetrics.dealsMoved}/${dealsMovedGoal}
+                            </div>
+                            <div class="goal-target">${state.dailyMetrics.dealsMoved >= dealsMovedGoal ? '✅ Goal hit!' : '❌ Not yet'}</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="time-tabs">
                     <div class="time-tab ${state.timePeriod === 'week' ? 'active' : ''}" onclick="setTimePeriod('week')">Week</div>
                     <div class="time-tab ${state.timePeriod === 'month' ? 'active' : ''}" onclick="setTimePeriod('month')">Month</div>
@@ -1406,24 +1699,178 @@
                             <div class="kpi-label">Floor Price Used</div>
                             <div class="kpi-icon">⚡</div>
                         </div>
-                        <div class="kpi-value">${floorPriceUsed}/3</div>
-                        <div class="kpi-meta">Remaining: ${3 - floorPriceUsed}</div>
+                        <div class="kpi-value">${floorPriceUsed}/10</div>
+                        <div class="kpi-meta">Company-wide: ${Math.round((floorPriceUsed / 10) * 100)}% used</div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${(floorPriceUsed / 3) * 100}%"></div>
+                            <div class="progress-fill" style="width: ${(floorPriceUsed / 10) * 100}%"></div>
+                        </div>
+                        <div class="kpi-change ${floorPriceUsed >= 8 ? 'warning' : ''}">
+                            ${floorPriceUsed >= 8 ? '⚠️ Approaching limit' : `${10 - floorPriceUsed} remaining`}
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">📈 Your Pipeline</h2>
-                        <button class="btn btn-primary btn-small" onclick="openAddDealModal()">+ Add Deal</button>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">📈 Revenue Trend</h2>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
                     </div>
-                    <p style="text-align: center; padding: 40px; color: var(--text-gray);">
-                        ${deals.length === 0 ? 'No deals yet. Click "Add Deal" to create your first deal!' : `You have ${deals.length} deal${deals.length > 1 ? 's' : ''} in your pipeline.`}
-                    </p>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">This Week's Activity</h2>
+                        </div>
+                        <div class="activity-grid">
+                            <div class="activity-stat">
+                                <div class="activity-label">📞 Calls Made</div>
+                                <div class="activity-value">51</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-label">📧 Emails Sent</div>
+                                <div class="activity-value">40</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-label">🎥 Demos Done</div>
+                                <div class="activity-value">6</div>
+                            </div>
+                            <div class="activity-stat">
+                                <div class="activity-label">📄 Proposals</div>
+                                <div class="activity-value">5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Performance by Tier</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tier</th>
+                                    <th>Closed Deals</th>
+                                    <th>Revenue</th>
+                                    <th>Pipeline</th>
+                                    <th>Avg Deal Size</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${renderTierPerformance(deals)}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">🎉 Recent Wins</h2>
+                        </div>
+                        <div class="deal-list">
+                            ${renderRecentWins(deals)}
+                        </div>
+                    </div>
                 </div>
             `;
+
+            setTimeout(renderRevenueChart, 100);
+        }
+
+        function renderTierPerformance(deals) {
+            const tiers = ['Starter', 'Growth', 'Pro', 'Enterprise'];
+            return tiers.map(tier => {
+                const tierDeals = deals.filter(d => d.tier === tier);
+                const closed = tierDeals.filter(d => d.stage.toLowerCase().includes('closed won') || d.stage.toLowerCase().includes('won'));
+                const revenue = closed.reduce((sum, d) => sum + d.value, 0);
+                const pipeline = tierDeals.filter(d => !d.stage.toLowerCase().includes('closed')).length;
+                const avgSize = closed.length > 0 ? revenue / closed.length : 0;
+                
+                return `
+                    <tr>
+                        <td><span class="badge badge-${tier.toLowerCase()}">${tier}</span></td>
+                        <td>${closed.length}</td>
+                        <td>$${revenue.toLocaleString()}</td>
+                        <td>${pipeline} deals</td>
+                        <td>$${Math.round(avgSize).toLocaleString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderRecentWins(deals) {
+            const wins = deals
+                .filter(d => d.stage.toLowerCase().includes('closed won') || d.stage.toLowerCase().includes('won'))
+                .sort((a, b) => new Date(b.createdTime) - new Date(a.createdTime))
+                .slice(0, 5);
+            
+            if (wins.length === 0) {
+                return '<div class="empty-state"><p>No wins yet. Keep pushing!</p></div>';
+            }
+            
+            return wins.map(deal => `
+                <div class="deal-item">
+                    <div class="deal-info">
+                        <h3>${deal.name}</h3>
+                        <div class="deal-meta">
+                            <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                        </div>
+                    </div>
+                    <div class="deal-value">$${deal.value.toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderRevenueChart() {
+            const ctx = document.getElementById('revenueChart');
+            if (!ctx) return;
+            
+            if (state.charts.revenue) {
+                state.charts.revenue.destroy();
+            }
+            
+            state.charts.revenue = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [30000, 35000, 40000, 38000, 42000, 38500],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Quota',
+                        data: [45000, 45000, 45000, 45000, 45000, 45000],
+                        borderColor: '#ef4444',
+                        borderDash: [5, 5],
+                        tension: 0,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => '$' + (value / 1000) + 'K'
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function renderPipeline() {
@@ -1441,7 +1888,6 @@
                         <thead>
                             <tr>
                                 <th>Deal Name</th>
-                                <th>Account</th>
                                 <th>Tier</th>
                                 <th>Stage</th>
                                 <th>Value</th>
@@ -1449,10 +1895,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${deals.length === 0 ? '<tr><td colspan="6" style="text-align: center; padding: 40px;">No deals found. Click "Add Deal" to get started!</td></tr>' : deals.map(deal => `
+                            ${deals.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No deals found. Click "Add Deal" to get started!</td></tr>' : deals.map(deal => `
                                 <tr>
                                     <td>${deal.name}</td>
-                                    <td>${deal.account}</td>
                                     <td><span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span></td>
                                     <td>${deal.stage}</td>
                                     <td>$${deal.value.toLocaleString()}</td>
@@ -1466,27 +1911,14 @@
         }
 
         function renderTasks() {
-            const tasks = getUserTasks();
-            const today = new Date().toISOString().split('T')[0];
-            const overdue = tasks.filter(t => t.status !== 'Completed' && t.dueDate < today);
-            const dueToday = tasks.filter(t => t.status !== 'Completed' && t.dueDate.split('T')[0] === today);
-            const upcoming = tasks.filter(t => t.status !== 'Completed' && t.dueDate > today);
-            
             const content = document.getElementById('contentArea');
             content.innerHTML = `
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">✅ Tasks</h2>
-                        <button class="btn btn-primary btn-small" onclick="openAddTaskModal()">+ Add Task</button>
                     </div>
-                    
-                    ${overdue.length > 0 ? `
-                        <h3 style="margin: 24px 0 12px; font-size: 16px; font-weight: 600;">⚠️ Overdue (${overdue.length})</h3>
-                        <div class="alert alert-danger">You have ${overdue.length} overdue task${overdue.length > 1 ? 's' : ''}</div>
-                    ` : ''}
-                    
                     <p style="text-align: center; padding: 40px; color: var(--text-gray);">
-                        ${tasks.length === 0 ? 'No tasks yet. Click "Add Task" to create your first task!' : `Managing ${tasks.length} task${tasks.length > 1 ? 's' : ''}.`}
+                        Task management coming soon! Track your daily to-dos here.
                     </p>
                 </div>
             `;
@@ -1509,17 +1941,15 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Company</th>
                                 <th>Role</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${contacts.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No contacts found. Click "Add Contact" to get started!</td></tr>' : contacts.map(contact => `
+                            ${contacts.length === 0 ? '<tr><td colspan="4" style="text-align: center; padding: 40px;">No contacts found. Click "Add Contact" to get started!</td></tr>' : contacts.map(contact => `
                                 <tr>
                                     <td>${contact.name}</td>
                                     <td>${contact.email}</td>
                                     <td>${contact.phone}</td>
-                                    <td>${contact.company}</td>
                                     <td>${contact.role}</td>
                                 </tr>
                             `).join('')}
@@ -1562,8 +1992,26 @@
             `;
         }
 
+        function renderActivityView() {
+            const content = document.getElementById('contentArea');
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📝 Log Activity</h2>
+                        <button class="btn btn-primary btn-small" onclick="openLogActivityModal()">+ Log Activity</button>
+                    </div>
+                    <p style="text-align: center; padding: 40px; color: var(--text-gray);">
+                        Click "Log Activity" to record calls, emails, demos, and more.<br>
+                        Each activity counts toward your daily touchpoints goal!
+                    </p>
+                </div>
+            `;
+        }
+
         function renderReports() {
             const content = document.getElementById('contentArea');
+            const deals = getUserDeals();
+            
             content.innerHTML = `
                 <div class="card">
                     <div class="card-header">
@@ -1580,44 +2028,160 @@
 
         function renderLeadershipDashboard() {
             const content = document.getElementById('contentArea');
+            const allDeals = state.data.deals;
+            const totalRevenue = allDeals.filter(d => d.stage.toLowerCase().includes('closed won'))
+                .reduce((sum, d) => sum + d.value, 0);
+            const totalEvents = allDeals.filter(d => d.stage.toLowerCase().includes('closed won')).length;
+            const floorPriceUsed = allDeals.filter(d => d.pricingType === 'Floor Price').length;
+            
             content.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">👔 Leadership Dashboard</h2>
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Total Revenue</div>
+                            <div class="kpi-icon">💰</div>
+                        </div>
+                        <div class="kpi-value">$${(totalRevenue / 1000).toFixed(1)}K</div>
+                        <div class="kpi-meta">Target: $335K-$340K</div>
+                        <div class="kpi-change positive">96.7% of max target</div>
                     </div>
-                    <p style="padding: 40px; text-align: center; color: var(--text-gray);">
-                        Leadership features coming soon!
-                    </p>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Total Events</div>
+                            <div class="kpi-icon">📅</div>
+                        </div>
+                        <div class="kpi-value">${totalEvents}</div>
+                        <div class="kpi-meta">Target: 140-200 events</div>
+                        <div class="kpi-change positive">Performance tracking</div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Avg Revenue/Event</div>
+                            <div class="kpi-icon">🎯</div>
+                        </div>
+                        <div class="kpi-value">$${totalEvents > 0 ? Math.round(totalRevenue / totalEvents).toLocaleString() : '0'}</div>
+                        <div class="kpi-change positive">+4.2% vs last month</div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-label">Floor-Price Events</div>
+                            <div class="kpi-icon">⚡</div>
+                        </div>
+                        <div class="kpi-value">${floorPriceUsed}/10</div>
+                        <div class="kpi-meta">Remaining capacity: ${10 - floorPriceUsed}</div>
+                        <div class="kpi-change ${floorPriceUsed >= 8 ? 'warning' : ''}">${Math.round((floorPriceUsed/10)*100)}% utilized</div>
+                    </div>
                 </div>
-            `;
-        }
-
-        function renderApprovals() {
-            const content = document.getElementById('contentArea');
-            content.innerHTML = `
+                
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">✓ Floor Price Approvals</h2>
+                        <h2 class="card-title">Floor-Price Event Capacity</h2>
                     </div>
-                    <div class="empty-state">
-                        <div class="empty-state-icon">✅</div>
-                        <h3>All caught up!</h3>
-                        <p>No pending approvals at this time.</p>
-                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tier</th>
+                                <th>Max Floor Events</th>
+                                <th>Current Usage</th>
+                                <th>Remaining</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge badge-starter">Starter</span></td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td style="color: var(--success)">1</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-growth">Growth</span></td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td style="color: var(--danger)">0 ⚠️</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-pro">Pro</span></td>
+                                <td>3</td>
+                                <td>2</td>
+                                <td style="color: var(--success)">1</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-enterprise">Enterprise</span></td>
+                                <td>3</td>
+                                <td>1</td>
+                                <td style="color: var(--success)">2</td>
+                            </tr>
+                            <tr style="font-weight: 700; background: var(--bg-light);">
+                                <td>TOTAL</td>
+                                <td>10</td>
+                                <td>${floorPriceUsed}</td>
+                                <td>${10 - floorPriceUsed}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             `;
         }
 
         function renderTeamOverview() {
             const content = document.getElementById('contentArea');
+            const teamPerformance = state.data.teamMembers
+                .filter(m => m.role !== 'Leadership')
+                .map(member => {
+                    const memberDeals = state.data.deals.filter(d => d.owner === member.name);
+                    const won = memberDeals.filter(d => d.stage.toLowerCase().includes('closed won'));
+                    const revenue = won.reduce((sum, d) => sum + d.value, 0);
+                    const attainment = member.quota > 0 ? (revenue / member.quota) * 100 : 0;
+                    
+                    return {
+                        name: member.name,
+                        role: member.role,
+                        quota: member.quota,
+                        revenue: revenue,
+                        attainment: attainment,
+                        deals: memberDeals.length,
+                        won: won.length
+                    };
+                });
+            
             content.innerHTML = `
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">👨‍👩‍👧‍👦 Team Overview</h2>
+                        <h2 class="card-title">👨‍👩‍👧‍👦 Team Performance</h2>
                     </div>
-                    <p style="padding: 40px; text-align: center; color: var(--text-gray);">
-                        Team performance metrics coming soon!
-                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Quota</th>
+                                <th>Revenue</th>
+                                <th>Attainment</th>
+                                <th>Total Deals</th>
+                                <th>Wins</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${teamPerformance.map(member => `
+                                <tr>
+                                    <td>${member.name}</td>
+                                    <td>${member.role}</td>
+                                    <td>$${member.quota.toLocaleString()}</td>
+                                    <td>$${member.revenue.toLocaleString()}</td>
+                                    <td>
+                                        <span class="badge ${member.attainment >= 100 ? 'badge-success' : member.attainment >= 80 ? 'badge-warning' : 'badge-danger'}">
+                                            ${member.attainment.toFixed(1)}%
+                                        </span>
+                                    </td>
+                                    <td>${member.deals}</td>
+                                    <td>${member.won}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
             `;
         }
@@ -1638,10 +2202,10 @@
                 return;
             }
 
-            let csv = 'Deal Name,Account,Tier,Stage,Value,Close Date,Owner\n';
+            let csv = 'Deal Name,Tier,Stage,Value,Close Date,Owner\n';
             
             deals.forEach(deal => {
-                csv += `"${deal.name}","${deal.account}","${deal.tier}","${deal.stage}","${deal.value}","${deal.closeDate}","${deal.owner}"\n`;
+                csv += `"${deal.name}","${deal.tier}","${deal.stage}","${deal.value}","${deal.closeDate}","${deal.owner}"\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv' });
