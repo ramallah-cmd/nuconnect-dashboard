@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NuConnect Sales Dashboard</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/recharts@2.5.0/dist/Recharts.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { 
+            BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, 
+            Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell,
+            RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar 
+        } = Recharts;
+        
+        // Lucide Icons
+        const TrendingUp = () => <i data-lucide="trending-up"></i>;
+        const TrendingDown = () => <i data-lucide="trending-down"></i>;
+        const DollarSign = () => <i data-lucide="dollar-sign"></i>;
+        const Users = () => <i data-lucide="users"></i>;
+        const Calendar = () => <i data-lucide="calendar"></i>;
+        const Target = () => <i data-lucide="target"></i>;
+        const Award = () => <i data-lucide="award"></i>;
+        const Phone = () => <i data-lucide="phone"></i>;
+        const Mail = () => <i data-lucide="mail"></i>;
+        const FileText = () => <i data-lucide="file-text"></i>;
+        const Clock = () => <i data-lucide="clock"></i>;
+        const Zap = () => <i data-lucide="zap"></i>;
+        const RefreshCw = () => <i data-lucide="refresh-cw"></i>;
+        const Settings = () => <i data-lucide="settings"></i>;
+
+        const NuConnectDashboard = () => {
+            const [selectedPeriod, setSelectedPeriod] = useState('month');
+            const [loading, setLoading] = useState(false);
+            const [showConfig, setShowConfig] = useState(false);
+            const [airtableConfig, setAirtableConfig] = useState({
+                baseId: localStorage.getItem('airtable_baseId') || '',
+                apiKey: localStorage.getItem('airtable_apiKey') || '',
+                configured: !!(localStorage.getItem('airtable_baseId') && localStorage.getItem('airtable_apiKey'))
+            });
+            const [data, setData] = useState(null);
+
+            // Initialize Lucide icons
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [showConfig, data]);
+
+            // Mock data for demo
+            const mockData = {
+                repName: "Sarah Johnson",
+                repQuota: 45000,
+                currentRevenue: 38500,
+                goals: {
+                    revenue: { current: 38500, target: 45000 },
+                    events: { current: 18, target: 22 },
+                    floorPriceUsed: { current: 2, target: 3 },
+                    avgDealSize: { current: 2139, target: 2045 }
+                },
+                pipelineData: [
+                    { stage: 'Prospecting', count: 12, value: 18000, color: '#94a3b8' },
+                    { stage: 'Demo Scheduled', count: 8, value: 14500, color: '#60a5fa' },
+                    { stage: 'Proposal Sent', count: 5, value: 12800, color: '#fbbf24' },
+                    { stage: 'Negotiation', count: 3, value: 9500, color: '#fb923c' },
+                    { stage: 'Verbal Commit', count: 2, value: 8200, color: '#34d399' }
+                ],
+                dealsByTier: [
+                    { tier: 'Starter', closed: 6, revenue: 3000, pipeline: 4 },
+                    { tier: 'Growth', closed: 8, revenue: 10000, pipeline: 7 },
+                    { tier: 'Pro', closed: 3, revenue: 6000, pipeline: 5 },
+                    { tier: 'Enterprise', closed: 1, revenue: 19500, pipeline: 3 }
+                ],
+                weeklyActivity: [
+                    { week: 'W1', calls: 45, emails: 32, demos: 5, proposals: 3 },
+                    { week: 'W2', calls: 52, emails: 38, demos: 6, proposals: 4 },
+                    { week: 'W3', calls: 48, emails: 35, demos: 7, proposals: 2 },
+                    { week: 'W4', calls: 51, emails: 40, demos: 6, proposals: 5 }
+                ],
+                performanceMetrics: [
+                    { metric: 'Revenue', value: 85.6, fullMark: 100 },
+                    { metric: 'Activity', value: 92, fullMark: 100 },
+                    { metric: 'Conversion', value: 78, fullMark: 100 },
+                    { metric: 'Pipeline', value: 85, fullMark: 100 },
+                    { metric: 'Velocity', value: 88, fullMark: 100 }
+                ],
+                recentDeals: [
+                    { company: 'Tech Summit Inc', tier: 'Enterprise', value: 19500, date: '2 days ago', closeTime: 32 },
+                    { company: 'Local Biz Expo', tier: 'Growth', value: 1250, date: '4 days ago', closeTime: 18 },
+                    { company: 'Startup Connect', tier: 'Pro', value: 2000, date: '1 week ago', closeTime: 28 },
+                    { company: 'Community Fest', tier: 'Starter', value: 750, date: '1 week ago', closeTime: 12 }
+                ],
+                revenueTrend: [
+                    { month: 'Jan', revenue: 32000, quota: 45000 },
+                    { month: 'Feb', revenue: 38500, quota: 45000 },
+                    { month: 'Mar', revenue: 42000, quota: 45000 },
+                    { month: 'Apr', revenue: 39800, quota: 45000 },
+                    { month: 'May', revenue: 46200, quota: 45000 },
+                    { month: 'Jun', revenue: 38500, quota: 45000 }
+                ]
+            };
+
+            const fetchAirtableData = async () => {
+                if (!airtableConfig.configured) {
+                    setData(mockData);
+                    return;
+                }
+
+                setLoading(true);
+                try {
+                    const response = await fetch(
+                        `https://api.airtable.com/v0/${airtableConfig.baseId}/Deals`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${airtableConfig.apiKey}`
+                            }
+                        }
+                    );
+                    
+                    if (!response.ok) throw new Error('Failed to fetch data');
+                    
+                    const result = await response.json();
+                    const transformedData = transformAirtableData(result.records);
+                    setData(transformedData);
+                } catch (error) {
+                    console.error('Error fetching from Airtable:', error);
+                    setData(mockData);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const transformAirtableData = (records) => {
+                // Transform Airtable records to dashboard format
+                return mockData; // Placeholder - we'll customize this based on your fields
+            };
+
+            useEffect(() => {
+                fetchAirtableData();
+            }, [airtableConfig.configured]);
+
+            const saveAirtableConfig = () => {
+                localStorage.setItem('airtable_baseId', airtableConfig.baseId);
+                localStorage.setItem('airtable_apiKey', airtableConfig.apiKey);
+                setAirtableConfig({ ...airtableConfig, configured: true });
+                setShowConfig(false);
+                fetchAirtableData();
+            };
+
+            const currentData = data || mockData;
+            const quotaAttainment = (currentData.currentRevenue / currentData.repQuota) * 100;
+
+            const KPICard = ({ title, value, subtitle, change, icon: Icon, trend, progress }) => (
+                <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{title}</span>
+                        <Icon />
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-1">{value}</div>
+                    {subtitle && <div className="text-xs text-gray-500 mb-2">{subtitle}</div>}
+                    {progress !== undefined && (
+                        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+                            <div
+                                className={`h-1.5 rounded-full ${progress >= 100 ? 'bg-green-500' : progress >= 80 ? 'bg-blue-500' : 'bg-orange-500'}`}
+                                style={{ width: `${Math.min(progress, 100)}%` }}
+                            />
+                        </div>
+                    )}
+                    {change && (
+                        <div className="flex items-center text-xs">
+                            {trend === 'up' ? <TrendingUp /> : <TrendingDown />}
+                            <span className={trend === 'up' ? 'text-green-600 ml-1' : 'text-red-600 ml-1'}>
+                                {change}
+                            </span>
+                        </div>
+                    )}
+                </div>
+            );
+
+            const ActivityBadge = ({ icon: Icon, label, value, color }) => (
+                <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+                    <Icon />
+                    <div>
+                        <div className="text-xs text-gray-500">{label}</div>
+                        <div className="text-lg font-bold text-gray-900">{value}</div>
+                    </div>
+                </div>
+            );
+
+            if (showConfig) {
+                return (
+                    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+                        <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-2xl font-bold text-gray-900">Airtable Setup</h2>
+                                <button
+                                    onClick={() => setShowConfig(false)}
+                                    className="text-gray-400 hover:text-gray-600 text-2xl"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Airtable Base ID
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="app0WnWepz3soa88I"
+                                        value={airtableConfig.baseId}
+                                        onChange={(e) => setAirtableConfig({ ...airtableConfig, baseId: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Find this in your Airtable URL
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Airtable API Key (Personal Access Token)
+                                    </label>
+                                    <input
+                                        type="password"
+                                        placeholder="patXXXXXXXXXXXXXX..."
+                                        value={airtableConfig.apiKey}
+                                        onChange={(e) => setAirtableConfig({ ...airtableConfig, apiKey: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Create at airtable.com/create/tokens
+                                    </p>
+                                </div>
+
+                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <p className="text-sm text-blue-900">
+                                        <strong>Note:</strong> Your API key is stored locally in your browser and never sent to any third party.
+                                    </p>
+                                </div>
+
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={saveAirtableConfig}
+                                        disabled={!airtableConfig.baseId || !airtableConfig.apiKey}
+                                        className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    >
+                                        Connect
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setAirtableConfig({ baseId: '', apiKey: '', configured: false });
+                                            setShowConfig(false);
+                                            setData(mockData);
+                                        }}
+                                        className="px-4 py-2 border border-gray-300 rounded-lg font-medium hover:bg-gray-50"
+                                    >
+                                        Use Demo Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gray-50 p-6">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Header */}
+                        <div className="mb-6">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h1 className="text-3xl font-bold text-gray-900">
+                                        {airtableConfig.configured ? currentData.repName : 'Demo'}'s Dashboard
+                                    </h1>
+                                    <p className="text-gray-600 mt-1">Track your performance and hit your goals</p>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    {!airtableConfig.configured && (
+                                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2">
+                                            <span className="text-sm font-medium text-yellow-800">Using demo data</span>
+                                        </div>
+                                    )}
+                                    <button
+                                        onClick={() => setShowConfig(true)}
+                                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                                    >
+                                        <Settings />
+                                        <span className="text-sm font-medium">Setup</span>
+                                    </button>
+                                    <button
+                                        onClick={fetchAirtableData}
+                                        disabled={loading}
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+                                    >
+                                        <RefreshCw />
+                                        <span className="text-sm font-medium">Refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="mt-4 text-right">
+                                <div className="text-sm text-gray-500">Monthly Quota</div>
+                                <div className="text-3xl font-bold text-gray-900">${(currentData.repQuota / 1000).toFixed(0)}K</div>
+                                <div className={`text-sm font-semibold ${quotaAttainment >= 100 ? 'text-green-600' : quotaAttainment >= 80 ? 'text-blue-600' : 'text-orange-600'}`}>
+                                    {quotaAttainment.toFixed(1)}% Attainment
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Period Selector */}
+                        <div className="mb-6 flex gap-2">
+                            {['week', 'month', 'quarter', 'year'].map((period) => (
+                                <button
+                                    key={period}
+                                    onClick={() => setSelectedPeriod(period)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                        selectedPeriod === period
+                                            ? 'bg-blue-600 text-white'
+                                            : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                                    }`}
+                                >
+                                    {period.charAt(0).toUpperCase() + period.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Primary KPIs */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <KPICard
+                                title="Revenue"
+                                value={`$${(currentData.goals.revenue.current / 1000).toFixed(1)}K`}
+                                subtitle={`Goal: $${(currentData.goals.revenue.target / 1000).toFixed(0)}K`}
+                                progress={(currentData.goals.revenue.current / currentData.goals.revenue.target) * 100}
+                                change="+12.5% vs last month"
+                                icon={DollarSign}
+                                trend="up"
+                            />
+                            <KPICard
+                                title="Events Closed"
+                                value={currentData.goals.events.current}
+                                subtitle={`Goal: ${currentData.goals.events.target}`}
+                                progress={(currentData.goals.events.current / currentData.goals.events.target) * 100}
+                                change="+3 this week"
+                                icon={Calendar}
+                                trend="up"
+                            />
+                            <KPICard
+                                title="Avg Deal Size"
+                                value={`$${currentData.goals.avgDealSize.current.toLocaleString()}`}
+                                subtitle={`Target: $${currentData.goals.avgDealSize.target.toLocaleString()}`}
+                                progress={(currentData.goals.avgDealSize.current / currentData.goals.avgDealSize.target) * 100}
+                                change="+4.6% vs target"
+                                icon={Target}
+                                trend="up"
+                            />
+                            <KPICard
+                                title="Floor Price Used"
+                                value={`${currentData.goals.floorPriceUsed.current}/${currentData.goals.floorPriceUsed.target}`}
+                                subtitle="Remaining: 1"
+                                progress={(currentData.goals.floorPriceUsed.current / currentData.goals.floorPriceUsed.target) * 100}
+                                icon={Zap}
+                            />
+                        </div>
+
+                        {/* This Week's Activity */}
+                        <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200 mb-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">This Week's Activity</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <ActivityBadge icon={Phone} label="Calls Made" value="51" color="text-blue-600" />
+                                <ActivityBadge icon={Mail} label="Emails Sent" value="40" color="text-green-600" />
+                                <ActivityBadge icon={Users} label="Demos Done" value="6" color="text-purple-600" />
+                                <ActivityBadge icon={FileText} label="Proposals" value="5" color="text-orange-600" />
+                            </div>
+                        </div>
+
+                        {/* Charts */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                            <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
+                                <ResponsiveContainer width="100%" height={250}>
+                                    <LineChart data={currentData.revenueTrend}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                                        <XAxis dataKey="month" stroke="#6b7280" style={{ fontSize: '12px' }} />
+                                        <YAxis stroke="#6b7280" style={{ fontSize: '12px' }} />
+                                        <Tooltip formatter={(value) => `$${(value / 1000).toFixed(1)}K`} />
+                                        <Legend />
+                                        <Line type="monotone" dataKey="quota" stroke="#ef4444" strokeWidth={2} strokeDasharray="5 5" name="Quota" />
+                                        <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={2} name="Revenue" />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+
+                            <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Pipeline by Stage</h3>
+                                <ResponsiveContainer width="100%" height={250}>
+                                    <BarChart data={currentData.pipelineData} layout="vertical">
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                                        <XAxis type="number" stroke="#6b7280" style={{ fontSize: '12px' }} />
+                                        <YAxis dataKey="stage" type="category" width={100} stroke="#6b7280" style={{ fontSize: '11px' }} />
+                                        <Tooltip formatter={(value) => `$${(value / 1000).toFixed(1)}K`} />
+                                        <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Performance by Tier */}
+                        <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200 mb-6">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance by Tier</h3>
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-gray-200">
+                                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Tier</th>
+                                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Closed Deals</th>
+                                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Revenue</th>
+                                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Pipeline</th>
+                                            <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Avg Deal Size</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {currentData.dealsByTier.map((tier, index) => (
+                                            <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                                                <td className="py-3 px-4">
+                                                    <span className={`inline-block px-2 py-1 text-xs font-semibold rounded ${
+                                                        tier.tier === 'Enterprise' ? 'bg-purple-100 text-purple-700' :
+                                                        tier.tier === 'Pro' ? 'bg-yellow-100 text-yellow-700' :
+                                                        tier.tier === 'Growth' ? 'bg-green-100 text-green-700' :
+                                                        'bg-blue-100 text-blue-700'
+                                                    }`}>
+                                                        {tier.tier}
+                                                    </span>
+                                                </td>
+                                                <td className="py-3 px-4 text-sm font-medium text-gray-900">{tier.closed}</td>
+                                                <td className="py-3 px-4 text-sm text-gray-700">${tier.revenue.toLocaleString()}</td>
+                                                <td className="py-3 px-4 text-sm text-gray-700">{tier.pipeline} deals</td>
+                                                <td className="py-3 px-4 text-sm text-gray-700">${(tier.revenue / tier.closed).toFixed(0)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* Recent Wins */}
+                        <div className="bg-white rounded-lg p-5 shadow-sm border border-gray-200">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Wins 🎉</h3>
+                            <div className="space-y-3">
+                                {currentData.recentDeals.map((deal, index) => (
+                                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                                        <div className="flex-1">
+                                            <div className="font-medium text-gray-900">{deal.company}</div>
+                                            <div className="text-sm text-gray-500 flex items-center gap-2 mt-1">
+                                                <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded ${
+                                                    deal.tier === 'Enterprise' ? 'bg-purple-100 text-purple-700' :
+                                                    deal.tier === 'Pro' ? 'bg-yellow-100 text-yellow-700' :
+                                                    deal.tier === 'Growth' ? 'bg-green-100 text-green-700' :
+                                                    'bg-blue-100 text-blue-700'
+                                                }`}>
+                                                    {deal.tier}
+                                                </span>
+                                                <span>•</span>
+                                                <Clock />
+                                                <span>{deal.closeTime} days</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-gray-900">${deal.value.toLocaleString()}</div>
+                                            <div className="text-xs text-gray-500">{deal.date}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<NuConnectDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
