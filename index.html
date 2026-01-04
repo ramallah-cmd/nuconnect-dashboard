@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NuConnect CRM - Complete System</title>
+    <title>NuConnect CRM - Secure</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -268,44 +268,6 @@
             align-items: center;
         }
 
-        .search-bar {
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 300px;
-            padding: 10px 16px 10px 40px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 14px;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-gray);
-        }
-
-        .notification-badge {
-            position: relative;
-            cursor: pointer;
-            padding: 8px;
-        }
-
-        .notification-badge .badge {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: var(--danger);
-            color: var(--white);
-            border-radius: 10px;
-            padding: 2px 6px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-
         /* KPI Cards */
         .kpi-grid {
             display: grid;
@@ -403,14 +365,6 @@
             color: var(--success);
         }
 
-        .kpi-change.negative {
-            color: var(--danger);
-        }
-
-        .kpi-change.warning {
-            color: var(--warning);
-        }
-
         /* Cards */
         .card {
             background: var(--white);
@@ -485,85 +439,6 @@
             position: relative;
             height: 300px;
             margin-top: 20px;
-        }
-
-        /* Deal List */
-        .deal-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .deal-item {
-            padding: 16px;
-            background: var(--bg-light);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .deal-item:hover {
-            background: var(--white);
-            box-shadow: var(--shadow-sm);
-            transform: translateX(4px);
-        }
-
-        .deal-info h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 6px;
-        }
-
-        .deal-meta {
-            display: flex;
-            gap: 12px;
-            font-size: 13px;
-            color: var(--text-gray);
-        }
-
-        .deal-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        /* Task List */
-        .task-item {
-            padding: 16px;
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .task-item:hover {
-            box-shadow: var(--shadow-sm);
-        }
-
-        .task-item.overdue {
-            border-left: 4px solid var(--danger);
-            background: #fef2f2;
-        }
-
-        .task-item.due-today {
-            border-left: 4px solid var(--warning);
-            background: #fffbeb;
-        }
-
-        .task-checkbox {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
         }
 
         /* Grid Layout */
@@ -652,28 +527,10 @@
             gap: 12px;
         }
 
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border-left: 4px solid #22c55e;
-        }
-
-        .alert-warning {
-            background: #fef3c7;
-            color: #92400e;
-            border-left: 4px solid #f59e0b;
-        }
-
         .alert-danger {
             background: #fee2e2;
             color: #991b1b;
             border-left: 4px solid #ef4444;
-        }
-
-        .alert-info {
-            background: #dbeafe;
-            color: #1e40af;
-            border-left: 4px solid #3b82f6;
         }
 
         /* Empty State */
@@ -698,51 +555,6 @@
             color: var(--text-gray);
             margin-bottom: 24px;
         }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--white);
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: var(--white);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .kpi-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-
-            .search-bar input {
-                width: 200px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -751,14 +563,22 @@
         <div class="login-card">
             <div class="logo">🎯</div>
             <h1>NuConnect CRM</h1>
-            <p>Select your profile to continue</p>
+            <p>Sign in to your account</p>
             <div class="form-group">
                 <label>Team Member</label>
                 <select id="userSelect">
                     <option value="">Choose your name...</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="passwordInput" placeholder="Enter your password">
+            </div>
+            <div id="loginError" class="hidden" style="color: var(--danger); margin-bottom: 16px; font-size: 14px;"></div>
             <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
+            <p style="margin-top: 20px; font-size: 13px; color: var(--text-gray);">
+                Default password: <strong>nuconnect2024</strong> (Leadership: <strong>admin2024</strong>)
+            </p>
         </div>
     </div>
 
@@ -782,14 +602,6 @@
                     <p id="pageSubtitle">Track your performance</p>
                 </div>
                 <div class="top-bar-right">
-                    <div class="search-bar">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="globalSearch" placeholder="Search deals, contacts, accounts..." onkeyup="handleGlobalSearch()">
-                    </div>
-                    <div class="notification-badge" onclick="showNotifications()">
-                        <span style="font-size: 24px;">🔔</span>
-                        <span class="badge" id="notificationCount">0</span>
-                    </div>
                     <button class="btn btn-secondary btn-small" onclick="openSettings()">⚙️</button>
                     <button class="btn btn-danger btn-small" onclick="logout()">Logout</button>
                 </div>
@@ -828,6 +640,16 @@
             notifications: []
         };
 
+        // Password storage
+        const userPasswords = {
+            'Javonte': 'nuconnect2024',
+            'Teslim': 'nuconnect2024',
+            'Israel': 'nuconnect2024',
+            'Conrad': 'nuconnect2024',
+            'Ramallah': 'admin2024',
+            'Keyna': 'admin2024'
+        };
+
         // Navigation Items
         const repNavItems = [
             { id: 'dashboard', icon: '📊', label: 'Dashboard' },
@@ -835,7 +657,6 @@
             { id: 'tasks', icon: '✅', label: 'Tasks' },
             { id: 'contacts', icon: '👥', label: 'Contacts' },
             { id: 'accounts', icon: '🏢', label: 'Accounts' },
-            { id: 'activities', icon: '📝', label: 'Log Activity' },
             { id: 'reports', icon: '📑', label: 'Reports' }
         ];
 
@@ -893,9 +714,6 @@
             }
         }
 
-        // ========================================
-        // DATA LOADING
-        // ========================================
         async function loadTeamMembers() {
             try {
                 const response = await fetchFromAirtable('Team Members');
@@ -935,7 +753,84 @@
             });
         }
 
-        async function fetchFromAirtable(tableName, method = 'GET', body = null) {
+        // ========================================
+        // LOGIN & AUTHENTICATION
+        // ========================================
+        async function handleLogin() {
+            const select = document.getElementById('userSelect');
+            const passwordInput = document.getElementById('passwordInput');
+            const errorDiv = document.getElementById('loginError');
+            
+            const selectedName = select.value;
+            const enteredPassword = passwordInput.value;
+            
+            if (!selectedName) {
+                errorDiv.textContent = 'Please select a team member';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (!enteredPassword) {
+                errorDiv.textContent = 'Please enter your password';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Validate password
+            if (userPasswords[selectedName] !== enteredPassword) {
+                errorDiv.textContent = 'Incorrect password';
+                errorDiv.classList.remove('hidden');
+                passwordInput.value = '';
+                return;
+            }
+
+            // Login successful
+            const user = state.data.teamMembers.find(m => m.name === selectedName);
+            if (user) {
+                state.currentUser = user;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                await initApp();
+            }
+        }
+
+        async function initApp() {
+            document.getElementById('currentUserName').textContent = state.currentUser.name;
+            buildNavigation();
+            await loadAllData();
+            renderView('dashboard');
+            setInterval(() => loadAllData(), 5 * 60 * 1000);
+        }
+
+        function buildNavigation() {
+            const nav = document.getElementById('sidebarNav');
+            const items = state.currentUser.role === 'Leadership' 
+                ? [...repNavItems, ...leadershipNavItems]
+                : repNavItems;
+            
+            nav.innerHTML = items.map(item => `
+                <div class="nav-item ${item.id === state.currentView ? 'active' : ''}" 
+                     onclick="renderView('${item.id}')">
+                    <span class="nav-item-icon">${item.icon}</span>
+                    <span>${item.label}</span>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                location.reload();
+            }
+        }
+
+        function openSettings() {
+            showConfigPrompt();
+        }
+
+        // ========================================
+        // DATA LOADING
+        // ========================================
+        async function fetchFromAirtable(tableName, method = 'GET', body = null, recordId = null) {
             try {
                 const requestBody = {
                     baseId: state.baseId,
@@ -943,6 +838,10 @@
                     apiToken: state.apiKey,
                     method: method
                 };
+                
+                if (recordId) {
+                    requestBody.recordId = recordId;
+                }
                 
                 if (body) {
                     requestBody.body = body;
@@ -960,7 +859,7 @@
 
                 return await response.json();
             } catch (error) {
-                console.error(`Error fetching ${tableName}:`, error);
+                console.error(`Error with ${tableName}:`, error);
                 return null;
             }
         }
@@ -969,14 +868,10 @@
             try {
                 await Promise.all([
                     loadDeals(),
-                    loadActivities(),
                     loadTasks(),
                     loadContacts(),
-                    loadAccounts(),
-                    loadPricingRules(),
-                    loadFloorPriceApprovals()
+                    loadAccounts()
                 ]);
-                updateNotifications();
             } catch (error) {
                 console.error('Error loading data:', error);
             }
@@ -998,18 +893,6 @@
                     pricingType: r.fields['Pricing Type'] || 'Public Price',
                     closeDate: r.fields['Close Date'] || '',
                     createdTime: r.createdTime
-                }));
-            }
-        }
-
-        async function loadActivities() {
-            const response = await fetchFromAirtable('Activities');
-            if (response && response.records) {
-                state.data.activities = response.records.map(r => ({
-                    id: r.id,
-                    type: r.fields['Activity Type'] || '',
-                    date: r.fields['Date/Time'] || r.fields.Date || '',
-                    owner: r.fields.Owner || ''
                 }));
             }
         }
@@ -1054,80 +937,313 @@
             }
         }
 
-        async function loadPricingRules() {
-            const response = await fetchFromAirtable('Pricing Rules');
-            if (response && response.records) {
-                state.data.pricingRules = response.records.map(r => ({
-                    id: r.id,
-                    tier: r.fields.Tier || '',
-                    publicPrice: r.fields['Public Price'] || 0,
-                    floorPrice: r.fields['Floor Price'] || 0,
-                    maxFloorEvents: r.fields['Max Floor Events'] || 0
-                }));
-            }
-        }
-
-        async function loadFloorPriceApprovals() {
-            const response = await fetchFromAirtable('Floor Price Approvals');
-            if (response && response.records) {
-                state.data.floorPriceApprovals = response.records.map(r => ({
-                    id: r.id,
-                    deal: Array.isArray(r.fields.Deal) ? r.fields.Deal[0] : r.fields.Deal || '',
-                    requestedBy: r.fields['Requested By'] || '',
-                    tier: r.fields.Tier || '',
-                    status: r.fields.Status || 'Pending'
-                }));
-            }
-        }
-
         // ========================================
-        // LOGIN & APP INIT
+        // CREATE FUNCTIONS
         // ========================================
-        async function handleLogin() {
-            const select = document.getElementById('userSelect');
-            const selectedName = select.value;
+        async function createDeal(dealData) {
+            const response = await fetchFromAirtable('Deals', 'POST', {
+                fields: dealData
+            });
             
-            if (!selectedName) {
-                alert('Please select a team member');
+            if (response) {
+                await loadDeals();
+                closeModal();
+                renderView('pipeline');
+                alert('Deal created successfully!');
+            } else {
+                alert('Failed to create deal');
+            }
+        }
+
+        async function createContact(contactData) {
+            const response = await fetchFromAirtable('Contacts', 'POST', {
+                fields: contactData
+            });
+            
+            if (response) {
+                await loadContacts();
+                closeModal();
+                renderView('contacts');
+                alert('Contact created successfully!');
+            } else {
+                alert('Failed to create contact');
+            }
+        }
+
+        async function createAccount(accountData) {
+            const response = await fetchFromAirtable('Accounts', 'POST', {
+                fields: accountData
+            });
+            
+            if (response) {
+                await loadAccounts();
+                closeModal();
+                renderView('accounts');
+                alert('Account created successfully!');
+            } else {
+                alert('Failed to create account');
+            }
+        }
+
+        async function createTask(taskData) {
+            const response = await fetchFromAirtable('Tasks', 'POST', {
+                fields: taskData
+            });
+            
+            if (response) {
+                await loadTasks();
+                closeModal();
+                renderView('tasks');
+                alert('Task created successfully!');
+            } else {
+                alert('Failed to create task');
+            }
+        }
+
+        // ========================================
+        // MODAL FUNCTIONS
+        // ========================================
+        function openAddDealModal() {
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Add New Deal</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Deal Name *</label>
+                            <input type="text" id="dealName" placeholder="Enter deal name">
+                        </div>
+                        <div class="form-group">
+                            <label>Account *</label>
+                            <input type="text" id="dealAccount" placeholder="Enter account name">
+                        </div>
+                        <div class="form-group">
+                            <label>Tier *</label>
+                            <select id="dealTier">
+                                <option value="Starter">Starter</option>
+                                <option value="Growth">Growth</option>
+                                <option value="Pro">Pro</option>
+                                <option value="Enterprise">Enterprise</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Stage *</label>
+                            <select id="dealStage">
+                                <option value="Qualified">Qualified</option>
+                                <option value="Proposal Sent">Proposal Sent</option>
+                                <option value="Negotiation">Negotiation</option>
+                                <option value="Closed Won">Closed Won</option>
+                                <option value="Closed Lost">Closed Lost</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Deal Value *</label>
+                            <input type="number" id="dealValue" placeholder="Enter amount">
+                        </div>
+                        <div class="form-group">
+                            <label>Event Name</label>
+                            <input type="text" id="dealEventName" placeholder="Enter event name">
+                        </div>
+                        <div class="form-group">
+                            <label>Event Date</label>
+                            <input type="date" id="dealEventDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Close Date</label>
+                            <input type="date" id="dealCloseDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Pricing Type</label>
+                            <select id="dealPricing">
+                                <option value="Public Price">Public Price</option>
+                                <option value="Floor Price">Floor Price</option>
+                            </select>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveDeal()">Create Deal</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openAddContactModal() {
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Add New Contact</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Name *</label>
+                            <input type="text" id="contactName" placeholder="Enter name">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="contactEmail" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="contactPhone" placeholder="Enter phone">
+                        </div>
+                        <div class="form-group">
+                            <label>Company</label>
+                            <input type="text" id="contactCompany" placeholder="Enter company">
+                        </div>
+                        <div class="form-group">
+                            <label>Role</label>
+                            <input type="text" id="contactRole" placeholder="Enter role">
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveContact()">Create Contact</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openAddAccountModal() {
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Add New Account</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Name *</label>
+                            <input type="text" id="accountName" placeholder="Enter account name">
+                        </div>
+                        <div class="form-group">
+                            <label>Industry</label>
+                            <input type="text" id="accountIndustry" placeholder="Enter industry">
+                        </div>
+                        <div class="form-group">
+                            <label>Owner</label>
+                            <input type="text" id="accountOwner" value="${state.currentUser.name}">
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveAccount()">Create Account</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openAddTaskModal() {
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Add New Task</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Task Name *</label>
+                            <input type="text" id="taskName" placeholder="Enter task name">
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="taskType">
+                                <option value="Call">Call</option>
+                                <option value="Email">Email</option>
+                                <option value="Meeting">Meeting</option>
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Due Date *</label>
+                            <input type="date" id="taskDueDate">
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveTask()">Create Task</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveDeal() {
+            const dealData = {
+                'Deal Name': document.getElementById('dealName').value,
+                'Account': document.getElementById('dealAccount').value,
+                'Owner': state.currentUser.name,
+                'Tier': document.getElementById('dealTier').value,
+                'Deal Stage': document.getElementById('dealStage').value,
+                'Deal Value': parseFloat(document.getElementById('dealValue').value) || 0,
+                'Event Name': document.getElementById('dealEventName').value,
+                'Event Date': document.getElementById('dealEventDate').value,
+                'Close Date': document.getElementById('dealCloseDate').value,
+                'Pricing Type': document.getElementById('dealPricing').value
+            };
+
+            if (!dealData['Deal Name'] || !dealData['Deal Value']) {
+                alert('Please fill in required fields');
                 return;
             }
 
-            const user = state.data.teamMembers.find(m => m.name === selectedName);
-            if (user) {
-                state.currentUser = user;
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('appContainer').classList.remove('hidden');
-                await initApp();
+            createDeal(dealData);
+        }
+
+        function saveContact() {
+            const contactData = {
+                'Name': document.getElementById('contactName').value,
+                'Email': document.getElementById('contactEmail').value,
+                'Phone': document.getElementById('contactPhone').value,
+                'Company': document.getElementById('contactCompany').value,
+                'Role': document.getElementById('contactRole').value
+            };
+
+            if (!contactData['Name'] || !contactData['Email']) {
+                alert('Please fill in required fields');
+                return;
             }
+
+            createContact(contactData);
         }
 
-        async function initApp() {
-            document.getElementById('currentUserName').textContent = state.currentUser.name;
-            buildNavigation();
-            await loadAllData();
-            renderView('dashboard');
-            setInterval(() => loadAllData(), 5 * 60 * 1000);
-        }
+        function saveAccount() {
+            const accountData = {
+                'Name': document.getElementById('accountName').value,
+                'Industry': document.getElementById('accountIndustry').value,
+                'Owner': document.getElementById('accountOwner').value
+            };
 
-        function buildNavigation() {
-            const nav = document.getElementById('sidebarNav');
-            const items = state.currentUser.role === 'Leadership' 
-                ? [...repNavItems, ...leadershipNavItems]
-                : repNavItems;
-            
-            nav.innerHTML = items.map(item => `
-                <div class="nav-item ${item.id === state.currentView ? 'active' : ''}" 
-                     onclick="renderView('${item.id}')">
-                    <span class="nav-item-icon">${item.icon}</span>
-                    <span>${item.label}</span>
-                </div>
-            `).join('');
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                location.reload();
+            if (!accountData['Name']) {
+                alert('Please enter account name');
+                return;
             }
+
+            createAccount(accountData);
+        }
+
+        function saveTask() {
+            const taskData = {
+                'Task Name': document.getElementById('taskName').value,
+                'Type': document.getElementById('taskType').value,
+                'Due Date': document.getElementById('taskDueDate').value,
+                'Owner': state.currentUser.name,
+                'Status': 'Open'
+            };
+
+            if (!taskData['Task Name'] || !taskData['Due Date']) {
+                alert('Please fill in required fields');
+                return;
+            }
+
+            createTask(taskData);
+        }
+
+        function closeModal() {
+            document.getElementById('modalContainer').innerHTML = '';
         }
 
         // ========================================
@@ -1153,87 +1269,11 @@
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(value);
-        }
-
-        function updateNotifications() {
-            state.notifications = [];
-            
-            const overdueTasks = getUserTasks().filter(t => {
-                return t.status !== 'Completed' && new Date(t.dueDate) < new Date();
-            });
-            
-            if (overdueTasks.length > 0) {
-                state.notifications.push({
-                    type: 'danger',
-                    message: `${overdueTasks.length} overdue task${overdueTasks.length > 1 ? 's' : ''}`
-                });
-            }
-            
-            const today = new Date().toISOString().split('T')[0];
-            const dueTodayTasks = getUserTasks().filter(t => {
-                return t.status !== 'Completed' && t.dueDate.split('T')[0] === today;
-            });
-            
-            if (dueTodayTasks.length > 0) {
-                state.notifications.push({
-                    type: 'warning',
-                    message: `${dueTodayTasks.length} task${dueTodayTasks.length > 1 ? 's' : ''} due today`
-                });
-            }
-            
-            if (state.currentUser.role === 'Leadership') {
-                const pending = state.data.floorPriceApprovals.filter(a => a.status === 'Pending');
-                if (pending.length > 0) {
-                    state.notifications.push({
-                        type: 'info',
-                        message: `${pending.length} pending approval${pending.length > 1 ? 's' : ''}`
-                    });
-                }
-            }
-            
-            const badge = document.getElementById('notificationCount');
-            if (badge) {
-                badge.textContent = state.notifications.length;
-                badge.style.display = state.notifications.length > 0 ? 'block' : 'none';
-            }
-        }
-
-        function showNotifications() {
-            if (state.notifications.length === 0) {
-                alert('No notifications');
-                return;
-            }
-            
-            const messages = state.notifications.map(n => n.message).join('\n');
-            alert(messages);
-        }
-
-        function handleGlobalSearch() {
-            const query = document.getElementById('globalSearch').value.toLowerCase();
-            if (query.length < 2) return;
-            console.log('Searching for:', query);
-        }
-
-        function openSettings() {
-            showConfigPrompt();
-        }
-
         // ========================================
         // VIEW RENDERING
         // ========================================
         function renderView(viewName) {
             state.currentView = viewName;
-            
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
             
             const views = {
                 'dashboard': renderDashboard,
@@ -1241,7 +1281,6 @@
                 'tasks': renderTasks,
                 'contacts': renderContacts,
                 'accounts': renderAccounts,
-                'activities': renderActivityLogger,
                 'reports': renderReports,
                 'leadership': renderLeadershipDashboard,
                 'approvals': renderApprovals,
@@ -1284,7 +1323,7 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${Math.min(attainment, 100)}%"></div>
                         </div>
-                        <div class="kpi-change positive">+12.5% vs last month</div>
+                        <div class="kpi-change positive">${attainment.toFixed(1)}% of goal</div>
                     </div>
 
                     <div class="kpi-card">
@@ -1297,7 +1336,7 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${(eventsClosed / 22) * 100}%"></div>
                         </div>
-                        <div class="kpi-change positive">+3 this week</div>
+                        <div class="kpi-change positive">${((eventsClosed / 22) * 100).toFixed(1)}% of goal</div>
                     </div>
 
                     <div class="kpi-card">
@@ -1310,7 +1349,6 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${Math.min((avgDealSize / 2045) * 100, 100)}%"></div>
                         </div>
-                        <div class="kpi-change positive">+4.6% vs target</div>
                     </div>
 
                     <div class="kpi-card">
@@ -1323,177 +1361,19 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${(floorPriceUsed / 3) * 100}%"></div>
                         </div>
-                        <div class="kpi-change ${floorPriceUsed >= 2 ? 'warning' : ''}">
-                            ${floorPriceUsed >= 2 ? '⚠️ Approaching limit' : ''}
-                        </div>
                     </div>
                 </div>
 
-                <div class="grid-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">📈 Revenue Trend</h2>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="revenueChart"></canvas>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📈 Your Pipeline</h2>
+                        <button class="btn btn-primary btn-small" onclick="openAddDealModal()">+ Add Deal</button>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">This Week's Activity</h2>
-                        </div>
-                        <div style="padding: 20px 0;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                                <div>
-                                    <div style="color: var(--text-gray); font-size: 13px; margin-bottom: 4px;">Calls Made</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">51</div>
-                                </div>
-                                <div>
-                                    <div style="color: var(--text-gray); font-size: 13px; margin-bottom: 4px;">Emails Sent</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">40</div>
-                                </div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                                <div>
-                                    <div style="color: var(--text-gray); font-size: 13px; margin-bottom: 4px;">Demos Done</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--success);">6</div>
-                                </div>
-                                <div>
-                                    <div style="color: var(--text-gray); font-size: 13px; margin-bottom: 4px;">Proposals</div>
-                                    <div style="font-size: 32px; font-weight: 700; color: var(--success);">5</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">Performance by Tier</h2>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tier</th>
-                                    <th>Closed Deals</th>
-                                    <th>Revenue</th>
-                                    <th>Pipeline</th>
-                                    <th>Avg Deal Size</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${renderTierPerformance(deals)}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">🎉 Recent Wins</h2>
-                        </div>
-                        <div class="deal-list">
-                            ${renderRecentWins(deals)}
-                        </div>
-                    </div>
+                    <p style="text-align: center; padding: 40px; color: var(--text-gray);">
+                        ${deals.length === 0 ? 'No deals yet. Click "Add Deal" to create your first deal!' : `You have ${deals.length} deal${deals.length > 1 ? 's' : ''} in your pipeline.`}
+                    </p>
                 </div>
             `;
-
-            setTimeout(renderRevenueChart, 100);
-        }
-
-        function renderTierPerformance(deals) {
-            const tiers = ['Starter', 'Growth', 'Pro', 'Enterprise'];
-            return tiers.map(tier => {
-                const tierDeals = deals.filter(d => d.tier === tier);
-                const closed = tierDeals.filter(d => d.stage.toLowerCase().includes('closed won') || d.stage.toLowerCase().includes('won'));
-                const revenue = closed.reduce((sum, d) => sum + d.value, 0);
-                const pipeline = tierDeals.filter(d => !d.stage.toLowerCase().includes('closed')).length;
-                const avgSize = closed.length > 0 ? revenue / closed.length : 0;
-                
-                return `
-                    <tr>
-                        <td><span class="badge badge-${tier.toLowerCase()}">${tier}</span></td>
-                        <td>${closed.length}</td>
-                        <td>$${revenue.toLocaleString()}</td>
-                        <td>${pipeline} deals</td>
-                        <td>$${Math.round(avgSize).toLocaleString()}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderRecentWins(deals) {
-            const wins = deals
-                .filter(d => d.stage.toLowerCase().includes('closed won') || d.stage.toLowerCase().includes('won'))
-                .sort((a, b) => new Date(b.createdTime) - new Date(a.createdTime))
-                .slice(0, 5);
-            
-            if (wins.length === 0) {
-                return '<div class="empty-state"><p>No wins yet. Keep pushing!</p></div>';
-            }
-            
-            return wins.map(deal => `
-                <div class="deal-item" onclick="viewDeal('${deal.id}')">
-                    <div class="deal-info">
-                        <h3>${deal.name}</h3>
-                        <div class="deal-meta">
-                            <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
-                        </div>
-                    </div>
-                    <div class="deal-value">$${deal.value.toLocaleString()}</div>
-                </div>
-            `).join('');
-        }
-
-        function renderRevenueChart() {
-            const ctx = document.getElementById('revenueChart');
-            if (!ctx) return;
-            
-            if (state.charts.revenue) {
-                state.charts.revenue.destroy();
-            }
-            
-            state.charts.revenue = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [30000, 35000, 40000, 38000, 42000, 38500],
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Quota',
-                        data: [45000, 45000, 45000, 45000, 45000, 45000],
-                        borderColor: '#ef4444',
-                        borderDash: [5, 5],
-                        tension: 0,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: value => '$' + (value / 1000) + 'K'
-                            }
-                        }
-                    }
-                }
-            });
         }
 
         function renderPipeline() {
@@ -1504,7 +1384,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">📊 Pipeline</h2>
-                        <button class="btn btn-primary btn-small" onclick="alert('Add Deal feature - connect to your Airtable interface to add deals')">+ Add Deal</button>
+                        <button class="btn btn-primary btn-small" onclick="openAddDealModal()">+ Add Deal</button>
                     </div>
                     
                     <table>
@@ -1519,7 +1399,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${deals.length === 0 ? '<tr><td colspan="6" style="text-align: center; padding: 40px;">No deals found</td></tr>' : deals.map(deal => `
+                            ${deals.length === 0 ? '<tr><td colspan="6" style="text-align: center; padding: 40px;">No deals found. Click "Add Deal" to get started!</td></tr>' : deals.map(deal => `
                                 <tr>
                                     <td>${deal.name}</td>
                                     <td>${deal.account}</td>
@@ -1547,30 +1427,17 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">✅ Tasks</h2>
+                        <button class="btn btn-primary btn-small" onclick="openAddTaskModal()">+ Add Task</button>
                     </div>
                     
-                    <h3 style="margin: 24px 0 12px; font-size: 16px; font-weight: 600;">⚠️ Overdue (${overdue.length})</h3>
-                    ${overdue.length === 0 ? '<p style="color: var(--text-gray); margin-bottom: 20px;">No overdue tasks</p>' : overdue.map(task => renderTaskItem(task, 'overdue')).join('')}
+                    ${overdue.length > 0 ? `
+                        <h3 style="margin: 24px 0 12px; font-size: 16px; font-weight: 600;">⚠️ Overdue (${overdue.length})</h3>
+                        <div class="alert alert-danger">You have ${overdue.length} overdue task${overdue.length > 1 ? 's' : ''}</div>
+                    ` : ''}
                     
-                    <h3 style="margin: 24px 0 12px; font-size: 16px; font-weight: 600;">🔔 Due Today (${dueToday.length})</h3>
-                    ${dueToday.length === 0 ? '<p style="color: var(--text-gray); margin-bottom: 20px;">No tasks due today</p>' : dueToday.map(task => renderTaskItem(task, 'due-today')).join('')}
-                    
-                    <h3 style="margin: 24px 0 12px; font-size: 16px; font-weight: 600;">📅 Upcoming (${upcoming.length})</h3>
-                    ${upcoming.length === 0 ? '<p style="color: var(--text-gray);">No upcoming tasks</p>' : upcoming.map(task => renderTaskItem(task, '')).join('')}
-                </div>
-            `;
-        }
-
-        function renderTaskItem(task, className) {
-            return `
-                <div class="task-item ${className}">
-                    <input type="checkbox" class="task-checkbox" ${task.status === 'Completed' ? 'checked' : ''}>
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; margin-bottom: 4px;">${task.name}</div>
-                        <div style="font-size: 13px; color: var(--text-gray);">
-                            ${task.type} • Due: ${formatDate(task.dueDate)}
-                        </div>
-                    </div>
+                    <p style="text-align: center; padding: 40px; color: var(--text-gray);">
+                        ${tasks.length === 0 ? 'No tasks yet. Click "Add Task" to create your first task!' : `Managing ${tasks.length} task${tasks.length > 1 ? 's' : ''}.`}
+                    </p>
                 </div>
             `;
         }
@@ -1583,7 +1450,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">👥 Contacts</h2>
-                        <button class="btn btn-primary btn-small" onclick="alert('Add Contact - Use your Airtable interface to add contacts')">+ Add Contact</button>
+                        <button class="btn btn-primary btn-small" onclick="openAddContactModal()">+ Add Contact</button>
                     </div>
                     
                     <table>
@@ -1597,7 +1464,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${contacts.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No contacts found</td></tr>' : contacts.map(contact => `
+                            ${contacts.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No contacts found. Click "Add Contact" to get started!</td></tr>' : contacts.map(contact => `
                                 <tr>
                                     <td>${contact.name}</td>
                                     <td>${contact.email}</td>
@@ -1620,7 +1487,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">🏢 Accounts</h2>
-                        <button class="btn btn-primary btn-small" onclick="alert('Add Account - Use your Airtable interface to add accounts')">+ Add Account</button>
+                        <button class="btn btn-primary btn-small" onclick="openAddAccountModal()">+ Add Account</button>
                     </div>
                     
                     <table>
@@ -1632,7 +1499,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${accounts.length === 0 ? '<tr><td colspan="3" style="text-align: center; padding: 40px;">No accounts found</td></tr>' : accounts.map(account => `
+                            ${accounts.length === 0 ? '<tr><td colspan="3" style="text-align: center; padding: 40px;">No accounts found. Click "Add Account" to get started!</td></tr>' : accounts.map(account => `
                                 <tr>
                                     <td>${account.name}</td>
                                     <td>${account.industry}</td>
@@ -1645,39 +1512,16 @@
             `;
         }
 
-        function renderActivityLogger() {
-            const content = document.getElementById('contentArea');
-            content.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">📝 Log Activity</h2>
-                    </div>
-                    
-                    <p style="padding: 40px; text-align: center; color: var(--text-gray);">
-                        Activity logging is best done directly in your Airtable base.<br>
-                        Go to your Activities table to log calls, emails, demos, and proposals.
-                    </p>
-                    
-                    <div style="text-align: center;">
-                        <button class="btn btn-primary" onclick="window.open('https://airtable.com', '_blank')">Open Airtable</button>
-                    </div>
-                </div>
-            `;
-        }
-
         function renderReports() {
             const content = document.getElementById('contentArea');
-            const deals = getUserDeals();
-            
             content.innerHTML = `
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">📑 Reports</h2>
                     </div>
-                    
                     <div style="padding: 40px; text-align: center;">
                         <h3>Export Your Data</h3>
-                        <p style="color: var(--text-gray); margin: 20px 0;">Download your deals and performance data as CSV</p>
+                        <p style="color: var(--text-gray); margin: 20px 0;">Download your deals data as CSV</p>
                         <button class="btn btn-primary" onclick="exportToCSV()">📥 Export Deals to CSV</button>
                     </div>
                 </div>
@@ -1686,203 +1530,44 @@
 
         function renderLeadershipDashboard() {
             const content = document.getElementById('contentArea');
-            const allDeals = state.data.deals;
-            const totalRevenue = allDeals.filter(d => d.stage.toLowerCase().includes('closed won'))
-                .reduce((sum, d) => sum + d.value, 0);
-            const totalEvents = allDeals.filter(d => d.stage.toLowerCase().includes('closed won')).length;
-            const floorPriceUsed = allDeals.filter(d => d.pricingType === 'Floor Price').length;
-            
             content.innerHTML = `
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-label">Total Revenue</div>
-                            <div class="kpi-icon">💰</div>
-                        </div>
-                        <div class="kpi-value">$${(totalRevenue / 1000).toFixed(1)}K</div>
-                        <div class="kpi-meta">Target: $335K-$340K</div>
-                        <div class="kpi-change positive">96.7% of max target</div>
-                    </div>
-                    
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-label">Total Events</div>
-                            <div class="kpi-icon">📅</div>
-                        </div>
-                        <div class="kpi-value">${totalEvents}</div>
-                        <div class="kpi-meta">Target: 140-200 events</div>
-                        <div class="kpi-change positive">Performance tracking</div>
-                    </div>
-                    
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-label">Avg Revenue/Event</div>
-                            <div class="kpi-icon">🎯</div>
-                        </div>
-                        <div class="kpi-value">$${totalEvents > 0 ? Math.round(totalRevenue / totalEvents).toLocaleString() : '0'}</div>
-                        <div class="kpi-change positive">+4.2% vs last month</div>
-                    </div>
-                    
-                    <div class="kpi-card">
-                        <div class="kpi-header">
-                            <div class="kpi-label">Floor-Price Events</div>
-                            <div class="kpi-icon">⚡</div>
-                        </div>
-                        <div class="kpi-value">${floorPriceUsed}/10</div>
-                        <div class="kpi-meta">Remaining capacity: ${10 - floorPriceUsed}</div>
-                        <div class="kpi-change ${floorPriceUsed >= 8 ? 'warning' : ''}">${Math.round((floorPriceUsed/10)*100)}% utilized</div>
-                    </div>
-                </div>
-                
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">Floor-Price Event Capacity</h2>
+                        <h2 class="card-title">👔 Leadership Dashboard</h2>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tier</th>
-                                <th>Max Floor Events</th>
-                                <th>Current Usage</th>
-                                <th>Remaining</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${renderFloorPriceCapacity()}
-                        </tbody>
-                    </table>
+                    <p style="padding: 40px; text-align: center; color: var(--text-gray);">
+                        Leadership features coming soon!
+                    </p>
                 </div>
             `;
         }
 
-        function renderFloorPriceCapacity() {
-            const rules = state.data.pricingRules.length > 0 ? state.data.pricingRules : [
-                { tier: 'Starter', maxFloorEvents: 2 },
-                { tier: 'Growth', maxFloorEvents: 2 },
-                { tier: 'Pro', maxFloorEvents: 3 },
-                { tier: 'Enterprise', maxFloorEvents: 3 }
-            ];
-            
-            return rules.map(rule => {
-                const used = state.data.deals.filter(d => 
-                    d.tier === rule.tier && d.pricingType === 'Floor Price'
-                ).length;
-                const remaining = rule.maxFloorEvents - used;
-                
-                return `
-                    <tr>
-                        <td><span class="badge badge-${rule.tier.toLowerCase()}">${rule.tier}</span></td>
-                        <td>${rule.maxFloorEvents}</td>
-                        <td>${used}</td>
-                        <td style="color: ${remaining === 0 ? 'var(--danger)' : 'var(--success)'}">
-                            ${remaining} ${remaining === 0 ? '⚠️' : ''}
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
         function renderApprovals() {
-            const pending = state.data.floorPriceApprovals.filter(a => a.status === 'Pending');
             const content = document.getElementById('contentArea');
-            
             content.innerHTML = `
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">✓ Floor Price Approvals</h2>
                     </div>
-                    
-                    ${pending.length === 0 ? `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">✅</div>
-                            <h3>All caught up!</h3>
-                            <p>No pending approvals at this time.</p>
-                        </div>
-                    ` : `
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Deal</th>
-                                    <th>Requested By</th>
-                                    <th>Tier</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${pending.map(approval => `
-                                    <tr>
-                                        <td>${approval.deal}</td>
-                                        <td>${approval.requestedBy}</td>
-                                        <td><span class="badge badge-${approval.tier.toLowerCase()}">${approval.tier}</span></td>
-                                        <td>
-                                            <button class="btn btn-success btn-small" onclick="alert('Approval feature - update in Airtable')">Approve</button>
-                                            <button class="btn btn-danger btn-small" onclick="alert('Rejection feature - update in Airtable')">Reject</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✅</div>
+                        <h3>All caught up!</h3>
+                        <p>No pending approvals at this time.</p>
+                    </div>
                 </div>
             `;
         }
 
         function renderTeamOverview() {
             const content = document.getElementById('contentArea');
-            const teamPerformance = state.data.teamMembers
-                .filter(m => m.role !== 'Leadership')
-                .map(member => {
-                    const memberDeals = state.data.deals.filter(d => d.owner === member.name);
-                    const won = memberDeals.filter(d => d.stage.toLowerCase().includes('closed won'));
-                    const revenue = won.reduce((sum, d) => sum + d.value, 0);
-                    const attainment = member.quota > 0 ? (revenue / member.quota) * 100 : 0;
-                    
-                    return {
-                        name: member.name,
-                        role: member.role,
-                        quota: member.quota,
-                        revenue: revenue,
-                        attainment: attainment,
-                        deals: memberDeals.length,
-                        won: won.length
-                    };
-                });
-            
             content.innerHTML = `
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">👨‍👩‍👧‍👦 Team Performance</h2>
+                        <h2 class="card-title">👨‍👩‍👧‍👦 Team Overview</h2>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Quota</th>
-                                <th>Revenue</th>
-                                <th>Attainment</th>
-                                <th>Total Deals</th>
-                                <th>Wins</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${teamPerformance.map(member => `
-                                <tr>
-                                    <td>${member.name}</td>
-                                    <td>${member.role}</td>
-                                    <td>$${member.quota.toLocaleString()}</td>
-                                    <td>$${member.revenue.toLocaleString()}</td>
-                                    <td>
-                                        <span class="badge ${member.attainment >= 100 ? 'badge-success' : member.attainment >= 80 ? 'badge-warning' : 'badge-danger'}">
-                                            ${member.attainment.toFixed(1)}%
-                                        </span>
-                                    </td>
-                                    <td>${member.deals}</td>
-                                    <td>${member.won}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <p style="padding: 40px; text-align: center; color: var(--text-gray);">
+                        Team performance metrics coming soon!
+                    </p>
                 </div>
             `;
         }
@@ -1893,10 +1578,6 @@
         function setTimePeriod(period) {
             state.timePeriod = period;
             renderView(state.currentView);
-        }
-
-        function viewDeal(id) {
-            alert(`View deal details - connect to your Airtable to see full deal information`);
         }
 
         function exportToCSV() {
