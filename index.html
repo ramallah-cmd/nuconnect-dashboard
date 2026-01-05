@@ -552,6 +552,7 @@
             'Israel': 'nuconnect2024',
             'Conrad': 'nuconnect2024',
             'Test User': 'test2024',
+            'Test Leadership': 'testleader2024',
             'Ramallah': 'admin2024',
             'Keyna': 'admin2024'
         };
@@ -642,8 +643,9 @@
                     { id: '3', name: 'Israel', role: 'BDR', quota: 45000 },
                     { id: '4', name: 'Conrad', role: 'AE', quota: 60000 },
                     { id: '5', name: 'Test User', role: 'BDR', quota: 45000 },
-                    { id: '6', name: 'Ramallah', role: 'Leadership', quota: 0 },
-                    { id: '7', name: 'Keyna', role: 'Leadership', quota: 0 }
+                    { id: '6', name: 'Test Leadership', role: 'Leadership', quota: 0 },
+                    { id: '7', name: 'Ramallah', role: 'Leadership', quota: 0 },
+                    { id: '8', name: 'Keyna', role: 'Leadership', quota: 0 }
                 ];
             }
         }
@@ -834,11 +836,11 @@
             if (response && response.records) {
                 state.data.contacts = response.records.map(r => ({
                     id: r.id,
-                    name: r.fields.Name || '',
+                    name: r.fields['Full Name'] || '',
                     email: r.fields.Email || '',
                     phone: r.fields.Phone || '',
-                    company: Array.isArray(r.fields.Company) ? r.fields.Company[0] : r.fields.Company || '',
-                    role: r.fields.Role || '',
+                    company: Array.isArray(r.fields.Account) ? r.fields.Account[0] : r.fields.Account || '',
+                    role: r.fields.Title || '',
                     createdTime: r.createdTime
                 }));
             }
@@ -1101,13 +1103,13 @@
 
         function saveContact() {
             const contactData = {
-                'Name': document.getElementById('contactName').value,
+                'Full Name': document.getElementById('contactName').value,
                 'Email': document.getElementById('contactEmail').value,
                 'Phone': document.getElementById('contactPhone').value,
-                'Role': document.getElementById('contactRole').value
+                'Title': document.getElementById('contactRole').value
             };
 
-            if (!contactData['Name'] || !contactData['Email']) {
+            if (!contactData['Full Name'] || !contactData['Email']) {
                 alert('Please fill in Name and Email');
                 return;
             }
@@ -1514,59 +1516,753 @@
 
         function renderLeadershipDashboard() {
             const content = document.getElementById('contentArea');
-            const allDeals = state.data.deals;
-            const totalRevenue = allDeals.filter(d => d.stage.toLowerCase().includes('won'))
-                .reduce((sum, d) => sum + d.value, 0);
-            const totalEvents = allDeals.filter(d => d.stage.toLowerCase().includes('won')).length;
-            const floorPriceUsed = allDeals.filter(d => d.pricingType === 'Floor Price').length;
+            const isTestUser = state.currentUser.name === 'Test Leadership';
             
             content.innerHTML = `
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL REVENUE</div>
-                        <div class="kpi-value">$${(totalRevenue / 1000).toFixed(1)}K</div>
-                        <div style="font-size: 13px; color: var(--text-gray);">Target: $335K-$340K</div>
-                    </div>
-                    
-                    <div class="kpi-card">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL EVENTS</div>
-                        <div class="kpi-value">${totalEvents}</div>
-                        <div style="font-size: 13px; color: var(--text-gray);">Target: 140-200 events</div>
-                    </div>
-                    
-                    <div class="kpi-card">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">FLOOR-PRICE EVENTS</div>
-                        <div class="kpi-value">${floorPriceUsed}/10</div>
-                        <div style="font-size: 13px; color: var(--text-gray);">Remaining: ${10 - floorPriceUsed}</div>
-                    </div>
-                </div>
-
                 <div class="card">
-                    <h2 class="card-title" style="margin-bottom: 20px;">Monthly Deal Mix (Team Total)</h2>
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchLeadershipTab('overview')">Company Overview</button>
+                        <button class="tab" onclick="switchLeadershipTab('daily')">Daily Team Activity</button>
+                        <button class="tab" onclick="switchLeadershipTab('weekly')">Weekly Breakdown</button>
+                        <button class="tab" onclick="switchLeadershipTab('pipeline')">Pipeline Health</button>
+                        <button class="tab" onclick="switchLeadershipTab('individual')">Rep Deep Dive</button>
+                    </div>
+                    <div id="leadershipContent"></div>
+                </div>
+            `;
+
+            switchLeadershipTab('overview');
+        }
+
+        function switchLeadershipTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event?.target?.classList.add('active');
+
+            const content = document.getElementById('leadershipContent');
+            const isTestUser = state.currentUser.name === 'Test Leadership';
+            
+            if (tab === 'overview') {
+                if (isTestUser) {
+                    // SAMPLE DATA for Test Leadership
+                    content.innerHTML = `
+                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                            <strong>📊 SAMPLE DATA MODE</strong><br>
+                            <span style="font-size: 14px;">This shows example data. Ramallah & Keyna see real data.</span>
+                        </div>
+                        
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL REVENUE</div>
+                                <div class="kpi-value">$328.8K</div>
+                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: $340K</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 96.7%"></div>
+                                </div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--success);">96.7% of goal</div>
+                            </div>
+                            
+                            <div class="kpi-card">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL EVENTS</div>
+                                <div class="kpi-value">156</div>
+                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: 140-200</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 78%"></div>
+                                </div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--success);">78% of max target</div>
+                            </div>
+                            
+                            <div class="kpi-card">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">AVG REVENUE/EVENT</div>
+                                <div class="kpi-value">$2,107</div>
+                                <div style="font-size: 13px; color: var(--text-gray);">Target: $2,045</div>
+                            </div>
+                            
+                            <div class="kpi-card">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">FLOOR-PRICE EVENTS</div>
+                                <div class="kpi-value">6/10</div>
+                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Remaining: 4</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 60%"></div>
+                                </div>
+                                <div style="font-size: 13px; font-weight: 600;">60% utilized</div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top: 24px;">
+                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Monthly Deal Mix (Team Total)</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tier</th>
+                                        <th>Deals Closed</th>
+                                        <th>Revenue</th>
+                                        <th>Avg Deal Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge badge-starter">Starter</span></td>
+                                        <td>3</td>
+                                        <td>$2,250</td>
+                                        <td>$750</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-growth">Growth</span></td>
+                                        <td>8</td>
+                                        <td>$10,000</td>
+                                        <td>$1,250</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-pro">Pro</span></td>
+                                        <td>5</td>
+                                        <td>$10,000</td>
+                                        <td>$2,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-enterprise">Enterprise</span></td>
+                                        <td>2</td>
+                                        <td>$8,400</td>
+                                        <td>$4,200</td>
+                                    </tr>
+                                    <tr style="font-weight: 700; background: var(--bg-light);">
+                                        <td>TOTAL</td>
+                                        <td>18</td>
+                                        <td>$30,650</td>
+                                        <td>$1,703</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card" style="margin-top: 24px;">
+                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Floor-Price Event Capacity</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tier</th>
+                                        <th>Max Floor Events</th>
+                                        <th>Current Usage</th>
+                                        <th>Remaining</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge badge-starter">Starter</span></td>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td style="color: var(--success)">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-growth">Growth</span></td>
+                                        <td>2</td>
+                                        <td>2</td>
+                                        <td style="color: var(--warning)">0 ⚠️</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-pro">Pro</span></td>
+                                        <td>3</td>
+                                        <td>2</td>
+                                        <td style="color: var(--success)">1</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge badge-enterprise">Enterprise</span></td>
+                                        <td>3</td>
+                                        <td>1</td>
+                                        <td style="color: var(--success)">2</td>
+                                    </tr>
+                                    <tr style="font-weight: 700; background: var(--bg-light);">
+                                        <td>TOTAL</td>
+                                        <td>10</td>
+                                        <td>6</td>
+                                        <td>4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    // REAL DATA for Ramallah & Keyna
+                    const allDeals = state.data.deals;
+                    const totalRevenue = allDeals.filter(d => d.stage.toLowerCase().includes('won'))
+                        .reduce((sum, d) => sum + d.value, 0);
+                    const totalEvents = allDeals.filter(d => d.stage.toLowerCase().includes('won')).length;
+                    const avgRevenue = totalEvents > 0 ? totalRevenue / totalEvents : 0;
+                    const floorPriceUsed = allDeals.filter(d => d.pricingType === 'Floor Price').length;
+                    
+                    content.innerHTML = `
+                        <div class="kpi-grid" style="margin-top: 24px;">
+                            <div class="kpi-card">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL REVENUE</div>
+                                <div class="kpi-value">$${(totalRevenue / 1000).toFixed(1)}K</div>
+                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: $340K</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${Math.min((totalRevenue / 340000) * 100, 100)}%"></div>
+                                </div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--success);">${((totalRevenue / 340000) * 100).toFixed(1)}% of goal</div>
+                            </div>
+                            
+                            <div class="kpi-card">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL EVENTS</div>
+                                <div class="kpi-value">${totalEvents}</div>
+                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: 140-200</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${(totalEvents / 200) * 100}%"></div>
+                                </div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--success);">${((totalEvents / 200) * 100).toFixed(1)}% of max target</div>
+                            </div>
+                            
+                            <div class="kpi-card">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">AVG REVENUE/EVENT</div>
+                                <div class="kpi-value">$${Math.round(avgRevenue).toLocaleString()}</div>
+                                <div style="font-size: 13px; color: var(--text-gray);">Target: $2,045</div>
+                            </div>
+                            
+                            <div class="kpi-card">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">FLOOR-PRICE EVENTS</div>
+                                <div class="kpi-value">${floorPriceUsed}/10</div>
+                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Remaining: ${10 - floorPriceUsed}</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${(floorPriceUsed / 10) * 100}%"></div>
+                                </div>
+                                <div style="font-size: 13px; font-weight: 600; ${floorPriceUsed >= 8 ? 'color: var(--warning)' : ''}">${((floorPriceUsed / 10) * 100).toFixed(0)}% utilized</div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top: 24px;">
+                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Monthly Deal Mix (Team Total)</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tier</th>
+                                        <th>Deals Closed</th>
+                                        <th>Revenue</th>
+                                        <th>Avg Deal Size</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${['Starter', 'Growth', 'Pro', 'Enterprise'].map(tier => {
+                                        const tierDeals = allDeals.filter(d => d.tier === tier && d.stage.toLowerCase().includes('won'));
+                                        const revenue = tierDeals.reduce((sum, d) => sum + d.value, 0);
+                                        const avg = tierDeals.length > 0 ? revenue / tierDeals.length : 0;
+                                        return `
+                                            <tr>
+                                                <td><span class="badge badge-${tier.toLowerCase()}">${tier}</span></td>
+                                                <td>${tierDeals.length}</td>
+                                                <td>$${revenue.toLocaleString()}</td>
+                                                <td>$${Math.round(avg).toLocaleString()}</td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                    <tr style="font-weight: 700; background: var(--bg-light);">
+                                        <td>TOTAL</td>
+                                        <td>${totalEvents}</td>
+                                        <td>$${totalRevenue.toLocaleString()}</td>
+                                        <td>$${Math.round(avgRevenue).toLocaleString()}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card" style="margin-top: 24px;">
+                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Floor-Price Event Capacity</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tier</th>
+                                        <th>Max Floor Events</th>
+                                        <th>Current Usage</th>
+                                        <th>Remaining</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${[
+                                        {tier: 'Starter', max: 2},
+                                        {tier: 'Growth', max: 2},
+                                        {tier: 'Pro', max: 3},
+                                        {tier: 'Enterprise', max: 3}
+                                    ].map(rule => {
+                                        const used = allDeals.filter(d => d.tier === rule.tier && d.pricingType === 'Floor Price').length;
+                                        return `
+                                            <tr>
+                                                <td><span class="badge badge-${rule.tier.toLowerCase()}">${rule.tier}</span></td>
+                                                <td>${rule.max}</td>
+                                                <td>${used}</td>
+                                                <td style="color: ${used >= rule.max ? 'var(--danger)' : 'var(--success)'}">
+                                                    ${rule.max - used} ${used >= rule.max ? '⚠️' : ''}
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                    <tr style="font-weight: 700; background: var(--bg-light);">
+                                        <td>TOTAL</td>
+                                        <td>10</td>
+                                        <td>${floorPriceUsed}</td>
+                                        <td>${10 - floorPriceUsed}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+            } else if (tab === 'daily') {
+                const reps = state.data.teamMembers.filter(m => m.role !== 'Leadership');
+                
+                if (isTestUser) {
+                    // SAMPLE DATA
+                    content.innerHTML = `
+                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                            <strong>📊 SAMPLE DATA MODE</strong>
+                        </div>
+                        
+                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">TODAY'S TEAM PERFORMANCE</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rep</th>
+                                    <th>Touchpoints</th>
+                                    <th>New Leads</th>
+                                    <th>Discoveries</th>
+                                    <th>Deals Moved</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Javonte</td>
+                                    <td>18/25 <span class="badge badge-warning">72%</span></td>
+                                    <td>3/5 <span class="badge badge-warning">60%</span></td>
+                                    <td>0/1 <span class="badge badge-danger">0%</span></td>
+                                    <td>1/1 <span class="badge badge-success">100%</span></td>
+                                    <td>2/4 ⚠️</td>
+                                </tr>
+                                <tr>
+                                    <td>Teslim</td>
+                                    <td>23/25 <span class="badge badge-success">92%</span></td>
+                                    <td>5/5 <span class="badge badge-success">100%</span></td>
+                                    <td>1/1 <span class="badge badge-success">100%</span></td>
+                                    <td>1/1 <span class="badge badge-success">100%</span></td>
+                                    <td>4/4 ✅</td>
+                                </tr>
+                                <tr>
+                                    <td>Israel</td>
+                                    <td>12/25 <span class="badge badge-danger">48%</span></td>
+                                    <td>2/5 <span class="badge badge-danger">40%</span></td>
+                                    <td>0/1 <span class="badge badge-danger">0%</span></td>
+                                    <td>0/1 <span class="badge badge-danger">0%</span></td>
+                                    <td>0/4 ❌</td>
+                                </tr>
+                                <tr>
+                                    <td>Conrad</td>
+                                    <td>25/25 <span class="badge badge-success">100%</span></td>
+                                    <td>6/5 <span class="badge badge-success">120%</span></td>
+                                    <td>2/1 <span class="badge badge-success">200%</span></td>
+                                    <td>2/1 <span class="badge badge-success">200%</span></td>
+                                    <td>4/4 ✅</td>
+                                </tr>
+                                <tr style="font-weight: 700; background: var(--bg-light);">
+                                    <td>TEAM TOTAL</td>
+                                    <td>78/100</td>
+                                    <td>16/20</td>
+                                    <td>3/4</td>
+                                    <td>4/4</td>
+                                    <td>10/16</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    // REAL DATA
+                    const today = new Date().toISOString().split('T')[0];
+                    
+                    content.innerHTML = `
+                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">TODAY'S TEAM PERFORMANCE</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rep</th>
+                                    <th>Touchpoints</th>
+                                    <th>New Leads</th>
+                                    <th>Discoveries</th>
+                                    <th>Deals Moved</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${reps.map(rep => {
+                                    const repActivities = state.data.activities.filter(a => 
+                                        a.owner === rep.name && 
+                                        a.createdTime && 
+                                        a.createdTime.split('T')[0] === today
+                                    );
+                                    
+                                    const touchpoints = repActivities.length;
+                                    const newContactsToday = state.data.contacts.filter(c => 
+                                        c.createdTime && c.createdTime.split('T')[0] === today
+                                    ).length;
+                                    const newAccountsToday = state.data.accounts.filter(a => 
+                                        a.createdTime && a.createdTime.split('T')[0] === today
+                                    ).length;
+                                    const newLeads = newContactsToday + newAccountsToday;
+                                    
+                                    const discoveries = repActivities.filter(a => 
+                                        a.type && a.type.toLowerCase().includes('discovery')
+                                    ).length;
+                                    
+                                    const dealsMoved = repActivities.filter(a => 
+                                        a.type && a.type.toLowerCase().includes('stage')
+                                    ).length;
+                                    
+                                    const goalsHit = [
+                                        touchpoints >= 25,
+                                        newLeads >= 5,
+                                        discoveries >= 1,
+                                        dealsMoved >= 1
+                                    ].filter(Boolean).length;
+                                    
+                                    return `
+                                        <tr>
+                                            <td>${rep.name}</td>
+                                            <td>${touchpoints}/25 <span class="badge ${touchpoints >= 25 ? 'badge-success' : touchpoints >= 20 ? 'badge-warning' : 'badge-danger'}">${Math.round((touchpoints/25)*100)}%</span></td>
+                                            <td>${newLeads}/5 <span class="badge ${newLeads >= 5 ? 'badge-success' : newLeads >= 3 ? 'badge-warning' : 'badge-danger'}">${Math.round((newLeads/5)*100)}%</span></td>
+                                            <td>${discoveries}/1 <span class="badge ${discoveries >= 1 ? 'badge-success' : 'badge-danger'}">${Math.round((discoveries/1)*100)}%</span></td>
+                                            <td>${dealsMoved}/1 <span class="badge ${dealsMoved >= 1 ? 'badge-success' : 'badge-danger'}">${Math.round((dealsMoved/1)*100)}%</span></td>
+                                            <td>${goalsHit}/4 ${goalsHit === 4 ? '✅' : goalsHit >= 2 ? '⚠️' : '❌'}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } else if (tab === 'weekly') {
+                if (isTestUser) {
+                    // SAMPLE DATA
+                    content.innerHTML = `
+                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                            <strong>📊 SAMPLE DATA MODE</strong>
+                        </div>
+                        
+                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">THIS WEEK'S TEAM ACTIVITY</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Activity Type</th>
+                                    <th>Javonte</th>
+                                    <th>Teslim</th>
+                                    <th>Israel</th>
+                                    <th>Conrad</th>
+                                    <th>TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Calls</strong></td>
+                                    <td>45</td>
+                                    <td>52</td>
+                                    <td>38</td>
+                                    <td>51</td>
+                                    <td><strong>186</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Emails</strong></td>
+                                    <td>35</td>
+                                    <td>40</td>
+                                    <td>30</td>
+                                    <td>40</td>
+                                    <td><strong>145</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>LinkedIn Msgs</strong></td>
+                                    <td>12</td>
+                                    <td>15</td>
+                                    <td>10</td>
+                                    <td>20</td>
+                                    <td><strong>57</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Discovery Calls</strong></td>
+                                    <td>4</td>
+                                    <td>5</td>
+                                    <td>3</td>
+                                    <td>6</td>
+                                    <td><strong>18</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Demos</strong></td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>1</td>
+                                    <td>6</td>
+                                    <td><strong>12</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Proposals</strong></td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                    <td>5</td>
+                                    <td><strong>9</strong></td>
+                                </tr>
+                                <tr style="font-weight: 700; background: var(--bg-light);">
+                                    <td>TOTAL</td>
+                                    <td>99</td>
+                                    <td>117</td>
+                                    <td>83</td>
+                                    <td>128</td>
+                                    <td>427</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    // REAL DATA
+                    const reps = state.data.teamMembers.filter(m => m.role !== 'Leadership');
+                    const activityTypes = ['Call', 'Email', 'LinkedIn', 'Discovery Call', 'Demo', 'Proposal'];
+                    
+                    content.innerHTML = `
+                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">THIS WEEK'S TEAM ACTIVITY</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Activity Type</th>
+                                    ${reps.map(r => `<th>${r.name}</th>`).join('')}
+                                    <th>TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${activityTypes.map(type => {
+                                    const repCounts = reps.map(rep => {
+                                        return state.data.activities.filter(a => 
+                                            a.owner === rep.name && 
+                                            a.type && 
+                                            a.type.toLowerCase().includes(type.toLowerCase())
+                                        ).length;
+                                    });
+                                    const total = repCounts.reduce((a,b) => a+b, 0);
+                                    
+                                    return `
+                                        <tr>
+                                            <td><strong>${type}</strong></td>
+                                            ${repCounts.map(count => `<td>${count}</td>`).join('')}
+                                            <td><strong>${total}</strong></td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } else if (tab === 'pipeline') {
+                const stages = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won', 'Closed Lost'];
+                
+                if (isTestUser) {
+                    // SAMPLE DATA
+                    content.innerHTML = `
+                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                            <strong>📊 SAMPLE DATA MODE</strong>
+                        </div>
+                        
+                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">TEAM PIPELINE BY STAGE</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Stage</th>
+                                    <th>Deals</th>
+                                    <th>Total Value</th>
+                                    <th>Avg Deal Size</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Qualified</td>
+                                    <td>12</td>
+                                    <td>$24,500</td>
+                                    <td>$2,042</td>
+                                </tr>
+                                <tr>
+                                    <td>Proposal Sent</td>
+                                    <td>8</td>
+                                    <td>$18,200</td>
+                                    <td>$2,275</td>
+                                </tr>
+                                <tr>
+                                    <td>Negotiation</td>
+                                    <td>5</td>
+                                    <td>$12,800</td>
+                                    <td>$2,560</td>
+                                </tr>
+                                <tr>
+                                    <td>Closed Won</td>
+                                    <td>18</td>
+                                    <td>$32,000</td>
+                                    <td>$1,778</td>
+                                </tr>
+                                <tr>
+                                    <td>Closed Lost</td>
+                                    <td>4</td>
+                                    <td>$8,000</td>
+                                    <td>$2,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700; color: var(--warning);">⚠️ ALERTS</h3>
+                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">Pipeline Health Alerts</div>
+                            <div>• 3 deals in Negotiation for 20+ days (potential stall)</div>
+                            <div>• Javonte below daily touchpoint goal 3 days this week</div>
+                            <div>• Israel has not logged a discovery call in 4 days</div>
+                        </div>
+                    `;
+                } else {
+                    // REAL DATA
+                    content.innerHTML = `
+                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">TEAM PIPELINE BY STAGE</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Stage</th>
+                                    <th>Deals</th>
+                                    <th>Total Value</th>
+                                    <th>Avg Deal Size</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${stages.map(stage => {
+                                    const stageDeals = state.data.deals.filter(d => d.stage === stage);
+                                    const totalValue = stageDeals.reduce((sum, d) => sum + d.value, 0);
+                                    const avgSize = stageDeals.length > 0 ? totalValue / stageDeals.length : 0;
+                                    
+                                    return `
+                                        <tr>
+                                            <td>${stage}</td>
+                                            <td>${stageDeals.length}</td>
+                                            <td>$${totalValue.toLocaleString()}</td>
+                                            <td>$${Math.round(avgSize).toLocaleString()}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            } else if (tab === 'individual') {
+                const reps = state.data.teamMembers.filter(m => m.role !== 'Leadership');
+                
+                content.innerHTML = `
+                    <div class="form-group" style="margin: 24px 0;">
+                        <label>SELECT REP:</label>
+                        <select id="repSelector" onchange="loadRepDetails(this.value)">
+                            ${reps.map(r => `<option value="${r.name}">${r.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div id="repDetails"></div>
+                `;
+                
+                if (reps.length > 0) {
+                    loadRepDetails(reps[0].name);
+                }
+            }
+        }
+
+        function loadRepDetails(repName) {
+            const isTestUser = state.currentUser.name === 'Test Leadership';
+            const rep = state.data.teamMembers.find(m => m.name === repName);
+            const repDeals = state.data.deals.filter(d => d.owner === repName);
+            const won = repDeals.filter(d => d.stage.toLowerCase().includes('won'));
+            const revenue = won.reduce((sum, d) => sum + d.value, 0);
+            const attainment = rep.quota > 0 ? (revenue / rep.quota) * 100 : 0;
+
+            if (isTestUser) {
+                // SAMPLE DATA
+                document.getElementById('repDetails').innerHTML = `
+                    <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #f59e0b;">
+                        <strong>📊 SAMPLE DATA MODE</strong>
+                    </div>
+                    
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">GOALS HIT (Last 7 Days)</div>
+                            <div class="kpi-value">15/28</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">54% completion rate</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOUCHPOINTS (This Week)</div>
+                            <div class="kpi-value">112/125</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">90% of weekly goal</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">NEW LEADS (This Week)</div>
+                            <div class="kpi-value">18/35</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">51% of weekly goal</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">DISCOVERY CALLS (This Week)</div>
+                            <div class="kpi-value">3/7</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">43% of weekly goal</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">CURRENT PIPELINE</h3>
+                    <p>• 8 active deals | $16,200 total value</p>
+                    <p>• Revenue YTD: $12,500 | Attainment: 27.8%</p>
+                    <p>• Longest deal in pipeline: 45 days (Negotiation stage)</p>
+                `;
+            } else {
+                // REAL DATA
+                document.getElementById('repDetails').innerHTML = `
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">REVENUE</div>
+                            <div class="kpi-value">$${revenue.toLocaleString()}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">Quota: $${rep.quota.toLocaleString()}</div>
+                            <div class="progress-bar" style="margin-top: 12px;">
+                                <div class="progress-fill" style="width: ${Math.min(attainment, 100)}%"></div>
+                            </div>
+                            <div style="font-size: 13px; font-weight: 600; margin-top: 8px; color: var(--success);">${attainment.toFixed(1)}% attainment</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">DEALS</div>
+                            <div class="kpi-value">${repDeals.length}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">Total pipeline</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">WINS</div>
+                            <div class="kpi-value">${won.length}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">Closed won</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">AVG DEAL SIZE</div>
+                            <div class="kpi-value">$${won.length > 0 ? Math.round(revenue / won.length).toLocaleString() : '0'}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">Per closed deal</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">CURRENT PIPELINE</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>Tier</th>
-                                <th>Deals Closed</th>
-                                <th>Revenue</th>
+                                <th>Stage</th>
+                                <th>Deals</th>
+                                <th>Total Value</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${['Starter', 'Growth', 'Pro', 'Enterprise'].map(tier => {
-                                const tierDeals = allDeals.filter(d => d.tier === tier && d.stage.toLowerCase().includes('won'));
-                                const revenue = tierDeals.reduce((sum, d) => sum + d.value, 0);
+                            ${['Qualified', 'Proposal Sent', 'Negotiation'].map(stage => {
+                                const stageDeals = repDeals.filter(d => d.stage === stage);
+                                const stageValue = stageDeals.reduce((sum, d) => sum + d.value, 0);
                                 return `
                                     <tr>
-                                        <td><span class="badge badge-${tier.toLowerCase()}">${tier}</span></td>
-                                        <td>${tierDeals.length}</td>
-                                        <td>$${revenue.toLocaleString()}</td>
+                                        <td>${stage}</td>
+                                        <td>${stageDeals.length}</td>
+                                        <td>$${stageValue.toLocaleString()}</td>
                                     </tr>
                                 `;
                             }).join('')}
                         </tbody>
                     </table>
-                </div>
-            `;
+                `;
+            }
         }
 
         function renderTeamOverview() {
