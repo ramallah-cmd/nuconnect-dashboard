@@ -537,6 +537,7 @@
                 accounts: [],
                 teamMembers: []
             },
+            teamMemberMap: {}, // Maps team member names to their Airtable record IDs
             dailyMetrics: {
                 touchpoints: 0,
                 newLeads: 0,
@@ -547,14 +548,14 @@
         };
 
         const userPasswords = {
-            'Javonte': 'nuconnect2024',
-            'Teslim': 'nuconnect2024',
-            'Israel': 'nuconnect2024',
-            'Conrad': 'nuconnect2024',
+            'Javonte': 'nuconnect2025',
+            'Teslim': 'nuconnect2025',
+            'Israel': 'nuconnect2025',
+            'Conrad': 'nuconnect2025',
             'Test User': 'test2024',
             'Test Leadership': 'testleader2024',
-            'Ramallah': 'admin2024',
-            'Keyna': 'admin2024'
+            'Ramallah': 'admin2025',
+            'Keyna': 'admin2025'
         };
 
         const tierPricing = {
@@ -634,6 +635,14 @@
                         role: r.fields.Role || '',
                         quota: r.fields['Monthly Quota'] || 0
                     }));
+                    
+                    // Build name-to-ID map for linked record fields
+                    state.teamMemberMap = {};
+                    response.records.forEach(r => {
+                        if (r.fields.Name) {
+                            state.teamMemberMap[r.fields.Name] = r.id;
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Error loading team members:', error);
@@ -647,6 +656,18 @@
                     { id: '7', name: 'Ramallah', role: 'Leadership', quota: 0 },
                     { id: '8', name: 'Keyna', role: 'Leadership', quota: 0 }
                 ];
+                
+                // Build fallback map
+                state.teamMemberMap = {
+                    'Javonte': '1',
+                    'Teslim': '2',
+                    'Israel': '3',
+                    'Conrad': '4',
+                    'Test User': '5',
+                    'Test Leadership': '6',
+                    'Ramallah': '7',
+                    'Keyna': '8'
+                };
             }
         }
 
@@ -788,7 +809,7 @@
                 state.data.deals = response.records.map(r => ({
                     id: r.id,
                     name: r.fields['Deal Name'] || '',
-                    owner: r.fields.Owner || '',
+                    owner: getOwnerName(r.fields.Owner),
                     tier: r.fields['Tier (calculated)'] || r.fields.Tier || '',
                     stage: r.fields['Deal Stage'] || '',
                     value: r.fields['Deal Value'] || 0,
@@ -841,10 +862,22 @@
                     phone: r.fields.Phone || '',
                     company: Array.isArray(r.fields.Account) ? r.fields.Account[0] : r.fields.Account || '',
                     role: r.fields.Title || '',
-                    owner: r.fields['Contact Owner'] || '',
+                    owner: getOwnerName(r.fields['Contact Owner']),
                     createdTime: r.createdTime
                 }));
             }
+        }
+
+        function getOwnerName(ownerField) {
+            // Handle linked record field (comes as array of record IDs)
+            if (Array.isArray(ownerField) && ownerField.length > 0) {
+                const recordId = ownerField[0];
+                // Find team member by record ID
+                const member = state.data.teamMembers.find(m => m.id === recordId);
+                return member ? member.name : '';
+            }
+            // Fallback for old data or empty field
+            return ownerField || '';
         }
 
         async function loadAccounts() {
@@ -854,7 +887,7 @@
                     id: r.id,
                     name: r.fields['Account Name'] || '',
                     industry: r.fields.Industry || '',
-                    owner: r.fields['Account Owner'] || '',
+                    owner: getOwnerName(r.fields['Account Owner']),
                     createdTime: r.createdTime
                 }));
             }
@@ -1059,11 +1092,16 @@
 
             const dealData = {
                 'Deal Name': dealName,
-                'Owner': state.currentUser.name,
                 'Deal Stage': document.getElementById('dealStage').value,
                 'Deal Value': dealValue,
                 'Pricing Type': document.getElementById('dealPricing').value
             };
+
+            // Add Owner as linked record (send record ID in array)
+            const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+            if (ownerRecordId) {
+                dealData['Owner'] = [ownerRecordId];
+            }
 
             const eventName = document.getElementById('dealEventName').value.trim();
             const closeDate = document.getElementById('dealCloseDate').value;
@@ -1115,13 +1153,18 @@
                 'Full Name': document.getElementById('contactName').value,
                 'Email': document.getElementById('contactEmail').value,
                 'Phone': document.getElementById('contactPhone').value,
-                'Title': document.getElementById('contactRole').value,
-                'Contact Owner': state.currentUser.name
+                'Title': document.getElementById('contactRole').value
             };
 
             if (!contactData['Full Name'] || !contactData['Email']) {
                 alert('Please fill in Name and Email');
                 return;
+            }
+
+            // Add Contact Owner as linked record (send record ID in array)
+            const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+            if (ownerRecordId) {
+                contactData['Contact Owner'] = [ownerRecordId];
             }
 
             createContact(contactData);
@@ -1137,17 +1180,14 @@
                         </div>
                         <div class="form-group">
                             <label>Account Name *</label>
-                            <input type="text" id="accountName">
+                            <input type="text" id="accountName" placeholder="Enter account name">
                         </div>
                         <div class="form-group">
                             <label>Industry</label>
-                            <input type="text" id="accountIndustry">
-                        </div>
-                        <div class="form-group">
-                            <label>Owner</label>
-                            <input type="text" id="accountOwner" value="${state.currentUser.name}">
+                            <input type="text" id="accountIndustry" placeholder="e.g., Technology, Healthcare">
                         </div>
                         <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            Owner: ${state.currentUser.name} (auto-assigned)<br>
                             Counts as +1 New Lead Added for today!
                         </p>
                         <div class="modal-actions">
@@ -1162,13 +1202,18 @@
         function saveAccount() {
             const accountData = {
                 'Account Name': document.getElementById('accountName').value,
-                'Industry': document.getElementById('accountIndustry').value,
-                'Account Owner': document.getElementById('accountOwner').value
+                'Industry': document.getElementById('accountIndustry').value
             };
 
             if (!accountData['Account Name']) {
                 alert('Please enter account name');
                 return;
+            }
+
+            // Add Account Owner as linked record (send record ID in array)
+            const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+            if (ownerRecordId) {
+                accountData['Account Owner'] = [ownerRecordId];
             }
 
             createAccount(accountData);
@@ -1313,6 +1358,14 @@
                 state.dailyMetrics.dealsMoved >= dealsMovedGoal
             ].filter(Boolean).length;
 
+            // Calculate this week's activity
+            const userActivities = state.data.activities.filter(a => a.owner === state.currentUser.name);
+            const calls = userActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+            const emails = userActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+            const linkedin = userActivities.filter(a => a.type && a.type.toLowerCase().includes('linkedin')).length;
+            const demos = userActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
+            const proposals = userActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
+
             const content = document.getElementById('contentArea');
             content.innerHTML = `
                 <div class="daily-scorecard">
@@ -1369,6 +1422,44 @@
                             <div class="progress-fill" style="width: ${(eventsClosed / 22) * 100}%"></div>
                         </div>
                         <div style="font-size: 13px; font-weight: 600; color: var(--success);">${((eventsClosed / 22) * 100).toFixed(1)}% of goal</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 This Week's Activity</h2>
+                    </div>
+                    <div class="kpi-grid">
+                        <div class="kpi-card" style="border-left: 4px solid #3b82f6;">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">📞 CALLS</div>
+                            <div class="kpi-value" style="color: #3b82f6;">${calls}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        </div>
+                        <div class="kpi-card" style="border-left: 4px solid #8b5cf6;">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">📧 EMAILS</div>
+                            <div class="kpi-value" style="color: #8b5cf6;">${emails}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        </div>
+                        <div class="kpi-card" style="border-left: 4px solid #06b6d4;">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">💼 LINKEDIN</div>
+                            <div class="kpi-value" style="color: #06b6d4;">${linkedin}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        </div>
+                        <div class="kpi-card" style="border-left: 4px solid #f59e0b;">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">🎥 DEMOS</div>
+                            <div class="kpi-value" style="color: #f59e0b;">${demos}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        </div>
+                        <div class="kpi-card" style="border-left: 4px solid #10b981;">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">📄 PROPOSALS</div>
+                            <div class="kpi-value" style="color: #10b981;">${proposals}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        </div>
+                        <div class="kpi-card" style="border-left: 4px solid #22c55e;">
+                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">🎉 WINS</div>
+                            <div class="kpi-value" style="color: #22c55e;">${eventsClosed}</div>
+                            <div style="font-size: 13px; color: var(--text-gray);">This month</div>
+                        </div>
                     </div>
                 </div>
             `;
