@@ -874,11 +874,12 @@
             if (response && response.records) {
                 state.data.activities = response.records.map(r => ({
                     id: r.id,
+                    name: r.fields['Activity Name'] || '',
                     type: r.fields.Type || '',
                     date: r.fields.Date || '',
-                    owner: getOwnerName(r.fields.Owner),
+                    owner: r.fields.Owner || '',
                     account: r.fields.Account || '',
-                    contact: r.fields.Contact || '',
+                    contact: Array.isArray(r.fields.Contact) ? r.fields.Contact[0] : r.fields.Contact || '',
                     result: r.fields.Result || '',
                     nextSteps: r.fields['Next Steps'] || '',
                     createdTime: r.createdTime
@@ -1347,11 +1348,16 @@
             const account = state.data.accounts.find(a => a.id === accountRecordId);
             const accountName = account ? account.name : '';
 
+            // Generate Activity Name from type and account
+            const activityType = document.getElementById('activityType').value;
+            const activityName = `${activityType} - ${accountName}`;
+
             const activityData = {
-                'Type': document.getElementById('activityType').value,
+                'Activity Name': activityName,  // PRIMARY FIELD - was missing!
+                'Type': activityType,
                 'Date': new Date().toISOString().split('T')[0],
-                'Account': accountName,  // Send as TEXT, not linked record
-                'Owner': state.currentUser.name,  // Send as TEXT, not linked record
+                'Account': accountName,
+                'Owner': state.currentUser.name,
                 'Result': result
             };
 
