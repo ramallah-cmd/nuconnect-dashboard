@@ -832,11 +832,10 @@
                     id: r.id,
                     name: r.fields['Deal Name'] || '',
                     owner: getOwnerName(r.fields.Owner),
-                    tier: r.fields['Tier (calculated)'] || r.fields.Tier || '',
-                    stage: r.fields['Deal Stage'] || '',
-                    value: r.fields['Deal Value'] || 0,
+                    tier: r.fields.Tier || '',
+                    stage: r.fields.Stage || '',
+                    value: r.fields.Amount || 0,
                     eventName: r.fields['Event Name'] || '',
-                    pricingType: r.fields['Pricing Type'] || 'Public Price',
                     closeDate: r.fields['Close Date'] || '',
                     createdTime: r.createdTime
                 }));
@@ -938,9 +937,12 @@
 
         async function createDeal(dealData) {
             try {
+                console.log('Creating deal with data:', JSON.stringify(dealData, null, 2));
                 const response = await fetchFromAirtable('Deals', 'POST', {
                     fields: dealData
                 });
+                
+                console.log('Airtable response:', response);
                 
                 if (response && response.id) {
                     await loadDeals();
@@ -948,10 +950,12 @@
                     renderView('pipeline');
                     alert('Deal created successfully!');
                 } else {
-                    const errorMsg = response?.error?.message || 'Unknown error';
+                    const errorMsg = response?.error?.message || JSON.stringify(response?.error) || 'Unknown error';
+                    console.error('Deal creation failed:', errorMsg);
                     alert('Failed to create deal: ' + errorMsg);
                 }
             } catch (error) {
+                console.error('Deal creation error:', error);
                 alert('Error creating deal: ' + error.message);
             }
         }
@@ -979,9 +983,12 @@
 
         async function createAccount(accountData) {
             try {
+                console.log('Creating account with data:', JSON.stringify(accountData, null, 2));
                 const response = await fetchFromAirtable('Accounts', 'POST', {
                     fields: accountData
                 });
+                
+                console.log('Airtable response:', response);
                 
                 if (response && response.id) {
                     await loadAccounts();
@@ -990,19 +997,24 @@
                     renderView('accounts');
                     alert('Account created! +1 New Lead Added today!');
                 } else {
-                    const errorMsg = response?.error?.message || 'Unknown error';
+                    const errorMsg = response?.error?.message || JSON.stringify(response?.error) || 'Unknown error';
+                    console.error('Account creation failed:', errorMsg);
                     alert('Failed to create account: ' + errorMsg);
                 }
             } catch (error) {
+                console.error('Account creation error:', error);
                 alert('Error creating account: ' + error.message);
             }
         }
 
         async function logActivity(activityData) {
             try {
+                console.log('Logging activity with data:', JSON.stringify(activityData, null, 2));
                 const response = await fetchFromAirtable('Activities', 'POST', {
                     fields: activityData
                 });
+                
+                console.log('Airtable response:', response);
                 
                 if (response && response.id) {
                     await loadActivities();
@@ -1011,10 +1023,12 @@
                     renderView('dashboard');
                     alert('Activity logged! +1 Touchpoint!');
                 } else {
-                    const errorMsg = response?.error?.message || 'Unknown error';
+                    const errorMsg = response?.error?.message || JSON.stringify(response?.error) || 'Unknown error';
+                    console.error('Activity logging failed:', errorMsg);
                     alert('Failed to log activity: ' + errorMsg);
                 }
             } catch (error) {
+                console.error('Activity logging error:', error);
                 alert('Error logging activity: ' + error.message);
             }
         }
@@ -1062,13 +1076,6 @@
                             <label>Close Date</label>
                             <input type="date" id="dealCloseDate">
                         </div>
-                        <div class="form-group">
-                            <label>Pricing Type</label>
-                            <select id="dealPricing">
-                                <option value="Public Price">Public Price</option>
-                                <option value="Floor Price">Floor Price</option>
-                            </select>
-                        </div>
                         <div class="modal-actions">
                             <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                             <button class="btn btn-primary" onclick="saveDeal()">Create Deal</button>
@@ -1100,22 +1107,25 @@
 
             const dealData = {
                 'Deal Name': dealName,
-                'Deal Stage': document.getElementById('dealStage').value,
-                'Deal Value': dealValue,
-                'Pricing Type': document.getElementById('dealPricing').value
+                'Amount': dealValue,
+                'Stage': document.getElementById('dealStage').value,
+                'Tier': dealTier
             };
 
+            // Add Owner as linked record
             const ownerRecordId = state.teamMemberMap[state.currentUser.name];
             if (ownerRecordId) {
                 dealData['Owner'] = [ownerRecordId];
             }
 
+            // Add optional fields
             const eventName = document.getElementById('dealEventName').value.trim();
             const closeDate = document.getElementById('dealCloseDate').value;
 
             if (eventName) dealData['Event Name'] = eventName;
             if (closeDate) dealData['Close Date'] = closeDate;
 
+            console.log('Sending deal data:', dealData);
             createDeal(dealData);
         }
 
@@ -1252,14 +1262,14 @@
                             <label>Account *</label>
                             <select id="activityAccount">
                                 <option value="">Select account...</option>
-                                ${accounts.map(a => `<option value="${a.name}">${a.name}</option>`).join('')}
+                                ${accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Contact</label>
                             <select id="activityContact">
                                 <option value="">Select contact...</option>
-                                ${contacts.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
+                                ${contacts.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
                             </select>
                         </div>
                         <div class="form-group">
@@ -1283,11 +1293,19 @@
         }
 
         function saveActivity() {
+            const accountRecordId = document.getElementById('activityAccount').value;
+            const result = document.getElementById('activityResult').value;
+            
+            if (!accountRecordId || !result) {
+                alert('Please select an Account and enter Result');
+                return;
+            }
+
             const activityData = {
                 'Type': document.getElementById('activityType').value,
-                'Date': new Date().toISOString(),
-                'Account': document.getElementById('activityAccount').value,
-                'Result': document.getElementById('activityResult').value
+                'Date': new Date().toISOString().split('T')[0], // Send date in YYYY-MM-DD format
+                'Account': [accountRecordId], // Send as linked record array
+                'Result': result
             };
 
             const ownerRecordId = state.teamMemberMap[state.currentUser.name];
@@ -1295,16 +1313,11 @@
                 activityData['Owner'] = [ownerRecordId];
             }
 
-            const contact = document.getElementById('activityContact').value;
+            const contactRecordId = document.getElementById('activityContact').value;
             const nextSteps = document.getElementById('activityNextSteps').value;
 
-            if (contact) activityData['Contact'] = contact;
+            if (contactRecordId) activityData['Contact'] = [contactRecordId]; // Send as linked record array
             if (nextSteps) activityData['Next Steps'] = nextSteps;
-
-            if (!activityData['Account'] || !activityData['Result']) {
-                alert('Please fill in Account and Result');
-                return;
-            }
 
             logActivity(activityData);
         }
@@ -1453,7 +1466,6 @@
             const allDeals = state.data.deals;
             const closedDeals = allDeals.filter(d => d.stage.toLowerCase().includes('won'));
             const totalRevenue = closedDeals.reduce((sum, d) => sum + d.value, 0);
-            const floorPriceUsed = allDeals.filter(d => d.pricingType === 'Floor Price').length;
 
             const content = document.getElementById('contentArea');
             content.innerHTML = `
@@ -1471,9 +1483,9 @@
                     </div>
                     
                     <div class="kpi-card">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">FLOOR-PRICE EVENTS</div>
-                        <div class="kpi-value">${floorPriceUsed}/10</div>
-                        <div style="font-size: 13px; color: var(--text-gray);">Remaining: ${10 - floorPriceUsed}</div>
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">ACTIVE PIPELINE</div>
+                        <div class="kpi-value">${allDeals.length - closedDeals.length}</div>
+                        <div style="font-size: 13px; color: var(--text-gray);">Open deals</div>
                     </div>
                 </div>
 
