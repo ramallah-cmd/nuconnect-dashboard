@@ -644,7 +644,50 @@
         }
 
         function openSettings() {
-            showConfigPrompt();
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>⚙️ Settings</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Airtable Base ID</label>
+                            <input type="text" id="settingsBaseId" value="${state.baseId}" style="font-family: monospace;">
+                        </div>
+                        <div class="form-group">
+                            <label>Airtable API Key / Personal Access Token</label>
+                            <input type="password" id="settingsApiKey" placeholder="Enter new token..." style="font-family: monospace;">
+                            <p style="font-size: 12px; color: var(--text-gray); margin-top: 8px;">
+                                ⚠️ Make sure your token has <strong>data.records:write</strong> permission!
+                            </p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveSettings()">Save & Reload</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveSettings() {
+            const baseId = document.getElementById('settingsBaseId').value.trim();
+            const apiKey = document.getElementById('settingsApiKey').value.trim();
+            
+            if (!baseId) {
+                alert('Base ID is required');
+                return;
+            }
+            
+            localStorage.setItem('airtable_baseId', baseId);
+            
+            if (apiKey) {
+                localStorage.setItem('airtable_apiKey', apiKey);
+            }
+            
+            alert('Settings saved! Reloading...');
+            location.reload();
         }
 
         async function loadTeamMembers() {
@@ -902,7 +945,7 @@
                     id: r.id,
                     name: r.fields['Activity Name'] || '',
                     type: r.fields.Type || '',
-                    date: r.fields.Date || '',
+                    date: r.fields['Activity Date/Time'] || r.fields.Date || '', // Try Activity Date/Time first, fallback to Date
                     owner: r.fields.Owner || '',
                     account: r.fields.Account || '',
                     contact: Array.isArray(r.fields.Contact) ? r.fields.Contact[0] : r.fields.Contact || '',
@@ -1074,7 +1117,7 @@
                     await loadActivities();
                     calculateDailyMetrics();
                     closeModal();
-                    renderView('dashboard');
+                    renderView(state.currentView); // Stay on current view
                     alert('Activity logged! +1 Touchpoint!');
                 } else {
                     const errorMsg = response?.error?.message || JSON.stringify(response?.error) || 'Unknown error';
@@ -1395,10 +1438,16 @@
             const activityType = document.getElementById('activityType').value;
             const activityName = `${activityType} - ${accountName}`;
 
+            // Get current time in ISO format (includes date and time)
+            const now = new Date();
+            const dateOnly = now.toISOString().split('T')[0]; // YYYY-MM-DD for Date field
+            const dateTime = now.toISOString(); // Full ISO timestamp for Activity Date/Time field
+
             const activityData = {
-                'Activity Name': activityName,  // PRIMARY FIELD - was missing!
+                'Activity Name': activityName,
                 'Type': activityType,
-                'Date': new Date().toISOString().split('T')[0],
+                'Date': dateOnly, // Date field (date only)
+                'Activity Date/Time': dateTime, // Date/Time field (full timestamp)
                 'Account': accountName,
                 'Owner': state.currentUser.name,
                 'Result': result
