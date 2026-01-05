@@ -852,6 +852,32 @@
             return ownerField || '';
         }
 
+        function getAccountName(accountField) {
+            if (Array.isArray(accountField) && accountField.length > 0) {
+                const accountId = accountField[0];
+                const account = state.data.accounts.find(a => a.id === accountId);
+                return account ? account.name : '';
+            }
+            return '';
+        }
+
+        function formatDateCST(dateString) {
+            if (!dateString) return '-';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleString('en-US', { 
+                    timeZone: 'America/Chicago',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
         async function loadDeals() {
             const response = await fetchFromAirtable('Deals');
             if (response && response.records) {
@@ -909,7 +935,7 @@
                     name: r.fields['Full Name'] || '',
                     email: r.fields.Email || '',
                     phone: r.fields.Phone || '',
-                    company: Array.isArray(r.fields.Account) ? r.fields.Account[0] : r.fields.Account || '',
+                    company: getAccountName(r.fields.Account),
                     role: r.fields.Title || '',
                     owner: getOwnerName(r.fields['Contact Owner']),
                     createdTime: r.createdTime
@@ -1659,14 +1685,14 @@
                         ${stages.map(stage => {
                             const stageDeals = deals.filter(d => d.stage === stage);
                             return `
-                                <div class="kanban-column" data-stage="${stage}">
+                                <div class="kanban-column" data-stage="${stage}" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
                                     <div class="kanban-header">
                                         <span>${stage}</span>
                                         <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">${stageDeals.length}</span>
                                     </div>
-                                    <div class="kanban-cards" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                    <div class="kanban-cards">
                                         ${stageDeals.length === 0 ? '<p style="color: var(--text-gray); text-align: center; padding: 20px; font-size: 13px;">No deals</p>' : stageDeals.map(deal => `
-                                            <div class="kanban-card" draggable="true" ondragstart="handleDragStart(event)" data-deal-id="${deal.id}" style="cursor: move;">
+                                            <div class="kanban-card" draggable="true" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" data-deal-id="${deal.id}" style="cursor: move;">
                                                 <div class="kanban-card-title">${deal.name}</div>
                                                 <div class="kanban-card-value">$${deal.value.toLocaleString()}</div>
                                                 <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
@@ -1682,27 +1708,51 @@
         }
 
         let draggedDealId = null;
+        let draggedElement = null;
 
         function handleDragStart(event) {
             draggedDealId = event.target.getAttribute('data-deal-id');
+            draggedElement = event.target;
             event.target.style.opacity = '0.5';
+            console.log('Drag started:', draggedDealId);
+        }
+
+        function handleDragEnd(event) {
+            event.target.style.opacity = '1';
+            draggedElement = null;
+            console.log('Drag ended');
         }
 
         function handleDragOver(event) {
             event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
         }
 
         function handleDrop(event) {
             event.preventDefault();
-            const newStage = event.target.closest('.kanban-column')?.getAttribute('data-stage');
+            console.log('Drop event triggered');
+            
+            // Find the column - check if we dropped on the column or the cards container
+            let column = event.target.closest('.kanban-column');
+            if (!column) {
+                column = event.target.classList.contains('kanban-column') ? event.target : null;
+            }
+            
+            const newStage = column?.getAttribute('data-stage');
+            console.log('Target stage:', newStage);
             
             if (draggedDealId && newStage) {
                 updateDealStage(draggedDealId, newStage);
+            } else {
+                console.log('Missing draggedDealId or newStage:', { draggedDealId, newStage });
             }
             
             // Reset opacity
-            document.querySelectorAll('.kanban-card').forEach(card => card.style.opacity = '1');
+            if (draggedElement) {
+                draggedElement.style.opacity = '1';
+            }
             draggedDealId = null;
+            draggedElement = null;
         }
 
         async function updateDealStage(dealId, newStage) {
@@ -1837,7 +1887,7 @@
                         <tbody>
                             ${activities.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No activities logged yet. Click "+ Log Activity" to get started!</td></tr>' : activities.map(activity => `
                                 <tr>
-                                    <td>${activity.date || '-'}</td>
+                                    <td>${formatDateCST(activity.date)}</td>
                                     <td>
                                         <span class="badge" style="background: var(--primary); color: white;">${activity.type}</span>
                                     </td>
