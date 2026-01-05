@@ -1235,7 +1235,15 @@
                         </div>
                         <div class="form-group">
                             <label>Industry</label>
-                            <input type="text" id="accountIndustry" placeholder="e.g., Technology, Healthcare">
+                            <select id="accountIndustry">
+                                <option value="">Select industry...</option>
+                                <option value="Tech">Tech</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Education">Education</option>
+                                <option value="Nonprofit">Nonprofit</option>
+                                <option value="Corporate">Corporate</option>
+                                <option value="Other">Other</option>
+                            </select>
                         </div>
                         <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
                             Owner: ${state.currentUser.name} (auto-assigned)<br>
@@ -1335,22 +1343,23 @@
                 return;
             }
 
+            // Find the account name from the record ID
+            const account = state.data.accounts.find(a => a.id === accountRecordId);
+            const accountName = account ? account.name : '';
+
             const activityData = {
                 'Type': document.getElementById('activityType').value,
-                'Date': new Date().toISOString().split('T')[0], // Send date in YYYY-MM-DD format
-                'Account': [accountRecordId], // Send as linked record array
+                'Date': new Date().toISOString().split('T')[0],
+                'Account': accountName,  // Send as TEXT, not linked record
+                'Owner': state.currentUser.name,  // Send as TEXT, not linked record
                 'Result': result
             };
-
-            const ownerRecordId = state.teamMemberMap[state.currentUser.name];
-            if (ownerRecordId) {
-                activityData['Owner'] = [ownerRecordId];
-            }
 
             const contactRecordId = document.getElementById('activityContact').value;
             const nextSteps = document.getElementById('activityNextSteps').value;
 
-            if (contactRecordId) activityData['Contact'] = [contactRecordId]; // Send as linked record array
+            // Contact is a linked record field, so send as array
+            if (contactRecordId) activityData['Contact'] = [contactRecordId];
             if (nextSteps) activityData['Next Steps'] = nextSteps;
 
             logActivity(activityData);
