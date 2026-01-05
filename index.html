@@ -555,9 +555,11 @@
                 tasks: [],
                 contacts: [],
                 accounts: [],
-                teamMembers: []
+                teamMembers: [],
+                pricingRules: []
             },
             teamMemberMap: {},
+            pricingRuleMap: {},
             dailyMetrics: {
                 touchpoints: 0,
                 newLeads: 0,
@@ -602,6 +604,7 @@
         async function init() {
             if (state.baseId && state.apiKey) {
                 await loadTeamMembers();
+                await loadPricingRules();
                 populateLoginSelect();
             } else {
                 showConfigPrompt();
@@ -685,6 +688,30 @@
                     'Ramallah': 'rec7',
                     'Keyna': 'rec8'
                 };
+            }
+        }
+
+        async function loadPricingRules() {
+            try {
+                const response = await fetchFromAirtable('Pricing Rules');
+                if (response && response.records) {
+                    state.data.pricingRules = response.records.map(r => ({
+                        id: r.id,
+                        tier: r.fields.Tier || '',
+                        basePrice: r.fields['Base Price'] || 0
+                    }));
+                    
+                    state.pricingRuleMap = {};
+                    response.records.forEach(r => {
+                        if (r.fields.Tier) {
+                            state.pricingRuleMap[r.fields.Tier] = r.id;
+                        }
+                    });
+                    
+                    console.log('Pricing Rules loaded:', state.pricingRuleMap);
+                }
+            } catch (error) {
+                console.error('Error loading pricing rules:', error);
             }
         }
 
@@ -832,7 +859,7 @@
                     id: r.id,
                     name: r.fields['Deal Name'] || '',
                     owner: getOwnerName(r.fields.Owner),
-                    tier: r.fields.Tier || '',
+                    tier: Array.isArray(r.fields['Tier (lookup)']) ? r.fields['Tier (lookup)'][0] : r.fields['Tier (lookup)'] || '',
                     stage: r.fields.Stage || '',
                     value: r.fields.Amount || 0,
                     eventName: r.fields['Event Name'] || '',
@@ -1108,9 +1135,16 @@
             const dealData = {
                 'Deal Name': dealName,
                 'Amount': dealValue,
-                'Stage': document.getElementById('dealStage').value,
-                'Tier': dealTier
+                'Stage': document.getElementById('dealStage').value
             };
+
+            // Add Pricing Tier as linked record
+            const pricingTierRecordId = state.pricingRuleMap[dealTier];
+            if (pricingTierRecordId) {
+                dealData['Pricing Tier'] = [pricingTierRecordId];
+            } else {
+                console.warn('Could not find Pricing Rule for tier:', dealTier);
+            }
 
             // Add Owner as linked record
             const ownerRecordId = state.teamMemberMap[state.currentUser.name];
