@@ -1299,6 +1299,8 @@
                                 <option value="Demo">Demo</option>
                                 <option value="Proposal">Proposal Sent</option>
                                 <option value="Follow-up">Follow-up</option>
+                                <option value="Meeting Booked">Meeting Booked</option>
+                                <option value="Meeting Held">Meeting Held</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -1642,24 +1644,74 @@
                         ${stages.map(stage => {
                             const stageDeals = deals.filter(d => d.stage === stage);
                             return `
-                                <div class="kanban-column">
+                                <div class="kanban-column" data-stage="${stage}">
                                     <div class="kanban-header">
                                         <span>${stage}</span>
                                         <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">${stageDeals.length}</span>
                                     </div>
-                                    ${stageDeals.length === 0 ? '<p style="color: var(--text-gray); text-align: center; padding: 20px; font-size: 13px;">No deals</p>' : stageDeals.map(deal => `
-                                        <div class="kanban-card">
-                                            <div class="kanban-card-title">${deal.name}</div>
-                                            <div class="kanban-card-value">$${deal.value.toLocaleString()}</div>
-                                            <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
-                                        </div>
-                                    `).join('')}
+                                    <div class="kanban-cards" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                        ${stageDeals.length === 0 ? '<p style="color: var(--text-gray); text-align: center; padding: 20px; font-size: 13px;">No deals</p>' : stageDeals.map(deal => `
+                                            <div class="kanban-card" draggable="true" ondragstart="handleDragStart(event)" data-deal-id="${deal.id}" style="cursor: move;">
+                                                <div class="kanban-card-title">${deal.name}</div>
+                                                <div class="kanban-card-value">$${deal.value.toLocaleString()}</div>
+                                                <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
                                 </div>
                             `;
                         }).join('')}
                     </div>
                 </div>
             `;
+        }
+
+        let draggedDealId = null;
+
+        function handleDragStart(event) {
+            draggedDealId = event.target.getAttribute('data-deal-id');
+            event.target.style.opacity = '0.5';
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            const newStage = event.target.closest('.kanban-column')?.getAttribute('data-stage');
+            
+            if (draggedDealId && newStage) {
+                updateDealStage(draggedDealId, newStage);
+            }
+            
+            // Reset opacity
+            document.querySelectorAll('.kanban-card').forEach(card => card.style.opacity = '1');
+            draggedDealId = null;
+        }
+
+        async function updateDealStage(dealId, newStage) {
+            try {
+                console.log('Updating deal', dealId, 'to stage', newStage);
+                const response = await fetchFromAirtable(`Deals/${dealId}`, 'PATCH', {
+                    fields: {
+                        'Stage': newStage
+                    }
+                });
+                
+                console.log('Update response:', response);
+                
+                if (response && response.id) {
+                    await loadDeals();
+                    renderView('pipeline');
+                    alert('Deal moved to ' + newStage);
+                } else {
+                    alert('Failed to update deal stage');
+                }
+            } catch (error) {
+                console.error('Error updating deal stage:', error);
+                alert('Error updating deal stage: ' + error.message);
+            }
         }
 
         function renderTasks() {
@@ -1700,10 +1752,10 @@
                         <tbody>
                             ${contacts.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No contacts found</td></tr>' : contacts.map(contact => `
                                 <tr>
-                                    <td>${contact.name}</td>
+                                    <td><strong>${contact.name}</strong></td>
                                     <td>${contact.email}</td>
                                     <td>${contact.phone}</td>
-                                    <td>${contact.company}</td>
+                                    <td>${contact.company || '-'}</td>
                                     <td>${contact.role}</td>
                                 </tr>
                             `).join('')}
