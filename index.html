@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NuConnect CRM</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
@@ -217,52 +216,6 @@
             font-weight: 800;
         }
 
-        .daily-scorecard {
-            background: var(--white);
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 24px;
-        }
-
-        .scorecard-goals {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
-        }
-
-        .goal-item {
-            padding: 16px;
-            background: var(--bg-light);
-            border-radius: 12px;
-            border-left: 4px solid var(--border);
-        }
-
-        .goal-item.complete {
-            border-left-color: var(--success);
-            background: #f0fdf4;
-        }
-
-        .goal-item.incomplete {
-            border-left-color: var(--danger);
-            background: #fef2f2;
-        }
-
-        .goal-item.partial {
-            border-left-color: var(--warning);
-            background: #fffbeb;
-        }
-
-        .goal-value {
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 4px;
-        }
-
-        .goal-value.complete { color: var(--success); }
-        .goal-value.incomplete { color: var(--danger); }
-        .goal-value.partial { color: var(--warning); }
-
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -286,6 +239,7 @@
             width: 4px;
             height: 100%;
             background: var(--gradient);
+            border-radius: 16px 0 0 16px;
         }
 
         .kpi-value {
@@ -327,6 +281,113 @@
         .card-title {
             font-size: 20px;
             font-weight: 700;
+        }
+
+        .wins-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .win-card {
+            background: var(--bg-light);
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .win-info {
+            flex: 1;
+        }
+
+        .win-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .win-meta {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        .win-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .badge-starter { background: #dbeafe; color: #1e40af; }
+        .badge-growth { background: #d1fae5; color: #065f46; }
+        .badge-pro { background: #fef3c7; color: #92400e; }
+        .badge-enterprise { background: #e0e7ff; color: #3730a3; }
+
+        .activity-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 16px;
+            background: var(--bg-light);
+            border-radius: 12px;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-top: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-light);
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: var(--bg-light);
         }
 
         .kanban-board {
@@ -371,47 +432,6 @@
             color: var(--primary);
             margin-bottom: 8px;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: var(--bg-light);
-        }
-
-        th {
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-
-        td {
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:hover {
-            background: var(--bg-light);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-starter { background: #dbeafe; color: #1e40af; }
-        .badge-growth { background: #d1fae5; color: #065f46; }
-        .badge-pro { background: #fef3c7; color: #92400e; }
-        .badge-enterprise { background: #e0e7ff; color: #3730a3; }
-        .badge-success { background: #d1fae5; color: #065f46; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
 
         .modal {
             display: none;
@@ -537,14 +557,13 @@
                 accounts: [],
                 teamMembers: []
             },
-            teamMemberMap: {}, // Maps team member names to their Airtable record IDs
+            teamMemberMap: {},
             dailyMetrics: {
                 touchpoints: 0,
                 newLeads: 0,
                 discoveryCalls: 0,
                 dealsMoved: 0
-            },
-            charts: {}
+            }
         };
 
         const userPasswords = {
@@ -565,7 +584,7 @@
             'Enterprise': 4200
         };
 
-        const repNavItems = [
+        const allNavItems = [
             { id: 'dashboard', icon: '📊', label: 'Dashboard' },
             { id: 'pipeline', icon: '📈', label: 'Pipeline' },
             { id: 'tasks', icon: '✅', label: 'Tasks' },
@@ -636,7 +655,6 @@
                         quota: r.fields['Monthly Quota'] || 0
                     }));
                     
-                    // Build name-to-ID map for linked record fields
                     state.teamMemberMap = {};
                     response.records.forEach(r => {
                         if (r.fields.Name) {
@@ -647,26 +665,25 @@
             } catch (error) {
                 console.error('Error loading team members:', error);
                 state.data.teamMembers = [
-                    { id: '1', name: 'Javonte', role: 'BDR', quota: 45000 },
-                    { id: '2', name: 'Teslim', role: 'BDR', quota: 45000 },
-                    { id: '3', name: 'Israel', role: 'BDR', quota: 45000 },
-                    { id: '4', name: 'Conrad', role: 'AE', quota: 60000 },
-                    { id: '5', name: 'Test User', role: 'BDR', quota: 45000 },
-                    { id: '6', name: 'Test Leadership', role: 'Leadership', quota: 0 },
-                    { id: '7', name: 'Ramallah', role: 'Leadership', quota: 0 },
-                    { id: '8', name: 'Keyna', role: 'Leadership', quota: 0 }
+                    { id: 'rec1', name: 'Javonte', role: 'BDR', quota: 45000 },
+                    { id: 'rec2', name: 'Teslim', role: 'BDR', quota: 45000 },
+                    { id: 'rec3', name: 'Israel', role: 'BDR', quota: 45000 },
+                    { id: 'rec4', name: 'Conrad', role: 'AE', quota: 60000 },
+                    { id: 'rec5', name: 'Test User', role: 'BDR', quota: 45000 },
+                    { id: 'rec6', name: 'Test Leadership', role: 'Leadership', quota: 0 },
+                    { id: 'rec7', name: 'Ramallah', role: 'Leadership', quota: 0 },
+                    { id: 'rec8', name: 'Keyna', role: 'Leadership', quota: 0 }
                 ];
                 
-                // Build fallback map
                 state.teamMemberMap = {
-                    'Javonte': '1',
-                    'Teslim': '2',
-                    'Israel': '3',
-                    'Conrad': '4',
-                    'Test User': '5',
-                    'Test Leadership': '6',
-                    'Ramallah': '7',
-                    'Keyna': '8'
+                    'Javonte': 'rec1',
+                    'Teslim': 'rec2',
+                    'Israel': 'rec3',
+                    'Conrad': 'rec4',
+                    'Test User': 'rec5',
+                    'Test Leadership': 'rec6',
+                    'Ramallah': 'rec7',
+                    'Keyna': 'rec8'
                 };
             }
         }
@@ -724,13 +741,7 @@
             buildNavigation();
             await loadAllData();
             calculateDailyMetrics();
-            
-            // Leadership goes straight to leadership view, not dashboard
-            if (state.currentUser.role === 'Leadership') {
-                renderView('leadership');
-            } else {
-                renderView('dashboard');
-            }
+            renderView('dashboard');
             
             setInterval(async () => {
                 await loadAllData();
@@ -740,9 +751,11 @@
 
         function buildNavigation() {
             const nav = document.getElementById('sidebarNav');
-            const items = state.currentUser.role === 'Leadership' 
-                ? leadershipNavItems
-                : repNavItems;
+            let items = [...allNavItems];
+            
+            if (state.currentUser.role === 'Leadership') {
+                items = items.concat(leadershipNavItems);
+            }
             
             nav.innerHTML = items.map(item => `
                 <div class="nav-item ${item.id === state.currentView ? 'active' : ''}" 
@@ -803,6 +816,15 @@
             }
         }
 
+        function getOwnerName(ownerField) {
+            if (Array.isArray(ownerField) && ownerField.length > 0) {
+                const recordId = ownerField[0];
+                const member = state.data.teamMembers.find(m => m.id === recordId);
+                return member ? member.name : '';
+            }
+            return ownerField || '';
+        }
+
         async function loadDeals() {
             const response = await fetchFromAirtable('Deals');
             if (response && response.records) {
@@ -828,7 +850,7 @@
                     id: r.id,
                     type: r.fields.Type || '',
                     date: r.fields.Date || '',
-                    owner: r.fields.Owner || '',
+                    owner: getOwnerName(r.fields.Owner),
                     account: r.fields.Account || '',
                     contact: r.fields.Contact || '',
                     result: r.fields.Result || '',
@@ -844,7 +866,7 @@
                 state.data.tasks = response.records.map(r => ({
                     id: r.id,
                     name: r.fields['Task Name'] || '',
-                    owner: r.fields.Owner || '',
+                    owner: getOwnerName(r.fields.Owner),
                     dueDate: r.fields['Due Date'] || '',
                     status: r.fields.Status || 'Open',
                     type: r.fields.Type || ''
@@ -866,18 +888,6 @@
                     createdTime: r.createdTime
                 }));
             }
-        }
-
-        function getOwnerName(ownerField) {
-            // Handle linked record field (comes as array of record IDs)
-            if (Array.isArray(ownerField) && ownerField.length > 0) {
-                const recordId = ownerField[0];
-                // Find team member by record ID
-                const member = state.data.teamMembers.find(m => m.id === recordId);
-                return member ? member.name : '';
-            }
-            // Fallback for old data or empty field
-            return ownerField || '';
         }
 
         async function loadAccounts() {
@@ -903,14 +913,12 @@
             
             state.dailyMetrics.touchpoints = userActivities.length;
             
-            // FIXED: Only count contacts created by THIS user today
             const newContactsToday = state.data.contacts.filter(c => 
                 c.owner === state.currentUser.name &&
                 c.createdTime && 
                 c.createdTime.split('T')[0] === today
             ).length;
             
-            // FIXED: Only count accounts created by THIS user today
             const newAccountsToday = state.data.accounts.filter(a => 
                 a.owner === state.currentUser.name &&
                 a.createdTime && 
@@ -1097,7 +1105,6 @@
                 'Pricing Type': document.getElementById('dealPricing').value
             };
 
-            // Add Owner as linked record (send record ID in array)
             const ownerRecordId = state.teamMemberMap[state.currentUser.name];
             if (ownerRecordId) {
                 dealData['Owner'] = [ownerRecordId];
@@ -1137,6 +1144,7 @@
                             <input type="text" id="contactRole">
                         </div>
                         <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            Owner: ${state.currentUser.name} (auto-assigned)<br>
                             Counts as +1 New Lead Added for today!
                         </p>
                         <div class="modal-actions">
@@ -1161,7 +1169,6 @@
                 return;
             }
 
-            // Add Contact Owner as linked record (send record ID in array)
             const ownerRecordId = state.teamMemberMap[state.currentUser.name];
             if (ownerRecordId) {
                 contactData['Contact Owner'] = [ownerRecordId];
@@ -1210,7 +1217,6 @@
                 return;
             }
 
-            // Add Account Owner as linked record (send record ID in array)
             const ownerRecordId = state.teamMemberMap[state.currentUser.name];
             if (ownerRecordId) {
                 accountData['Account Owner'] = [ownerRecordId];
@@ -1280,10 +1286,14 @@
             const activityData = {
                 'Type': document.getElementById('activityType').value,
                 'Date': new Date().toISOString(),
-                'Owner': state.currentUser.name,
                 'Account': document.getElementById('activityAccount').value,
                 'Result': document.getElementById('activityResult').value
             };
+
+            const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+            if (ownerRecordId) {
+                activityData['Owner'] = [ownerRecordId];
+            }
 
             const contact = document.getElementById('activityContact').value;
             const nextSteps = document.getElementById('activityNextSteps').value;
@@ -1310,12 +1320,6 @@
             return state.data.deals.filter(d => d.owner === state.currentUser.name);
         }
 
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-
         function renderView(viewName) {
             state.currentView = viewName;
             document.getElementById('pageTitle').textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
@@ -1340,25 +1344,18 @@
 
         function renderDashboard() {
             const deals = getUserDeals();
+            const isLeadership = state.currentUser.role === 'Leadership';
+            
+            if (isLeadership) {
+                renderLeadershipDashboard();
+                return;
+            }
+            
             const quota = state.currentUser.quota || 45000;
-            const revenue = deals.filter(d => d.stage.toLowerCase().includes('won'))
-                .reduce((sum, d) => sum + d.value, 0);
-            const eventsClosed = deals.filter(d => d.stage.toLowerCase().includes('won')).length;
+            const closedDeals = deals.filter(d => d.stage.toLowerCase().includes('won'));
+            const revenue = closedDeals.reduce((sum, d) => sum + d.value, 0);
             const attainment = (revenue / quota) * 100;
 
-            const touchpointsGoal = 25;
-            const newLeadsGoal = 5;
-            const discoveriesGoal = 1;
-            const dealsMovedGoal = 1;
-
-            const goalsHit = [
-                state.dailyMetrics.touchpoints >= touchpointsGoal,
-                state.dailyMetrics.newLeads >= newLeadsGoal,
-                state.dailyMetrics.discoveryCalls >= discoveriesGoal,
-                state.dailyMetrics.dealsMoved >= dealsMovedGoal
-            ].filter(Boolean).length;
-
-            // Calculate this week's activity
             const userActivities = state.data.activities.filter(a => a.owner === state.currentUser.name);
             const calls = userActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
             const emails = userActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
@@ -1368,41 +1365,6 @@
 
             const content = document.getElementById('contentArea');
             content.innerHTML = `
-                <div class="daily-scorecard">
-                    <h2 style="margin-bottom: 16px;">TODAY'S GOALS (${state.currentUser.name})</h2>
-                    <p style="color: var(--text-gray); margin-bottom: 20px;">Status: ${goalsHit}/4 goals hit</p>
-                    <div class="scorecard-goals">
-                        <div class="goal-item ${state.dailyMetrics.touchpoints >= touchpointsGoal ? 'complete' : state.dailyMetrics.touchpoints >= 20 ? 'partial' : 'incomplete'}">
-                            <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 8px;">🔁 TOUCHPOINTS</div>
-                            <div class="goal-value ${state.dailyMetrics.touchpoints >= touchpointsGoal ? 'complete' : state.dailyMetrics.touchpoints >= 20 ? 'partial' : 'incomplete'}">
-                                ${state.dailyMetrics.touchpoints}/${touchpointsGoal}
-                            </div>
-                            <div style="font-size: 13px; color: var(--text-gray);">${Math.round((state.dailyMetrics.touchpoints / touchpointsGoal) * 100)}% complete</div>
-                        </div>
-                        <div class="goal-item ${state.dailyMetrics.newLeads >= newLeadsGoal ? 'complete' : state.dailyMetrics.newLeads >= 3 ? 'partial' : 'incomplete'}">
-                            <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 8px;">👥 NEW LEADS</div>
-                            <div class="goal-value ${state.dailyMetrics.newLeads >= newLeadsGoal ? 'complete' : state.dailyMetrics.newLeads >= 3 ? 'partial' : 'incomplete'}">
-                                ${state.dailyMetrics.newLeads}/${newLeadsGoal}
-                            </div>
-                            <div style="font-size: 13px; color: var(--text-gray);">${Math.round((state.dailyMetrics.newLeads / newLeadsGoal) * 100)}% complete</div>
-                        </div>
-                        <div class="goal-item ${state.dailyMetrics.discoveryCalls >= discoveriesGoal ? 'complete' : 'incomplete'}">
-                            <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 8px;">📞 DISCOVERIES</div>
-                            <div class="goal-value ${state.dailyMetrics.discoveryCalls >= discoveriesGoal ? 'complete' : 'incomplete'}">
-                                ${state.dailyMetrics.discoveryCalls}/${discoveriesGoal}
-                            </div>
-                            <div style="font-size: 13px; color: var(--text-gray);">${state.dailyMetrics.discoveryCalls >= discoveriesGoal ? '✅ Goal hit!' : '❌ Not yet'}</div>
-                        </div>
-                        <div class="goal-item ${state.dailyMetrics.dealsMoved >= dealsMovedGoal ? 'complete' : 'incomplete'}">
-                            <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 8px;">⚡ DEALS MOVED</div>
-                            <div class="goal-value ${state.dailyMetrics.dealsMoved >= dealsMovedGoal ? 'complete' : 'incomplete'}">
-                                ${state.dailyMetrics.dealsMoved}/${dealsMovedGoal}
-                            </div>
-                            <div style="font-size: 13px; color: var(--text-gray);">${state.dailyMetrics.dealsMoved >= dealsMovedGoal ? '✅ Goal hit!' : '❌ Not yet'}</div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="kpi-grid">
                     <div class="kpi-card">
                         <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">REVENUE</div>
@@ -1415,52 +1377,190 @@
                     </div>
 
                     <div class="kpi-card">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">EVENTS CLOSED</div>
-                        <div class="kpi-value">${eventsClosed}</div>
-                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Goal: 22</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${(eventsClosed / 22) * 100}%"></div>
-                        </div>
-                        <div style="font-size: 13px; font-weight: 600; color: var(--success);">${((eventsClosed / 22) * 100).toFixed(1)}% of goal</div>
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">CLOSED DEALS</div>
+                        <div class="kpi-value">${closedDeals.length}</div>
+                        <div style="font-size: 13px; color: var(--text-gray);">All time</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">PIPELINE</div>
+                        <div class="kpi-value">${deals.length - closedDeals.length}</div>
+                        <div style="font-size: 13px; color: var(--text-gray);">Active deals</div>
                     </div>
                 </div>
 
-                <div class="card" style="margin-top: 24px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🎉 Recent Wins</h2>
+                    </div>
+                    <div class="wins-list">
+                        ${closedDeals.length === 0 ? '<p style="text-align: center; color: var(--text-gray); padding: 40px;">No wins yet. Keep closing!</p>' : closedDeals.slice(0, 4).map(deal => `
+                            <div class="win-card">
+                                <div class="win-info">
+                                    <div class="win-name">${deal.name}</div>
+                                    <div class="win-meta">
+                                        <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                        ${deal.eventName || 'Event'}
+                                    </div>
+                                </div>
+                                <div class="win-value">$${deal.value.toLocaleString()}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">📊 This Week's Activity</h2>
                     </div>
-                    <div class="kpi-grid">
-                        <div class="kpi-card" style="border-left: 4px solid #3b82f6;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">📞 CALLS</div>
-                            <div class="kpi-value" style="color: #3b82f6;">${calls}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                    <div class="activity-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">📞</div>
+                            <div class="stat-value">${calls}</div>
+                            <div class="stat-label">Calls Made</div>
                         </div>
-                        <div class="kpi-card" style="border-left: 4px solid #8b5cf6;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">📧 EMAILS</div>
-                            <div class="kpi-value" style="color: #8b5cf6;">${emails}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📧</div>
+                            <div class="stat-value">${emails}</div>
+                            <div class="stat-label">Emails Sent</div>
                         </div>
-                        <div class="kpi-card" style="border-left: 4px solid #06b6d4;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">💼 LINKEDIN</div>
-                            <div class="kpi-value" style="color: #06b6d4;">${linkedin}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💼</div>
+                            <div class="stat-value">${linkedin}</div>
+                            <div class="stat-label">Messages</div>
                         </div>
-                        <div class="kpi-card" style="border-left: 4px solid #f59e0b;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">🎥 DEMOS</div>
-                            <div class="kpi-value" style="color: #f59e0b;">${demos}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎥</div>
+                            <div class="stat-value">${demos}</div>
+                            <div class="stat-label">Demos</div>
                         </div>
-                        <div class="kpi-card" style="border-left: 4px solid #10b981;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">📄 PROPOSALS</div>
-                            <div class="kpi-value" style="color: #10b981;">${proposals}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">This week</div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-value">${proposals}</div>
+                            <div class="stat-label">Proposals</div>
                         </div>
-                        <div class="kpi-card" style="border-left: 4px solid #22c55e;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 8px;">🎉 WINS</div>
-                            <div class="kpi-value" style="color: #22c55e;">${eventsClosed}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">This month</div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎉</div>
+                            <div class="stat-value">${closedDeals.length}</div>
+                            <div class="stat-label">Wins</div>
                         </div>
                     </div>
+                </div>
+            `;
+        }
+
+        function renderLeadershipDashboard() {
+            const allDeals = state.data.deals;
+            const closedDeals = allDeals.filter(d => d.stage.toLowerCase().includes('won'));
+            const totalRevenue = closedDeals.reduce((sum, d) => sum + d.value, 0);
+            const floorPriceUsed = allDeals.filter(d => d.pricingType === 'Floor Price').length;
+
+            const content = document.getElementById('contentArea');
+            content.innerHTML = `
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL REVENUE</div>
+                        <div class="kpi-value">$${(totalRevenue / 1000).toFixed(1)}K</div>
+                        <div style="font-size: 13px; color: var(--text-gray);">Target: $335K-$340K</div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL EVENTS</div>
+                        <div class="kpi-value">${closedDeals.length}</div>
+                        <div style="font-size: 13px; color: var(--text-gray);">Target: 140-200 events</div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">FLOOR-PRICE EVENTS</div>
+                        <div class="kpi-value">${floorPriceUsed}/10</div>
+                        <div style="font-size: 13px; color: var(--text-gray);">Remaining: ${10 - floorPriceUsed}</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title" style="margin-bottom: 20px;">Monthly Deal Mix (Team Total)</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tier</th>
+                                <th>Deals Closed</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${['Starter', 'Growth', 'Pro', 'Enterprise'].map(tier => {
+                                const tierDeals = closedDeals.filter(d => d.tier === tier);
+                                const revenue = tierDeals.reduce((sum, d) => sum + d.value, 0);
+                                return `
+                                    <tr>
+                                        <td><span class="badge badge-${tier.toLowerCase()}">${tier}</span></td>
+                                        <td>${tierDeals.length}</td>
+                                        <td>$${revenue.toLocaleString()}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderTeamOverview() {
+            const content = document.getElementById('contentArea');
+            const teamPerformance = state.data.teamMembers
+                .filter(m => m.role !== 'Leadership')
+                .map(member => {
+                    const memberDeals = state.data.deals.filter(d => d.owner === member.name);
+                    const won = memberDeals.filter(d => d.stage.toLowerCase().includes('won'));
+                    const revenue = won.reduce((sum, d) => sum + d.value, 0);
+                    const attainment = member.quota > 0 ? (revenue / member.quota) * 100 : 0;
+                    
+                    return {
+                        name: member.name,
+                        role: member.role,
+                        quota: member.quota,
+                        revenue: revenue,
+                        attainment: attainment,
+                        deals: memberDeals.length,
+                        won: won.length
+                    };
+                });
+            
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">👨‍👩‍👧‍👦 Team Performance</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Quota</th>
+                                <th>Revenue</th>
+                                <th>Attainment</th>
+                                <th>Deals</th>
+                                <th>Wins</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${teamPerformance.map(member => `
+                                <tr>
+                                    <td>${member.name}</td>
+                                    <td>${member.role}</td>
+                                    <td>$${member.quota.toLocaleString()}</td>
+                                    <td>$${member.revenue.toLocaleString()}</td>
+                                    <td>
+                                        <span class="badge ${member.attainment >= 100 ? 'badge-growth' : member.attainment >= 80 ? 'badge-pro' : 'badge-starter'}">
+                                            ${member.attainment.toFixed(1)}%
+                                        </span>
+                                    </td>
+                                    <td>${member.deals}</td>
+                                    <td>${member.won}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
             `;
         }
@@ -1595,7 +1695,7 @@
                     </div>
                     <p style="text-align: center; padding: 40px; color: var(--text-gray);">
                         Click "Log Activity" to record calls, emails, demos, and more.<br>
-                        Each activity counts toward your daily touchpoints goal!
+                        Each activity counts toward your weekly activity stats!
                     </p>
                 </div>
             `;
@@ -1611,826 +1711,6 @@
                     <p style="text-align: center; padding: 40px; color: var(--text-gray);">
                         Advanced reporting coming in Phase 2
                     </p>
-                </div>
-            `;
-        }
-
-        function renderLeadershipDashboard() {
-            const content = document.getElementById('contentArea');
-            const isTestUser = state.currentUser.name === 'Test Leadership';
-            
-            content.innerHTML = `
-                <div class="card">
-                    <div class="tabs">
-                        <button class="tab active" onclick="switchLeadershipTab('overview')">Company Overview</button>
-                        <button class="tab" onclick="switchLeadershipTab('daily')">Daily Team Activity</button>
-                        <button class="tab" onclick="switchLeadershipTab('weekly')">Weekly Breakdown</button>
-                        <button class="tab" onclick="switchLeadershipTab('pipeline')">Pipeline Health</button>
-                        <button class="tab" onclick="switchLeadershipTab('individual')">Rep Deep Dive</button>
-                    </div>
-                    <div id="leadershipContent"></div>
-                </div>
-            `;
-
-            switchLeadershipTab('overview');
-        }
-
-        function switchLeadershipTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event?.target?.classList.add('active');
-
-            const content = document.getElementById('leadershipContent');
-            const isTestUser = state.currentUser.name === 'Test Leadership';
-            
-            if (tab === 'overview') {
-                if (isTestUser) {
-                    // SAMPLE DATA for Test Leadership
-                    content.innerHTML = `
-                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-                            <strong>📊 SAMPLE DATA MODE</strong><br>
-                            <span style="font-size: 14px;">This shows example data. Ramallah & Keyna see real data.</span>
-                        </div>
-                        
-                        <div class="kpi-grid">
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL REVENUE</div>
-                                <div class="kpi-value">$328.8K</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: $340K</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 96.7%"></div>
-                                </div>
-                                <div style="font-size: 13px; font-weight: 600; color: var(--success);">96.7% of goal</div>
-                            </div>
-                            
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL EVENTS</div>
-                                <div class="kpi-value">156</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: 140-200</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 78%"></div>
-                                </div>
-                                <div style="font-size: 13px; font-weight: 600; color: var(--success);">78% of max target</div>
-                            </div>
-                            
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">AVG REVENUE/EVENT</div>
-                                <div class="kpi-value">$2,107</div>
-                                <div style="font-size: 13px; color: var(--text-gray);">Target: $2,045</div>
-                            </div>
-                            
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">FLOOR-PRICE EVENTS</div>
-                                <div class="kpi-value">6/10</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Remaining: 4</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 60%"></div>
-                                </div>
-                                <div style="font-size: 13px; font-weight: 600;">60% utilized</div>
-                            </div>
-                        </div>
-
-                        <div class="card" style="margin-top: 24px;">
-                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Monthly Deal Mix (Team Total)</h2>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tier</th>
-                                        <th>Deals Closed</th>
-                                        <th>Revenue</th>
-                                        <th>Avg Deal Size</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span class="badge badge-starter">Starter</span></td>
-                                        <td>3</td>
-                                        <td>$2,250</td>
-                                        <td>$750</td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="badge badge-growth">Growth</span></td>
-                                        <td>8</td>
-                                        <td>$10,000</td>
-                                        <td>$1,250</td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="badge badge-pro">Pro</span></td>
-                                        <td>5</td>
-                                        <td>$10,000</td>
-                                        <td>$2,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="badge badge-enterprise">Enterprise</span></td>
-                                        <td>2</td>
-                                        <td>$8,400</td>
-                                        <td>$4,200</td>
-                                    </tr>
-                                    <tr style="font-weight: 700; background: var(--bg-light);">
-                                        <td>TOTAL</td>
-                                        <td>18</td>
-                                        <td>$30,650</td>
-                                        <td>$1,703</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="card" style="margin-top: 24px;">
-                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Floor-Price Event Capacity</h2>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tier</th>
-                                        <th>Max Floor Events</th>
-                                        <th>Current Usage</th>
-                                        <th>Remaining</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span class="badge badge-starter">Starter</span></td>
-                                        <td>2</td>
-                                        <td>1</td>
-                                        <td style="color: var(--success)">1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="badge badge-growth">Growth</span></td>
-                                        <td>2</td>
-                                        <td>2</td>
-                                        <td style="color: var(--warning)">0 ⚠️</td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="badge badge-pro">Pro</span></td>
-                                        <td>3</td>
-                                        <td>2</td>
-                                        <td style="color: var(--success)">1</td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="badge badge-enterprise">Enterprise</span></td>
-                                        <td>3</td>
-                                        <td>1</td>
-                                        <td style="color: var(--success)">2</td>
-                                    </tr>
-                                    <tr style="font-weight: 700; background: var(--bg-light);">
-                                        <td>TOTAL</td>
-                                        <td>10</td>
-                                        <td>6</td>
-                                        <td>4</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                } else {
-                    // REAL DATA for Ramallah & Keyna
-                    const allDeals = state.data.deals;
-                    const totalRevenue = allDeals.filter(d => d.stage.toLowerCase().includes('won'))
-                        .reduce((sum, d) => sum + d.value, 0);
-                    const totalEvents = allDeals.filter(d => d.stage.toLowerCase().includes('won')).length;
-                    const avgRevenue = totalEvents > 0 ? totalRevenue / totalEvents : 0;
-                    const floorPriceUsed = allDeals.filter(d => d.pricingType === 'Floor Price').length;
-                    
-                    content.innerHTML = `
-                        <div class="kpi-grid" style="margin-top: 24px;">
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL REVENUE</div>
-                                <div class="kpi-value">$${(totalRevenue / 1000).toFixed(1)}K</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: $340K</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${Math.min((totalRevenue / 340000) * 100, 100)}%"></div>
-                                </div>
-                                <div style="font-size: 13px; font-weight: 600; color: var(--success);">${((totalRevenue / 340000) * 100).toFixed(1)}% of goal</div>
-                            </div>
-                            
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL EVENTS</div>
-                                <div class="kpi-value">${totalEvents}</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: 140-200</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${(totalEvents / 200) * 100}%"></div>
-                                </div>
-                                <div style="font-size: 13px; font-weight: 600; color: var(--success);">${((totalEvents / 200) * 100).toFixed(1)}% of max target</div>
-                            </div>
-                            
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">AVG REVENUE/EVENT</div>
-                                <div class="kpi-value">$${Math.round(avgRevenue).toLocaleString()}</div>
-                                <div style="font-size: 13px; color: var(--text-gray);">Target: $2,045</div>
-                            </div>
-                            
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">FLOOR-PRICE EVENTS</div>
-                                <div class="kpi-value">${floorPriceUsed}/10</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Remaining: ${10 - floorPriceUsed}</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${(floorPriceUsed / 10) * 100}%"></div>
-                                </div>
-                                <div style="font-size: 13px; font-weight: 600; ${floorPriceUsed >= 8 ? 'color: var(--warning)' : ''}">${((floorPriceUsed / 10) * 100).toFixed(0)}% utilized</div>
-                            </div>
-                        </div>
-
-                        <div class="card" style="margin-top: 24px;">
-                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Monthly Deal Mix (Team Total)</h2>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tier</th>
-                                        <th>Deals Closed</th>
-                                        <th>Revenue</th>
-                                        <th>Avg Deal Size</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${['Starter', 'Growth', 'Pro', 'Enterprise'].map(tier => {
-                                        const tierDeals = allDeals.filter(d => d.tier === tier && d.stage.toLowerCase().includes('won'));
-                                        const revenue = tierDeals.reduce((sum, d) => sum + d.value, 0);
-                                        const avg = tierDeals.length > 0 ? revenue / tierDeals.length : 0;
-                                        return `
-                                            <tr>
-                                                <td><span class="badge badge-${tier.toLowerCase()}">${tier}</span></td>
-                                                <td>${tierDeals.length}</td>
-                                                <td>$${revenue.toLocaleString()}</td>
-                                                <td>$${Math.round(avg).toLocaleString()}</td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                    <tr style="font-weight: 700; background: var(--bg-light);">
-                                        <td>TOTAL</td>
-                                        <td>${totalEvents}</td>
-                                        <td>$${totalRevenue.toLocaleString()}</td>
-                                        <td>$${Math.round(avgRevenue).toLocaleString()}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="card" style="margin-top: 24px;">
-                            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Floor-Price Event Capacity</h2>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tier</th>
-                                        <th>Max Floor Events</th>
-                                        <th>Current Usage</th>
-                                        <th>Remaining</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${[
-                                        {tier: 'Starter', max: 2},
-                                        {tier: 'Growth', max: 2},
-                                        {tier: 'Pro', max: 3},
-                                        {tier: 'Enterprise', max: 3}
-                                    ].map(rule => {
-                                        const used = allDeals.filter(d => d.tier === rule.tier && d.pricingType === 'Floor Price').length;
-                                        return `
-                                            <tr>
-                                                <td><span class="badge badge-${rule.tier.toLowerCase()}">${rule.tier}</span></td>
-                                                <td>${rule.max}</td>
-                                                <td>${used}</td>
-                                                <td style="color: ${used >= rule.max ? 'var(--danger)' : 'var(--success)'}">
-                                                    ${rule.max - used} ${used >= rule.max ? '⚠️' : ''}
-                                                </td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                    <tr style="font-weight: 700; background: var(--bg-light);">
-                                        <td>TOTAL</td>
-                                        <td>10</td>
-                                        <td>${floorPriceUsed}</td>
-                                        <td>${10 - floorPriceUsed}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                }
-            } else if (tab === 'daily') {
-                const reps = state.data.teamMembers.filter(m => m.role !== 'Leadership');
-                
-                if (isTestUser) {
-                    // SAMPLE DATA
-                    content.innerHTML = `
-                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-                            <strong>📊 SAMPLE DATA MODE</strong>
-                        </div>
-                        
-                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">TODAY'S TEAM PERFORMANCE</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Rep</th>
-                                    <th>Touchpoints</th>
-                                    <th>New Leads</th>
-                                    <th>Discoveries</th>
-                                    <th>Deals Moved</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Javonte</td>
-                                    <td>18/25 <span class="badge badge-warning">72%</span></td>
-                                    <td>3/5 <span class="badge badge-warning">60%</span></td>
-                                    <td>0/1 <span class="badge badge-danger">0%</span></td>
-                                    <td>1/1 <span class="badge badge-success">100%</span></td>
-                                    <td>2/4 ⚠️</td>
-                                </tr>
-                                <tr>
-                                    <td>Teslim</td>
-                                    <td>23/25 <span class="badge badge-success">92%</span></td>
-                                    <td>5/5 <span class="badge badge-success">100%</span></td>
-                                    <td>1/1 <span class="badge badge-success">100%</span></td>
-                                    <td>1/1 <span class="badge badge-success">100%</span></td>
-                                    <td>4/4 ✅</td>
-                                </tr>
-                                <tr>
-                                    <td>Israel</td>
-                                    <td>12/25 <span class="badge badge-danger">48%</span></td>
-                                    <td>2/5 <span class="badge badge-danger">40%</span></td>
-                                    <td>0/1 <span class="badge badge-danger">0%</span></td>
-                                    <td>0/1 <span class="badge badge-danger">0%</span></td>
-                                    <td>0/4 ❌</td>
-                                </tr>
-                                <tr>
-                                    <td>Conrad</td>
-                                    <td>25/25 <span class="badge badge-success">100%</span></td>
-                                    <td>6/5 <span class="badge badge-success">120%</span></td>
-                                    <td>2/1 <span class="badge badge-success">200%</span></td>
-                                    <td>2/1 <span class="badge badge-success">200%</span></td>
-                                    <td>4/4 ✅</td>
-                                </tr>
-                                <tr style="font-weight: 700; background: var(--bg-light);">
-                                    <td>TEAM TOTAL</td>
-                                    <td>78/100</td>
-                                    <td>16/20</td>
-                                    <td>3/4</td>
-                                    <td>4/4</td>
-                                    <td>10/16</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    `;
-                } else {
-                    // REAL DATA
-                    const today = new Date().toISOString().split('T')[0];
-                    
-                    content.innerHTML = `
-                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">TODAY'S TEAM PERFORMANCE</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Rep</th>
-                                    <th>Touchpoints</th>
-                                    <th>New Leads</th>
-                                    <th>Discoveries</th>
-                                    <th>Deals Moved</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${reps.map(rep => {
-                                    const repActivities = state.data.activities.filter(a => 
-                                        a.owner === rep.name && 
-                                        a.createdTime && 
-                                        a.createdTime.split('T')[0] === today
-                                    );
-                                    
-                                    const touchpoints = repActivities.length;
-                                    
-                                    // FIXED: Only count contacts created by THIS rep today
-                                    const newContactsToday = state.data.contacts.filter(c => 
-                                        c.owner === rep.name &&
-                                        c.createdTime && 
-                                        c.createdTime.split('T')[0] === today
-                                    ).length;
-                                    
-                                    // FIXED: Only count accounts created by THIS rep today
-                                    const newAccountsToday = state.data.accounts.filter(a => 
-                                        a.owner === rep.name &&
-                                        a.createdTime && 
-                                        a.createdTime.split('T')[0] === today
-                                    ).length;
-                                    
-                                    const newLeads = newContactsToday + newAccountsToday;
-                                    
-                                    const discoveries = repActivities.filter(a => 
-                                        a.type && a.type.toLowerCase().includes('discovery')
-                                    ).length;
-                                    
-                                    const dealsMoved = repActivities.filter(a => 
-                                        a.type && a.type.toLowerCase().includes('stage')
-                                    ).length;
-                                    
-                                    const goalsHit = [
-                                        touchpoints >= 25,
-                                        newLeads >= 5,
-                                        discoveries >= 1,
-                                        dealsMoved >= 1
-                                    ].filter(Boolean).length;
-                                    
-                                    return `
-                                        <tr>
-                                            <td>${rep.name}</td>
-                                            <td>${touchpoints}/25 <span class="badge ${touchpoints >= 25 ? 'badge-success' : touchpoints >= 20 ? 'badge-warning' : 'badge-danger'}">${Math.round((touchpoints/25)*100)}%</span></td>
-                                            <td>${newLeads}/5 <span class="badge ${newLeads >= 5 ? 'badge-success' : newLeads >= 3 ? 'badge-warning' : 'badge-danger'}">${Math.round((newLeads/5)*100)}%</span></td>
-                                            <td>${discoveries}/1 <span class="badge ${discoveries >= 1 ? 'badge-success' : 'badge-danger'}">${Math.round((discoveries/1)*100)}%</span></td>
-                                            <td>${dealsMoved}/1 <span class="badge ${dealsMoved >= 1 ? 'badge-success' : 'badge-danger'}">${Math.round((dealsMoved/1)*100)}%</span></td>
-                                            <td>${goalsHit}/4 ${goalsHit === 4 ? '✅' : goalsHit >= 2 ? '⚠️' : '❌'}</td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                }
-            } else if (tab === 'weekly') {
-                if (isTestUser) {
-                    // SAMPLE DATA
-                    content.innerHTML = `
-                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-                            <strong>📊 SAMPLE DATA MODE</strong>
-                        </div>
-                        
-                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">THIS WEEK'S TEAM ACTIVITY</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Activity Type</th>
-                                    <th>Javonte</th>
-                                    <th>Teslim</th>
-                                    <th>Israel</th>
-                                    <th>Conrad</th>
-                                    <th>TOTAL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Calls</strong></td>
-                                    <td>45</td>
-                                    <td>52</td>
-                                    <td>38</td>
-                                    <td>51</td>
-                                    <td><strong>186</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Emails</strong></td>
-                                    <td>35</td>
-                                    <td>40</td>
-                                    <td>30</td>
-                                    <td>40</td>
-                                    <td><strong>145</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>LinkedIn Msgs</strong></td>
-                                    <td>12</td>
-                                    <td>15</td>
-                                    <td>10</td>
-                                    <td>20</td>
-                                    <td><strong>57</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Discovery Calls</strong></td>
-                                    <td>4</td>
-                                    <td>5</td>
-                                    <td>3</td>
-                                    <td>6</td>
-                                    <td><strong>18</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Demos</strong></td>
-                                    <td>2</td>
-                                    <td>3</td>
-                                    <td>1</td>
-                                    <td>6</td>
-                                    <td><strong>12</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Proposals</strong></td>
-                                    <td>1</td>
-                                    <td>2</td>
-                                    <td>1</td>
-                                    <td>5</td>
-                                    <td><strong>9</strong></td>
-                                </tr>
-                                <tr style="font-weight: 700; background: var(--bg-light);">
-                                    <td>TOTAL</td>
-                                    <td>99</td>
-                                    <td>117</td>
-                                    <td>83</td>
-                                    <td>128</td>
-                                    <td>427</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    `;
-                } else {
-                    // REAL DATA
-                    const reps = state.data.teamMembers.filter(m => m.role !== 'Leadership');
-                    const activityTypes = ['Call', 'Email', 'LinkedIn', 'Discovery Call', 'Demo', 'Proposal'];
-                    
-                    content.innerHTML = `
-                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">THIS WEEK'S TEAM ACTIVITY</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Activity Type</th>
-                                    ${reps.map(r => `<th>${r.name}</th>`).join('')}
-                                    <th>TOTAL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${activityTypes.map(type => {
-                                    const repCounts = reps.map(rep => {
-                                        return state.data.activities.filter(a => 
-                                            a.owner === rep.name && 
-                                            a.type && 
-                                            a.type.toLowerCase().includes(type.toLowerCase())
-                                        ).length;
-                                    });
-                                    const total = repCounts.reduce((a,b) => a+b, 0);
-                                    
-                                    return `
-                                        <tr>
-                                            <td><strong>${type}</strong></td>
-                                            ${repCounts.map(count => `<td>${count}</td>`).join('')}
-                                            <td><strong>${total}</strong></td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                }
-            } else if (tab === 'pipeline') {
-                const stages = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won', 'Closed Lost'];
-                
-                if (isTestUser) {
-                    // SAMPLE DATA
-                    content.innerHTML = `
-                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-                            <strong>📊 SAMPLE DATA MODE</strong>
-                        </div>
-                        
-                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">TEAM PIPELINE BY STAGE</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Stage</th>
-                                    <th>Deals</th>
-                                    <th>Total Value</th>
-                                    <th>Avg Deal Size</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Qualified</td>
-                                    <td>12</td>
-                                    <td>$24,500</td>
-                                    <td>$2,042</td>
-                                </tr>
-                                <tr>
-                                    <td>Proposal Sent</td>
-                                    <td>8</td>
-                                    <td>$18,200</td>
-                                    <td>$2,275</td>
-                                </tr>
-                                <tr>
-                                    <td>Negotiation</td>
-                                    <td>5</td>
-                                    <td>$12,800</td>
-                                    <td>$2,560</td>
-                                </tr>
-                                <tr>
-                                    <td>Closed Won</td>
-                                    <td>18</td>
-                                    <td>$32,000</td>
-                                    <td>$1,778</td>
-                                </tr>
-                                <tr>
-                                    <td>Closed Lost</td>
-                                    <td>4</td>
-                                    <td>$8,000</td>
-                                    <td>$2,000</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700; color: var(--warning);">⚠️ ALERTS</h3>
-                        <div style="background: #fef3c7; padding: 16px; border-radius: 12px; border-left: 4px solid #f59e0b;">
-                            <div style="font-weight: 600; margin-bottom: 8px;">Pipeline Health Alerts</div>
-                            <div>• 3 deals in Negotiation for 20+ days (potential stall)</div>
-                            <div>• Javonte below daily touchpoint goal 3 days this week</div>
-                            <div>• Israel has not logged a discovery call in 4 days</div>
-                        </div>
-                    `;
-                } else {
-                    // REAL DATA
-                    content.innerHTML = `
-                        <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">TEAM PIPELINE BY STAGE</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Stage</th>
-                                    <th>Deals</th>
-                                    <th>Total Value</th>
-                                    <th>Avg Deal Size</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${stages.map(stage => {
-                                    const stageDeals = state.data.deals.filter(d => d.stage === stage);
-                                    const totalValue = stageDeals.reduce((sum, d) => sum + d.value, 0);
-                                    const avgSize = stageDeals.length > 0 ? totalValue / stageDeals.length : 0;
-                                    
-                                    return `
-                                        <tr>
-                                            <td>${stage}</td>
-                                            <td>${stageDeals.length}</td>
-                                            <td>$${totalValue.toLocaleString()}</td>
-                                            <td>$${Math.round(avgSize).toLocaleString()}</td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                }
-            } else if (tab === 'individual') {
-                const reps = state.data.teamMembers.filter(m => m.role !== 'Leadership');
-                
-                content.innerHTML = `
-                    <div class="form-group" style="margin: 24px 0;">
-                        <label>SELECT REP:</label>
-                        <select id="repSelector" onchange="loadRepDetails(this.value)">
-                            ${reps.map(r => `<option value="${r.name}">${r.name}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div id="repDetails"></div>
-                `;
-                
-                if (reps.length > 0) {
-                    loadRepDetails(reps[0].name);
-                }
-            }
-        }
-
-        function loadRepDetails(repName) {
-            const isTestUser = state.currentUser.name === 'Test Leadership';
-            const rep = state.data.teamMembers.find(m => m.name === repName);
-            const repDeals = state.data.deals.filter(d => d.owner === repName);
-            const won = repDeals.filter(d => d.stage.toLowerCase().includes('won'));
-            const revenue = won.reduce((sum, d) => sum + d.value, 0);
-            const attainment = rep.quota > 0 ? (revenue / rep.quota) * 100 : 0;
-
-            if (isTestUser) {
-                // SAMPLE DATA
-                document.getElementById('repDetails').innerHTML = `
-                    <div style="background: #fef3c7; padding: 16px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #f59e0b;">
-                        <strong>📊 SAMPLE DATA MODE</strong>
-                    </div>
-                    
-                    <div class="kpi-grid">
-                        <div class="kpi-card">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">GOALS HIT (Last 7 Days)</div>
-                            <div class="kpi-value">15/28</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">54% completion rate</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOUCHPOINTS (This Week)</div>
-                            <div class="kpi-value">112/125</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">90% of weekly goal</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">NEW LEADS (This Week)</div>
-                            <div class="kpi-value">18/35</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">51% of weekly goal</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">DISCOVERY CALLS (This Week)</div>
-                            <div class="kpi-value">3/7</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">43% of weekly goal</div>
-                        </div>
-                    </div>
-
-                    <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">CURRENT PIPELINE</h3>
-                    <p>• 8 active deals | $16,200 total value</p>
-                    <p>• Revenue YTD: $12,500 | Attainment: 27.8%</p>
-                    <p>• Longest deal in pipeline: 45 days (Negotiation stage)</p>
-                `;
-            } else {
-                // REAL DATA
-                document.getElementById('repDetails').innerHTML = `
-                    <div class="kpi-grid">
-                        <div class="kpi-card">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">REVENUE</div>
-                            <div class="kpi-value">$${revenue.toLocaleString()}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">Quota: $${rep.quota.toLocaleString()}</div>
-                            <div class="progress-bar" style="margin-top: 12px;">
-                                <div class="progress-fill" style="width: ${Math.min(attainment, 100)}%"></div>
-                            </div>
-                            <div style="font-size: 13px; font-weight: 600; margin-top: 8px; color: var(--success);">${attainment.toFixed(1)}% attainment</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">DEALS</div>
-                            <div class="kpi-value">${repDeals.length}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">Total pipeline</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">WINS</div>
-                            <div class="kpi-value">${won.length}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">Closed won</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">AVG DEAL SIZE</div>
-                            <div class="kpi-value">$${won.length > 0 ? Math.round(revenue / won.length).toLocaleString() : '0'}</div>
-                            <div style="font-size: 13px; color: var(--text-gray);">Per closed deal</div>
-                        </div>
-                    </div>
-
-                    <h3 style="margin: 24px 0 12px; font-size: 18px; font-weight: 700;">CURRENT PIPELINE</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Stage</th>
-                                <th>Deals</th>
-                                <th>Total Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${['Qualified', 'Proposal Sent', 'Negotiation'].map(stage => {
-                                const stageDeals = repDeals.filter(d => d.stage === stage);
-                                const stageValue = stageDeals.reduce((sum, d) => sum + d.value, 0);
-                                return `
-                                    <tr>
-                                        <td>${stage}</td>
-                                        <td>${stageDeals.length}</td>
-                                        <td>$${stageValue.toLocaleString()}</td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                `;
-            }
-        }
-
-        function renderTeamOverview() {
-            const content = document.getElementById('contentArea');
-            const teamPerformance = state.data.teamMembers
-                .filter(m => m.role !== 'Leadership')
-                .map(member => {
-                    const memberDeals = state.data.deals.filter(d => d.owner === member.name);
-                    const won = memberDeals.filter(d => d.stage.toLowerCase().includes('won'));
-                    const revenue = won.reduce((sum, d) => sum + d.value, 0);
-                    const attainment = member.quota > 0 ? (revenue / member.quota) * 100 : 0;
-                    
-                    return {
-                        name: member.name,
-                        role: member.role,
-                        quota: member.quota,
-                        revenue: revenue,
-                        attainment: attainment,
-                        deals: memberDeals.length,
-                        won: won.length
-                    };
-                });
-            
-            content.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">👨‍👩‍👧‍👦 Team Performance</h2>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Quota</th>
-                                <th>Revenue</th>
-                                <th>Attainment</th>
-                                <th>Deals</th>
-                                <th>Wins</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${teamPerformance.map(member => `
-                                <tr>
-                                    <td>${member.name}</td>
-                                    <td>${member.role}</td>
-                                    <td>$${member.quota.toLocaleString()}</td>
-                                    <td>$${member.revenue.toLocaleString()}</td>
-                                    <td>
-                                        <span class="badge ${member.attainment >= 100 ? 'badge-success' : member.attainment >= 80 ? 'badge-warning' : 'badge-danger'}">
-                                            ${member.attainment.toFixed(1)}%
-                                        </span>
-                                    </td>
-                                    <td>${member.deals}</td>
-                                    <td>${member.won}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
                 </div>
             `;
         }
