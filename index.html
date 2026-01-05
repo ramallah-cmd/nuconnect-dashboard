@@ -790,8 +790,8 @@
                     name: r.fields['Deal Name'] || '',
                     owner: r.fields.Owner || '',
                     tier: r.fields['Tier (calculated)'] || r.fields.Tier || '',
-                    stage: r.fields.Stage || '',
-                    value: r.fields.Amount || 0,
+                    stage: r.fields['Deal Stage'] || '',
+                    value: r.fields['Deal Value'] || 0,
                     eventName: r.fields['Event Name'] || '',
                     pricingType: r.fields['Pricing Type'] || 'Public Price',
                     closeDate: r.fields['Close Date'] || '',
@@ -841,6 +841,7 @@
                     phone: r.fields.Phone || '',
                     company: Array.isArray(r.fields.Account) ? r.fields.Account[0] : r.fields.Account || '',
                     role: r.fields.Title || '',
+                    owner: r.fields['Contact Owner'] || '',
                     createdTime: r.createdTime
                 }));
             }
@@ -851,9 +852,9 @@
             if (response && response.records) {
                 state.data.accounts = response.records.map(r => ({
                     id: r.id,
-                    name: r.fields.Name || '',
+                    name: r.fields['Account Name'] || '',
                     industry: r.fields.Industry || '',
-                    owner: r.fields.Owner || '',
+                    owner: r.fields['Account Owner'] || '',
                     createdTime: r.createdTime
                 }));
             }
@@ -869,12 +870,20 @@
             
             state.dailyMetrics.touchpoints = userActivities.length;
             
+            // FIXED: Only count contacts created by THIS user today
             const newContactsToday = state.data.contacts.filter(c => 
-                c.createdTime && c.createdTime.split('T')[0] === today
+                c.owner === state.currentUser.name &&
+                c.createdTime && 
+                c.createdTime.split('T')[0] === today
             ).length;
+            
+            // FIXED: Only count accounts created by THIS user today
             const newAccountsToday = state.data.accounts.filter(a => 
-                a.createdTime && a.createdTime.split('T')[0] === today
+                a.owner === state.currentUser.name &&
+                a.createdTime && 
+                a.createdTime.split('T')[0] === today
             ).length;
+            
             state.dailyMetrics.newLeads = newContactsToday + newAccountsToday;
             
             state.dailyMetrics.discoveryCalls = userActivities.filter(a => 
@@ -1051,8 +1060,8 @@
             const dealData = {
                 'Deal Name': dealName,
                 'Owner': state.currentUser.name,
-                'Stage': document.getElementById('dealStage').value,
-                'Amount': dealValue,
+                'Deal Stage': document.getElementById('dealStage').value,
+                'Deal Value': dealValue,
                 'Pricing Type': document.getElementById('dealPricing').value
             };
 
@@ -1106,7 +1115,8 @@
                 'Full Name': document.getElementById('contactName').value,
                 'Email': document.getElementById('contactEmail').value,
                 'Phone': document.getElementById('contactPhone').value,
-                'Title': document.getElementById('contactRole').value
+                'Title': document.getElementById('contactRole').value,
+                'Contact Owner': state.currentUser.name
             };
 
             if (!contactData['Full Name'] || !contactData['Email']) {
@@ -1151,12 +1161,12 @@
 
         function saveAccount() {
             const accountData = {
-                'Name': document.getElementById('accountName').value,
+                'Account Name': document.getElementById('accountName').value,
                 'Industry': document.getElementById('accountIndustry').value,
-                'Owner': document.getElementById('accountOwner').value
+                'Account Owner': document.getElementById('accountOwner').value
             };
 
-            if (!accountData['Name']) {
+            if (!accountData['Account Name']) {
                 alert('Please enter account name');
                 return;
             }
@@ -1896,12 +1906,21 @@
                                     );
                                     
                                     const touchpoints = repActivities.length;
+                                    
+                                    // FIXED: Only count contacts created by THIS rep today
                                     const newContactsToday = state.data.contacts.filter(c => 
-                                        c.createdTime && c.createdTime.split('T')[0] === today
+                                        c.owner === rep.name &&
+                                        c.createdTime && 
+                                        c.createdTime.split('T')[0] === today
                                     ).length;
+                                    
+                                    // FIXED: Only count accounts created by THIS rep today
                                     const newAccountsToday = state.data.accounts.filter(a => 
-                                        a.createdTime && a.createdTime.split('T')[0] === today
+                                        a.owner === rep.name &&
+                                        a.createdTime && 
+                                        a.createdTime.split('T')[0] === today
                                     ).length;
+                                    
                                     const newLeads = newContactsToday + newAccountsToday;
                                     
                                     const discoveries = repActivities.filter(a => 
