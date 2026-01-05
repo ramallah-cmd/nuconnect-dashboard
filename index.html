@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -645,12 +646,6 @@
 
         function openSettings() {
             const modal = document.getElementById('modalContainer');
-            const currentToken = state.apiKey;
-            const tokenPreview = currentToken ? `${currentToken.substring(0, 8)}...${currentToken.substring(currentToken.length - 4)}` : 'Not set';
-            
-            console.log('🔑 Current API Token:', tokenPreview);
-            console.log('🔑 Full token length:', currentToken ? currentToken.length : 0);
-            
             modal.innerHTML = `
                 <div class="modal active">
                     <div class="modal-content">
@@ -663,10 +658,7 @@
                         </div>
                         <div class="form-group">
                             <label>Airtable API Key / Personal Access Token</label>
-                            <input type="password" id="settingsApiKey" value="${currentToken}" style="font-family: monospace;">
-                            <p style="font-size: 12px; color: var(--success); margin-top: 4px;">
-                                Current token: ${tokenPreview}
-                            </p>
+                            <input type="password" id="settingsApiKey" placeholder="Enter new token..." style="font-family: monospace;">
                             <p style="font-size: 12px; color: var(--text-gray); margin-top: 8px;">
                                 ⚠️ Make sure your token has <strong>data.records:write</strong> permission!
                             </p>
@@ -684,30 +676,19 @@
             const baseId = document.getElementById('settingsBaseId').value.trim();
             const apiKey = document.getElementById('settingsApiKey').value.trim();
             
-            console.log('💾 Saving settings...');
-            console.log('Base ID:', baseId);
-            console.log('API Key length:', apiKey ? apiKey.length : 0);
-            
             if (!baseId) {
                 alert('Base ID is required');
                 return;
             }
             
-            if (!apiKey) {
-                alert('API Key is required');
-                return;
-            }
-            
             localStorage.setItem('airtable_baseId', baseId);
-            localStorage.setItem('airtable_apiKey', apiKey);
             
-            console.log('✅ Settings saved to localStorage');
-            console.log('Stored Base ID:', localStorage.getItem('airtable_baseId'));
-            console.log('Stored API Key length:', localStorage.getItem('airtable_apiKey')?.length || 0);
+            if (apiKey) {
+                localStorage.setItem('airtable_apiKey', apiKey);
+            }
             
             alert('Settings saved! Reloading...');
             location.reload();
-        }
         }
 
         async function loadTeamMembers() {
@@ -864,9 +845,6 @@
 
         async function fetchFromAirtable(tableName, method = 'GET', body = null) {
             try {
-                const tokenPreview = state.apiKey ? `${state.apiKey.substring(0, 8)}...${state.apiKey.substring(state.apiKey.length - 4)}` : 'NONE';
-                console.log(`📡 Fetching ${tableName} (${method}) with token: ${tokenPreview}`);
-                
                 const requestBody = {
                     baseId: state.baseId,
                     tableName: tableName,
@@ -885,11 +863,9 @@
                 });
 
                 if (!response.ok) {
-                    console.error(`❌ ${tableName} request failed: ${response.status}`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                console.log(`✅ ${tableName} fetch successful`);
                 return await response.json();
             } catch (error) {
                 console.error(`Error with ${tableName}:`, error);
@@ -1488,126 +1464,6 @@
             logActivity(activityData);
         }
 
-        function openDealDetailsModal(dealId) {
-            const deal = state.data.deals.find(d => d.id === dealId);
-            if (!deal) {
-                alert('Deal not found');
-                return;
-            }
-            
-            const modal = document.getElementById('modalContainer');
-            modal.innerHTML = `
-                <div class="modal active">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>📊 ${deal.name}</h2>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Deal Value</label>
-                            <input type="text" value="$${deal.value.toLocaleString()}" disabled style="background: var(--bg-light); font-weight: 600; font-size: 18px;">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Tier</label>
-                            <div><span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Current Stage</label>
-                            <select id="dealStageEdit" class="form-control">
-                                <option value="Qualified" ${deal.stage === 'Qualified' ? 'selected' : ''}>Qualified</option>
-                                <option value="Proposal Sent" ${deal.stage === 'Proposal Sent' ? 'selected' : ''}>Proposal Sent</option>
-                                <option value="Negotiation" ${deal.stage === 'Negotiation' ? 'selected' : ''}>Negotiation</option>
-                                <option value="Closed Won" ${deal.stage === 'Closed Won' ? 'selected' : ''}>Closed Won</option>
-                                <option value="Closed Lost" ${deal.stage === 'Closed Lost' ? 'selected' : ''}>Closed Lost</option>
-                            </select>
-                            <p style="font-size: 12px; color: var(--text-gray); margin-top: 8px;">
-                                Change the stage and click "Update" to move the deal
-                            </p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Owner</label>
-                            <input type="text" value="${deal.owner}" disabled style="background: var(--bg-light);">
-                        </div>
-                        
-                        ${deal.eventName ? `
-                        <div class="form-group">
-                            <label>Event Name</label>
-                            <input type="text" value="${deal.eventName}" disabled style="background: var(--bg-light);">
-                        </div>
-                        ` : ''}
-                        
-                        ${deal.closeDate ? `
-                        <div class="form-group">
-                            <label>Close Date</label>
-                            <input type="text" value="${deal.closeDate}" disabled style="background: var(--bg-light);">
-                        </div>
-                        ` : ''}
-                        
-                        <div class="modal-actions">
-                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                            <button class="btn btn-primary" onclick="updateDealStage('${dealId}')">Update Stage</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        async function updateDealStage(dealId) {
-            const newStage = document.getElementById('dealStageEdit').value;
-            const deal = state.data.deals.find(d => d.id === dealId);
-            
-            if (!deal) {
-                alert('Deal not found');
-                return;
-            }
-            
-            if (newStage === deal.stage) {
-                alert('Stage unchanged');
-                closeModal();
-                return;
-            }
-            
-            try {
-                console.log(`🔄 Updating deal ${dealId} to stage: ${newStage}`);
-                
-                const response = await fetch(`https://api.airtable.com/v0/${state.baseId}/Deals/${dealId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `Bearer ${state.apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        fields: {
-                            'Deal Stage': newStage
-                        }
-                    })
-                });
-                
-                console.log('📡 Response status:', response.status);
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('❌ Error response:', errorText);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log('✅ Deal updated successfully:', result);
-                
-                await loadDeals();
-                closeModal();
-                renderView('pipeline');
-                alert(`Deal moved to ${newStage}!`);
-                
-            } catch (error) {
-                console.error('❌ Error updating deal stage:', error);
-                alert(`Error updating deal: ${error.message}\n\nCheck console for details.`);
-            }
-        }
-
         function closeModal() {
             document.getElementById('modalContainer').innerHTML = '';
         }
@@ -1886,7 +1742,7 @@
                                     </div>
                                     <div class="kanban-cards">
                                         ${stageDeals.length === 0 ? '<p style="color: var(--text-gray); text-align: center; padding: 20px; font-size: 13px;">No deals</p>' : stageDeals.map(deal => `
-                                            <div class="kanban-card" draggable="true" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" onclick="openDealDetailsModal('${deal.id}')" data-deal-id="${deal.id}" style="cursor: pointer;">
+                                            <div class="kanban-card" draggable="true" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" data-deal-id="${deal.id}" style="cursor: move;">
                                                 <div class="kanban-card-title">${deal.name}</div>
                                                 <div class="kanban-card-value">$${deal.value.toLocaleString()}</div>
                                                 <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
