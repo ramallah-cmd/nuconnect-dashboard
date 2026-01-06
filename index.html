@@ -862,34 +862,42 @@
         }
 
         async function fetchFromAirtable(tableName, method = 'GET', body = null) {
+        async function fetchFromAirtable(tableName, method = 'GET', body = null) {
             try {
                 const tokenPreview = state.apiKey ? `${state.apiKey.substring(0, 8)}...${state.apiKey.substring(state.apiKey.length - 4)}` : 'NONE';
                 console.log(`📡 Fetching ${tableName} (${method}) with token: ${tokenPreview}`);
                 
-                const requestBody = {
-                    baseId: state.baseId,
-                    tableName: tableName,
-                    apiToken: state.apiKey,
-                    method: method
+                // Build the URL
+                let url = `https://api.airtable.com/v0/${state.baseId}/${encodeURIComponent(tableName)}`;
+                
+                // Build fetch options
+                const options = {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${state.apiKey}`,
+                        'Content-Type': 'application/json'
+                    }
                 };
                 
-                if (body) {
-                    requestBody.body = body;
+                // Add body for POST/PATCH/PUT
+                if (body && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+                    options.body = JSON.stringify(body);
+                    console.log('Request body:', JSON.stringify(body, null, 2));
                 }
 
-                const response = await fetch('/api/airtable', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
+                console.log(`Making ${method} request to: ${url}`);
+                const response = await fetch(url, options);
 
                 if (!response.ok) {
+                    const errorText = await response.text();
                     console.error(`❌ ${tableName} request failed: ${response.status}`);
+                    console.error('Error details:', errorText);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
+                const data = await response.json();
                 console.log(`✅ ${tableName} fetch successful`);
-                return await response.json();
+                return data;
             } catch (error) {
                 console.error(`Error with ${tableName}:`, error);
                 throw error;
