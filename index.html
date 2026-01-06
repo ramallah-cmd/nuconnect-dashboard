@@ -1627,14 +1627,14 @@
             const todayISO = today.toISOString().split('T')[0];
             
             const weekStart = new Date(today);
-            weekStart.setDate(today.getDate() - today.getDay()); // Start of week (Sunday)
+            weekStart.setDate(today.getDate() - today.getDay());
             
             const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
             
             // Get user's activities
             const userActivities = state.data.activities.filter(a => a.owner === state.currentUser.name);
             
-            // TODAY's activities (filter by Activity Date/Time or Date field)
+            // TODAY's activities
             const todayActivities = userActivities.filter(a => {
                 const activityDate = a.date ? a.date.split('T')[0] : null;
                 return activityDate === todayISO;
@@ -1654,6 +1654,13 @@
                 return activityDate >= monthStart;
             });
             
+            // Activity type breakdown (all time)
+            const calls = userActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+            const emails = userActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+            const linkedin = userActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
+            const demos = userActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
+            const proposals = userActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
+            
             // Daily KPIs
             const todayTouchpoints = todayActivities.length;
             const todayNewLeads = state.data.contacts.filter(c => {
@@ -1670,22 +1677,19 @@
                 a.result && a.result.toLowerCase().includes('moved')
             ).length;
             
-            // Weekly KPIs
-            const weekTouchpoints = weekActivities.length;
-            const weekDiscoveryCalls = weekActivities.filter(a => 
-                a.type && (a.type.toLowerCase().includes('discovery') || a.type.toLowerCase().includes('call'))
-            ).length;
-            
             // Monthly KPIs
             const quota = state.currentUser.quota || 45000;
             const monthClosedDeals = deals.filter(d => {
                 if (!d.stage.toLowerCase().includes('won')) return false;
-                if (!d.createdTime) return true; // Include if no date
+                if (!d.createdTime) return true;
                 const dealDate = new Date(d.createdTime);
                 return dealDate >= monthStart;
             });
             const monthRevenue = monthClosedDeals.reduce((sum, d) => sum + d.value, 0);
             const attainment = (monthRevenue / quota) * 100;
+            
+            // All closed deals (for recent wins)
+            const allClosedDeals = deals.filter(d => d.stage.toLowerCase().includes('won'));
             
             // Status helpers
             const getStatus = (value, min, max) => {
@@ -1755,32 +1759,12 @@
                                 <div style="font-size: 24px;">${dealsMovedStatus === 'success' ? '✅' : dealsMovedStatus === 'warning' ? '⚠️' : '❌'}</div>
                             </div>
                             <div class="kpi-value" style="color: ${getStatusColor(dealsMovedStatus)};">${todayDealsMovedCount}</div>
-                            <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 1+/day (non-negotiable!)</div>
+                            <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 1+/day</div>
                             <div class="progress-bar" style="margin-top: 12px;">
                                 <div class="progress-fill" style="width: ${Math.min(todayDealsMovedCount * 100, 100)}%; background: ${getStatusColor(dealsMovedStatus)};"></div>
                             </div>
                         </div>
                         
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">📊 Weekly Targets</h2>
-                    </div>
-                    <div style="padding: 20px;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                            <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 12px;">
-                                <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${weekTouchpoints}</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Touchpoints This Week</div>
-                                <div style="font-size: 12px; color: var(--text-gray); margin-top: 4px;">Target: 100-125</div>
-                            </div>
-                            <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 12px;">
-                                <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${weekDiscoveryCalls}</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Discovery Calls This Week</div>
-                                <div style="font-size: 12px; color: var(--text-gray); margin-top: 4px;">Target: 4-5 minimum</div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -1805,6 +1789,64 @@
                         <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">📈 ACTIVE PIPELINE</div>
                         <div class="kpi-value">${deals.length - monthClosedDeals.length}</div>
                         <div style="font-size: 13px; color: var(--text-gray);">Open deals</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Activity Breakdown</h2>
+                    </div>
+                    <div class="activity-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">📞</div>
+                            <div class="stat-value">${calls}</div>
+                            <div class="stat-label">Calls Made</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📧</div>
+                            <div class="stat-value">${emails}</div>
+                            <div class="stat-label">Emails Sent</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💼</div>
+                            <div class="stat-value">${linkedin}</div>
+                            <div class="stat-label">Messages</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎥</div>
+                            <div class="stat-value">${demos}</div>
+                            <div class="stat-label">Demos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-value">${proposals}</div>
+                            <div class="stat-label">Proposals</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎉</div>
+                            <div class="stat-value">${allClosedDeals.length}</div>
+                            <div class="stat-label">Total Wins</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🏆 Recent Wins</h2>
+                    </div>
+                    <div class="wins-list">
+                        ${allClosedDeals.length === 0 ? '<p style="text-align: center; color: var(--text-gray); padding: 40px;">No wins yet. Keep closing!</p>' : allClosedDeals.slice(0, 5).map(deal => `
+                            <div class="win-card" style="cursor: pointer; transition: all 0.2s;" onclick="alert('Event details coming in Events table integration!')" onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                                <div class="win-info">
+                                    <div class="win-name">${deal.name}</div>
+                                    <div class="win-meta">
+                                        <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                        <span style="color: var(--text-gray); font-size: 13px;">📅 ${deal.eventName || 'Event TBD'}</span>
+                                    </div>
+                                </div>
+                                <div class="win-value">$${deal.value.toLocaleString()}</div>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             `;
@@ -1838,10 +1880,6 @@
                 a.type && (a.type.toLowerCase().includes('discovery') || a.type.toLowerCase().includes('call'))
             ).length;
             
-            const todayDealsMovedCount = todayActivities.filter(a => 
-                a.result && a.result.toLowerCase().includes('moved')
-            ).length;
-            
             // MONTH metrics
             const monthClosedDeals = allDeals.filter(d => {
                 if (!d.stage.toLowerCase().includes('won')) return false;
@@ -1851,15 +1889,22 @@
             });
             
             const monthRevenue = monthClosedDeals.reduce((sum, d) => sum + d.value, 0);
-            const teamTarget = 30000; // $28K-$35K midpoint
-            const teamTargetDeals = 20; // 18-22 midpoint
+            const teamTargetLow = 28000;
+            const teamTargetHigh = 35000;
+            const teamTargetMid = (teamTargetLow + teamTargetHigh) / 2;
             
-            // Deal Mix Quality
-            const starterDeals = monthClosedDeals.filter(d => d.tier === 'Starter').length;
-            const growthDeals = monthClosedDeals.filter(d => d.tier === 'Growth').length;
-            const proDeals = monthClosedDeals.filter(d => d.tier === 'Pro').length;
-            const enterpriseDeals = monthClosedDeals.filter(d => d.tier === 'Enterprise').length;
-            const growthPlusDeals = growthDeals + proDeals + enterpriseDeals;
+            // Deal Mix
+            const starterDeals = monthClosedDeals.filter(d => d.tier === 'Starter');
+            const growthDeals = monthClosedDeals.filter(d => d.tier === 'Growth');
+            const proDeals = monthClosedDeals.filter(d => d.tier === 'Pro');
+            const enterpriseDeals = monthClosedDeals.filter(d => d.tier === 'Enterprise');
+            
+            const starterRevenue = starterDeals.reduce((sum, d) => sum + d.value, 0);
+            const growthRevenue = growthDeals.reduce((sum, d) => sum + d.value, 0);
+            const proRevenue = proDeals.reduce((sum, d) => sum + d.value, 0);
+            const enterpriseRevenue = enterpriseDeals.reduce((sum, d) => sum + d.value, 0);
+            
+            const growthPlusDeals = growthDeals.length + proDeals.length + enterpriseDeals.length;
             const qualityScore = monthClosedDeals.length > 0 ? (growthPlusDeals / monthClosedDeals.length) * 100 : 0;
             
             // Individual Rep Performance
@@ -1868,155 +1913,317 @@
                 .map(member => {
                     const memberDeals = allDeals.filter(d => d.owner === member.name);
                     const memberWon = memberDeals.filter(d => d.stage.toLowerCase().includes('won'));
-                    const memberRevenue = memberWon.reduce((sum, d) => sum + d.value, 0);
+                    const memberMonthWon = memberWon.filter(d => {
+                        if (!d.createdTime) return true;
+                        const dealDate = new Date(d.createdTime);
+                        return dealDate >= monthStart;
+                    });
+                    const memberRevenue = memberMonthWon.reduce((sum, d) => sum + d.value, 0);
                     const memberQuota = member.quota || 45000;
                     const memberAttainment = (memberRevenue / memberQuota) * 100;
                     
-                    // Today's activity for this rep
+                    // Today's activity
                     const memberTodayActivities = todayActivities.filter(a => a.owner === member.name);
                     const memberTouchpoints = memberTodayActivities.length;
                     
+                    // All time stats
+                    const memberAllActivities = allActivities.filter(a => a.owner === member.name);
+                    const memberCalls = memberAllActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+                    const memberEmails = memberAllActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+                    const memberLinkedIn = memberAllActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
+                    
                     const getStatusColor = (value, target) => {
                         if (value >= target) return 'var(--success)';
-                        if (value >= target * 0.5) return '#ff9800';
+                        if (value >= target * 0.7) return '#ff9800';
                         return 'var(--danger)';
                     };
                     
                     return {
+                        id: member.id,
                         name: member.name,
                         role: member.role,
                         quota: memberQuota,
                         revenue: memberRevenue,
                         attainment: memberAttainment,
-                        deals: memberWon.length,
+                        deals: memberMonthWon.length,
                         touchpoints: memberTouchpoints,
-                        statusColor: getStatusColor(memberAttainment, 100)
+                        statusColor: getStatusColor(memberAttainment, 100),
+                        totalCalls: memberCalls,
+                        totalEmails: memberEmails,
+                        totalLinkedIn: memberLinkedIn,
+                        activePipeline: memberDeals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost')).length
                     };
                 });
 
             const content = document.getElementById('contentArea');
             content.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">📅 Team Daily Metrics - ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">💰 MONTHLY REVENUE</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">$${(monthRevenue / 1000).toFixed(1)}K</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: $${teamTargetLow / 1000}K - $${teamTargetHigh / 1000}K</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min((monthRevenue / teamTargetMid) * 100, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                        </div>
+                        <div style="font-size: 13px; font-weight: 600; margin-top: 8px;">${((monthRevenue / teamTargetMid) * 100).toFixed(0)}% of target</div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; padding: 20px;">
-                        
-                        <div style="background: var(--bg-light); padding: 20px; border-radius: 12px; text-align: center;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 12px;">TEAM TOUCHPOINTS TODAY</div>
-                            <div style="font-size: 40px; font-weight: 700; color: var(--primary);">${todayTouchpoints}</div>
-                            <div style="font-size: 12px; color: var(--text-gray); margin-top: 8px;">3 reps × 20-25 = 60-75 target</div>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">🎉 DEALS CLOSED</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${monthClosedDeals.length}</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: 18-22 deals</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min((monthClosedDeals.length / 20) * 100, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
                         </div>
-                        
-                        <div style="background: var(--bg-light); padding: 20px; border-radius: 12px; text-align: center;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 12px;">NEW LEADS TODAY</div>
-                            <div style="font-size: 40px; font-weight: 700; color: var(--primary);">${todayNewLeads}</div>
-                            <div style="font-size: 12px; color: var(--text-gray); margin-top: 8px;">3 reps × 3-5 = 9-15 target</div>
-                        </div>
-                        
-                        <div style="background: var(--bg-light); padding: 20px; border-radius: 12px; text-align: center;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 12px;">DISCOVERY CALLS</div>
-                            <div style="font-size: 40px; font-weight: 700; color: var(--primary);">${todayDiscoveryCalls}</div>
-                            <div style="font-size: 12px; color: var(--text-gray); margin-top: 8px;">3 reps × 1+ = 3+ target</div>
-                        </div>
-                        
-                        <div style="background: var(--bg-light); padding: 20px; border-radius: 12px; text-align: center;">
-                            <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 12px;">DEALS MOVED</div>
-                            <div style="font-size: 40px; font-weight: 700; color: var(--primary);">${todayDealsMovedCount}</div>
-                            <div style="font-size: 12px; color: var(--text-gray); margin-top: 8px;">3 reps × 1+ = 3+ target</div>
-                        </div>
-                        
                     </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">💰 Monthly Team Performance</h2>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">📊 QUALITY SCORE</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${qualityScore.toFixed(0)}%</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Growth+ Tier Deals (Target: 70%)</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min(qualityScore, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                        </div>
                     </div>
-                    <div style="padding: 20px;">
-                        <div class="kpi-grid">
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL REVENUE</div>
-                                <div class="kpi-value">$${(monthRevenue / 1000).toFixed(1)}K</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: $28K-$35K</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${Math.min((monthRevenue / teamTarget) * 100, 100)}%"></div>
-                                </div>
-                                <div style="font-size: 13px; font-weight: 600; color: var(--success); margin-top: 8px;">${((monthRevenue / teamTarget) * 100).toFixed(1)}% of target</div>
-                            </div>
-
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">TOTAL DEALS</div>
-                                <div class="kpi-value">${monthClosedDeals.length}</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Target: 18-22 deals</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${Math.min((monthClosedDeals.length / teamTargetDeals) * 100, 100)}%"></div>
-                                </div>
-                            </div>
-
-                            <div class="kpi-card">
-                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600; margin-bottom: 16px;">QUALITY SCORE</div>
-                                <div class="kpi-value" style="color: ${qualityScore >= 70 ? 'var(--success)' : 'var(--danger)'};">${qualityScore.toFixed(0)}%</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Growth+ Deals (Target: 70%+)</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${Math.min(qualityScore, 100)}%; background: ${qualityScore >= 70 ? 'var(--success)' : 'var(--danger)'}"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-top: 30px;">
-                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">📊 Deal Mix Breakdown</h3>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
-                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
-                                    <span class="badge badge-starter">Starter</span>
-                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${starterDeals}</div>
-                                    <div style="font-size: 12px; color: var(--text-gray);">Target: 3-4</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
-                                    <span class="badge badge-growth">Growth</span>
-                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${growthDeals}</div>
-                                    <div style="font-size: 12px; color: var(--text-gray);">Target: 7-8</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
-                                    <span class="badge badge-pro">Pro</span>
-                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${proDeals}</div>
-                                    <div style="font-size: 12px; color: var(--text-gray);">Target: 5-6</div>
-                                </div>
-                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
-                                    <span class="badge badge-enterprise">Enterprise</span>
-                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${enterpriseDeals}</div>
-                                    <div style="font-size: 12px; color: var(--text-gray);">Target: 2-3</div>
-                                </div>
-                            </div>
-                        </div>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">🔥 TEAM ACTIVITY TODAY</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${todayTouchpoints}</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Touchpoints Logged</div>
+                        <div style="font-size: 13px; opacity: 0.8;">${todayDiscoveryCalls} Discovery Calls • ${todayNewLeads} New Leads</div>
                     </div>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">👥 Individual Rep Performance</h2>
+                        <h2 class="card-title">📊 Revenue by Tier - This Month</h2>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+                    <div style="padding: 30px;">
+                        ${[
+                            { name: 'Starter', count: starterDeals.length, revenue: starterRevenue, color: '#9e9e9e', target: 3 },
+                            { name: 'Growth', count: growthDeals.length, revenue: growthRevenue, color: '#2196f3', target: 7 },
+                            { name: 'Pro', count: proDeals.length, revenue: proRevenue, color: '#9c27b0', target: 5 },
+                            { name: 'Enterprise', count: enterpriseDeals.length, revenue: enterpriseRevenue, color: '#ff9800', target: 2 }
+                        ].map(tier => {
+                            const maxRevenue = Math.max(starterRevenue, growthRevenue, proRevenue, enterpriseRevenue);
+                            const barWidth = maxRevenue > 0 ? (tier.revenue / maxRevenue) * 100 : 0;
+                            return `
+                                <div style="margin-bottom: 24px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <div>
+                                            <span class="badge badge-${tier.name.toLowerCase()}">${tier.name}</span>
+                                            <span style="font-size: 13px; color: var(--text-gray); margin-left: 12px;">${tier.count} deals • Target: ${tier.target}</span>
+                                        </div>
+                                        <div style="font-size: 16px; font-weight: 700; color: var(--text-dark);">$${(tier.revenue / 1000).toFixed(1)}K</div>
+                                    </div>
+                                    <div style="background: var(--bg-light); height: 32px; border-radius: 6px; overflow: hidden; position: relative;">
+                                        <div style="width: ${barWidth}%; height: 100%; background: ${tier.color}; transition: width 0.5s ease; display: flex; align-items: center; padding: 0 12px;">
+                                            <span style="color: white; font-weight: 600; font-size: 13px;">${tier.count > 0 ? tier.count + ' deal' + (tier.count > 1 ? 's' : '') : ''}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">👥 Sales Team - Click for Details</h2>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Click any rep card to see full performance insights</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px;">
                         ${repCards.map(rep => `
-                            <div class="kpi-card" style="border-left: 4px solid ${rep.statusColor};">
+                            <div class="kpi-card" onclick="openRepDetailsModal('${rep.id}')" style="cursor: pointer; border-left: 4px solid ${rep.statusColor}; transition: all 0.2s;" 
+                                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)'" 
+                                 onmouseout="this.style.transform=''; this.style.boxShadow=''">
                                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
                                     <div>
                                         <div style="font-size: 16px; font-weight: 700; color: var(--text-dark);">${rep.name}</div>
                                         <div style="font-size: 13px; color: var(--text-gray);">${rep.role}</div>
                                     </div>
+                                    <div style="font-size: 32px;">👤</div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 4px;">This Month</div>
+                                        <div style="font-size: 28px; font-weight: 700; color: ${rep.statusColor};">$${(rep.revenue / 1000).toFixed(1)}K</div>
+                                    </div>
                                     <div style="text-align: right;">
-                                        <div style="font-size: 13px; color: var(--text-gray);">Today's Touchpoints</div>
+                                        <div style="font-size: 13px; color: var(--text-gray);">Today</div>
                                         <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${rep.touchpoints}</div>
+                                        <div style="font-size: 11px; color: var(--text-gray);">touchpoints</div>
                                     </div>
                                 </div>
-                                <div style="font-size: 28px; font-weight: 700; color: ${rep.statusColor}; margin-bottom: 8px;">$${(rep.revenue / 1000).toFixed(1)}K</div>
-                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">Quota: $${(rep.quota / 1000).toFixed(0)}K • ${rep.deals} deals closed</div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: ${Math.min(rep.attainment, 100)}%; background: ${rep.statusColor}"></div>
+                                
+                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">${rep.deals} deals • ${rep.activePipeline} in pipeline</div>
+                                
+                                <div style="background: var(--bg-light); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
+                                    <div style="width: ${Math.min(rep.attainment, 100)}%; height: 100%; background: ${rep.statusColor}; transition: width 0.3s;"></div>
                                 </div>
-                                <div style="font-size: 13px; font-weight: 600; color: ${rep.statusColor}; margin-top: 8px;">${rep.attainment.toFixed(1)}% of quota</div>
+                                <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                                    <span style="color: var(--text-gray);">Quota: $${(rep.quota / 1000).toFixed(0)}K</span>
+                                    <span style="font-weight: 600; color: ${rep.statusColor};">${rep.attainment.toFixed(0)}%</span>
+                                </div>
                             </div>
                         `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function openRepDetailsModal(memberId) {
+            const member = state.data.teamMembers.find(m => m.id === memberId);
+            if (!member) return;
+            
+            const today = new Date();
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            const todayISO = today.toISOString().split('T')[0];
+            
+            // Get member's data
+            const memberDeals = state.data.deals.filter(d => d.owner === member.name);
+            const memberWon = memberDeals.filter(d => d.stage.toLowerCase().includes('won'));
+            const memberMonthWon = memberWon.filter(d => {
+                if (!d.createdTime) return true;
+                const dealDate = new Date(d.createdTime);
+                return dealDate >= monthStart;
+            });
+            
+            const memberActivities = state.data.activities.filter(a => a.owner === member.name);
+            const memberTodayActivities = memberActivities.filter(a => {
+                const activityDate = a.date ? a.date.split('T')[0] : null;
+                return activityDate === todayISO;
+            });
+            
+            const memberMonthActivities = memberActivities.filter(a => {
+                if (!a.date) return false;
+                const activityDate = new Date(a.date);
+                return activityDate >= monthStart;
+            });
+            
+            const memberContacts = state.data.contacts.filter(c => c.owner === member.name);
+            const memberAccounts = state.data.accounts.filter(a => a.owner === member.name);
+            
+            // Activity breakdown
+            const calls = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+            const emails = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+            const linkedin = memberActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
+            const demos = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
+            const proposals = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
+            
+            // Deal mix
+            const starterDeals = memberMonthWon.filter(d => d.tier === 'Starter').length;
+            const growthDeals = memberMonthWon.filter(d => d.tier === 'Growth').length;
+            const proDeals = memberMonthWon.filter(d => d.tier === 'Pro').length;
+            const enterpriseDeals = memberMonthWon.filter(d => d.tier === 'Enterprise').length;
+            
+            const memberRevenue = memberMonthWon.reduce((sum, d) => sum + d.value, 0);
+            const memberQuota = member.quota || 45000;
+            const memberAttainment = (memberRevenue / memberQuota) * 100;
+            
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                        <div class="modal-header">
+                            <h2>${member.name} - Full Performance Insights</h2>
+                        </div>
+                        
+                        <div style="padding: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 30px;">
+                                <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${memberTodayActivities.length}</div>
+                                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Touchpoints Today</div>
+                                </div>
+                                <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${memberMonthActivities.length}</div>
+                                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Activities This Month</div>
+                                </div>
+                                <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${memberContacts.length}</div>
+                                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Total Contacts</div>
+                                </div>
+                                <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${memberAccounts.length}</div>
+                                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Total Accounts</div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">📊 Activity Breakdown (All Time)</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 30px;">
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">📞</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${calls}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Calls</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">📧</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${emails}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Emails</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">💼</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${linkedin}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Messages</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">🎥</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${demos}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Demos</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">📄</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${proposals}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Proposals</div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">💰 Revenue Performance - This Month</h3>
+                            <div style="background: var(--bg-light); padding: 24px; border-radius: 12px; margin-bottom: 30px;">
+                                <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 16px;">
+                                    <div>
+                                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 4px;">Revenue</div>
+                                        <div style="font-size: 36px; font-weight: 700; color: var(--primary);">$${(memberRevenue / 1000).toFixed(1)}K</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 4px;">Quota</div>
+                                        <div style="font-size: 24px; font-weight: 600; color: var(--text-gray);">$${(memberQuota / 1000).toFixed(0)}K</div>
+                                    </div>
+                                </div>
+                                <div style="background: white; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px;">
+                                    <div style="width: ${Math.min(memberAttainment, 100)}%; height: 100%; background: var(--success); transition: width 0.3s;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-size: 14px; color: var(--text-gray);">${memberMonthWon.length} deals closed</span>
+                                    <span style="font-size: 16px; font-weight: 700; color: var(--success);">${memberAttainment.toFixed(1)}% of quota</span>
+                                </div>
+                            </div>
+                            
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">📊 Deal Mix - This Month</h3>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <span class="badge badge-starter">Starter</span>
+                                    <div style="font-size: 28px; font-weight: 700; margin-top: 12px;">${starterDeals}</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <span class="badge badge-growth">Growth</span>
+                                    <div style="font-size: 28px; font-weight: 700; margin-top: 12px;">${growthDeals}</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <span class="badge badge-pro">Pro</span>
+                                    <div style="font-size: 28px; font-weight: 700; margin-top: 12px;">${proDeals}</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <span class="badge badge-enterprise">Enterprise</span>
+                                    <div style="font-size: 28px; font-weight: 700; margin-top: 12px;">${enterpriseDeals}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                        </div>
                     </div>
                 </div>
             `;
