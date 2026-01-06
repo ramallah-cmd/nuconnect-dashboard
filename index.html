@@ -862,7 +862,6 @@
         }
 
         async function fetchFromAirtable(tableName, method = 'GET', body = null) {
-        async function fetchFromAirtable(tableName, method = 'GET', body = null) {
             try {
                 const tokenPreview = state.apiKey ? `${state.apiKey.substring(0, 8)}...${state.apiKey.substring(state.apiKey.length - 4)}` : 'NONE';
                 console.log(`📡 Fetching ${tableName} (${method}) with token: ${tokenPreview}`);
