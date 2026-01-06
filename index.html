@@ -2689,6 +2689,109 @@
             `;
         }
 
+
+        // ==================== CHART FUNCTIONS ====================
+        function createRevenueTrendChart(canvasId, revenueData, targetLine) {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+            if (state.charts[canvasId]) state.charts[canvasId].destroy();
+            
+            const months = [];
+            const today = new Date();
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                months.push(d.toLocaleDateString('en-US', { month: 'short' }));
+            }
+            
+            state.charts[canvasId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Actual',
+                        data: revenueData,
+                        borderColor: 'rgb(102, 126, 234)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3
+                    }, {
+                        label: 'Target',
+                        data: targetLine,
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderDash: [5, 5],
+                        fill: false,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { callback: v => '$' + (v/1000).toFixed(1) + 'K' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createTierPieChart(canvasId, data) {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+            if (state.charts[canvasId]) state.charts[canvasId].destroy();
+            
+            state.charts[canvasId] = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Starter', 'Growth', 'Pro', 'Enterprise'],
+                    datasets: [{
+                        data: [data.starter, data.growth, data.pro, data.enterprise],
+                        backgroundColor: ['rgb(59,130,246)', 'rgb(34,197,94)', 'rgb(245,158,11)', 'rgb(139,92,246)']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function createEventsBarChart(canvasId, data) {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+            if (state.charts[canvasId]) state.charts[canvasId].destroy();
+            
+            state.charts[canvasId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Starter', 'Growth', 'Pro', 'Enterprise'],
+                    datasets: [{
+                        data: [data.starter, data.growth, data.pro, data.enterprise],
+                        backgroundColor: ['rgb(59,130,246)', 'rgb(34,197,94)', 'rgb(245,158,11)', 'rgb(139,92,246)']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function createPricingPieChart(canvasId, publicRev, floorRev) {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+            if (state.charts[canvasId]) state.charts[canvasId].destroy();
+            
+            state.charts[canvasId] = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Public Price', 'Floor Price'],
+                    datasets: [{
+                        data: [publicRev, floorRev],
+                        backgroundColor: ['rgb(102,126,234)', 'rgb(245,158,11)']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+        // ==================== END CHARTS ====================
+
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
