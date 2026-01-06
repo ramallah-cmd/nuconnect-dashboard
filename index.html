@@ -3,378 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NuConnect CRM</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <title>NuConnect CRM - Complete Phase 2</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --accent: #06b6d4;
-            --success: #10b981;
+            --primary: #667eea;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #22c55e;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --dark: #0f172a;
-            --gray-900: #1e293b;
-            --gray-800: #334155;
-            --gray-700: #475569;
-            --gray-600: #64748b;
-            --gray-500: #94a3b8;
-            --gray-400: #cbd5e1;
-            --gray-300: #e2e8f0;
-            --gray-200: #f1f5f9;
-            --gray-100: #f8fafc;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --bg-light: #f9fafb;
+            --border: #e5e7eb;
             --white: #ffffff;
-            --starter: #3b82f6;
-            --growth: #10b981;
-            --pro: #f59e0b;
-            --enterprise: #8b5cf6;
-            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-            --gradient-accent: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.15);
-            --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            --radius: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
         }
 
         body {
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--gray-100);
-            color: var(--dark);
-            line-height: 1.6;
-            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            background: var(--gradient);
+            min-height: 100vh;
+            color: var(--text-dark);
         }
 
         .hidden { display: none !important; }
-
-        /* ==================== LOGIN SCREEN ==================== */
+        
         .login-screen {
-            min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            background: var(--gradient-primary);
+            align-items: center;
+            min-height: 100vh;
             padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-screen::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: pulse-bg 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse-bg {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
         }
 
         .login-card {
             background: var(--white);
-            padding: 48px 40px;
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            max-width: 420px;
+            padding: 60px 50px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            max-width: 450px;
             width: 100%;
-            position: relative;
-            z-index: 1;
-            animation: slide-up 0.6s ease-out;
         }
 
-        @keyframes slide-up {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .login-logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 36px;
-            font-weight: 700;
+        .logo {
+            font-size: 48px;
             text-align: center;
-            margin-bottom: 8px;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 10px;
         }
 
-        .login-subtitle {
+        .login-card h1 {
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: 800;
             text-align: center;
-            color: var(--gray-600);
+            margin-bottom: 10px;
+        }
+
+        .login-card p {
+            color: var(--text-gray);
+            text-align: center;
             margin-bottom: 40px;
-            font-size: 15px;
         }
 
-        .input-group {
+        .form-group {
             margin-bottom: 24px;
         }
 
-        .input-label {
+        .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--gray-800);
             font-size: 14px;
         }
 
-        .input-field {
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
             width: 100%;
-            padding: 14px 18px;
-            border: 2px solid var(--gray-300);
-            border-radius: var(--radius);
-            font-size: 15px;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
             font-family: inherit;
-            transition: all 0.2s ease;
-            background: var(--white);
         }
 
-        .input-field:focus {
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             padding: 14px 24px;
             border: none;
-            border-radius: var(--radius);
-            font-size: 15px;
+            border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
-            font-family: inherit;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s;
+            font-family: inherit;
         }
 
         .btn-primary {
-            background: var(--gradient-primary);
-            color: var(--white);
             width: 100%;
+            background: var(--gradient);
+            color: var(--white);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
-            background: var(--gray-200);
-            color: var(--gray-800);
+            background: var(--bg-light);
+            color: var(--text-dark);
         }
 
-        .btn-secondary:hover {
-            background: var(--gray-300);
-        }
+        .btn-success { background: var(--success); color: var(--white); }
+        .btn-danger { background: var(--danger); color: var(--white); }
+        .btn-small { padding: 8px 16px; font-size: 14px; }
 
-        .btn-success {
-            background: var(--success);
-            color: var(--white);
-        }
-
-        .btn-icon {
-            padding: 10px;
-            border-radius: var(--radius);
-            background: var(--gray-200);
-        }
-
-        .login-error {
-            background: #fef2f2;
-            color: var(--danger);
-            padding: 12px 16px;
-            border-radius: var(--radius);
-            font-size: 14px;
-            margin-bottom: 20px;
-            border: 1px solid #fecaca;
-        }
-
-        /* ==================== MAIN APP ==================== */
         .app-container {
             display: flex;
             min-height: 100vh;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 280px;
-            background: var(--dark);
-            color: var(--white);
-            display: flex;
-            flex-direction: column;
+            background: var(--white);
+            box-shadow: var(--shadow-md);
+            padding: 24px 0;
             position: fixed;
             height: 100vh;
-            z-index: 100;
-            transition: transform 0.3s ease;
+            overflow-y: auto;
         }
 
         .sidebar-header {
-            padding: 28px 24px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 0 24px 24px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .sidebar-logo {
-            font-family: 'Space Grotesk', sans-serif;
+        .sidebar-header h2 {
+            color: var(--primary);
             font-size: 24px;
-            font-weight: 700;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .sidebar-user {
-            padding: 20px 24px;
-            background: rgba(255,255,255,0.05);
-            margin: 16px;
-            border-radius: var(--radius);
-        }
-
-        .sidebar-user-name {
-            font-weight: 600;
-            font-size: 16px;
+            font-weight: 800;
             margin-bottom: 4px;
         }
 
-        .sidebar-user-role {
-            font-size: 13px;
-            color: var(--gray-500);
-        }
-
         .sidebar-nav {
-            flex: 1;
-            padding: 8px 16px;
-            overflow-y: auto;
+            padding: 24px 0;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            border-radius: var(--radius);
-            color: var(--gray-400);
+            padding: 12px 24px;
+            color: var(--text-gray);
             cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 4px;
+            transition: all 0.3s;
             font-weight: 500;
         }
 
         .nav-item:hover {
-            background: rgba(255,255,255,0.05);
-            color: var(--white);
+            background: var(--bg-light);
+            color: var(--primary);
         }
 
         .nav-item.active {
-            background: var(--primary);
-            color: var(--white);
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
         }
 
-        .nav-icon {
+        .nav-item-icon {
             font-size: 20px;
-            width: 24px;
-            text-align: center;
+            margin-right: 12px;
         }
 
-        .sidebar-footer {
-            padding: 16px 24px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 12px;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: var(--radius);
-            color: #fca5a5;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
-
-        /* Main Content */
         .main-content {
-            flex: 1;
             margin-left: 280px;
-            padding: 32px;
-            min-height: 100vh;
+            flex: 1;
+            padding: 24px;
         }
 
-        .page-header {
+        .top-bar {
+            background: var(--white);
+            padding: 20px 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
         }
 
-        .page-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--dark);
+        .top-bar h1 {
+            font-size: 28px;
+            font-weight: 800;
         }
 
-        .page-subtitle {
-            color: var(--gray-600);
-            font-size: 15px;
-            margin-top: 4px;
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
         }
 
-        /* View Toggle */
-        .view-toggle {
-            display: flex;
-            gap: 8px;
+        .kpi-card {
             background: var(--white);
-            padding: 6px;
-            border-radius: var(--radius);
+            padding: 24px;
+            border-radius: 16px;
             box-shadow: var(--shadow-sm);
+            position: relative;
         }
 
-        .toggle-btn {
-            padding: 10px 20px;
-            border: none;
-            background: transparent;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--gray-600);
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 16px 0 0 16px;
         }
 
-        .toggle-btn.active {
-            background: var(--primary);
-            color: var(--white);
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
         }
 
-        /* Cards */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
         .card {
             background: var(--white);
-            border-radius: var(--radius-lg);
             padding: 24px;
-            box-shadow: var(--shadow);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
             margin-bottom: 24px;
         }
 
@@ -386,1704 +281,2312 @@
         }
 
         .card-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .card-subtitle {
-            font-size: 14px;
-            color: var(--gray-600);
-        }
-
-        /* KPI Grid */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        .kpi-card {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kpi-card.gradient {
-            color: var(--white);
-        }
-
-        .kpi-card.gradient-purple {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-        }
-
-        .kpi-card.gradient-pink {
-            background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
-        }
-
-        .kpi-card.gradient-cyan {
-            background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
-        }
-
-        .kpi-card.gradient-amber {
-            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-        }
-
-        .kpi-card.gradient-emerald {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
-        .kpi-label {
-            font-size: 14px;
-            font-weight: 500;
-            opacity: 0.9;
-            margin-bottom: 12px;
-        }
-
-        .kpi-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 36px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 8px;
         }
 
-        .kpi-target {
-            font-size: 13px;
-            opacity: 0.8;
-        }
-
-        .kpi-progress {
-            height: 6px;
-            background: rgba(255,255,255,0.25);
-            border-radius: 3px;
-            margin-top: 16px;
-            overflow: hidden;
-        }
-
-        .kpi-progress-bar {
-            height: 100%;
-            background: var(--white);
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        /* Daily Scorecard */
-        .scorecard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-        }
-
-        .scorecard-item {
-            padding: 20px;
-            background: var(--gray-100);
-            border-radius: var(--radius);
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .scorecard-item.success {
-            border-left-color: var(--success);
-            background: #ecfdf5;
-        }
-
-        .scorecard-item.warning {
-            border-left-color: var(--warning);
-            background: #fffbeb;
-        }
-
-        .scorecard-item.danger {
-            border-left-color: var(--danger);
-            background: #fef2f2;
-        }
-
-        .scorecard-label {
-            font-size: 13px;
-            color: var(--gray-600);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .scorecard-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .scorecard-target {
-            font-size: 12px;
-            color: var(--gray-500);
-            margin-top: 6px;
-        }
-
-        /* Deal Mix Table */
-        .deal-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        .deal-table th {
-            text-align: left;
-            padding: 14px 16px;
-            background: var(--gray-100);
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--gray-700);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .deal-table th:first-child {
-            border-radius: var(--radius) 0 0 var(--radius);
-        }
-
-        .deal-table th:last-child {
-            border-radius: 0 var(--radius) var(--radius) 0;
-        }
-
-        .deal-table td {
-            padding: 16px;
-            border-bottom: 1px solid var(--gray-200);
-            font-size: 14px;
-        }
-
-        .deal-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Tier Badges */
-        .tier-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .tier-badge.starter {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .tier-badge.growth {
-            background: #d1fae5;
-            color: #047857;
-        }
-
-        .tier-badge.pro {
-            background: #fef3c7;
-            color: #b45309;
-        }
-
-        .tier-badge.enterprise {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-
-        /* Quality Badge */
-        .quality-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .quality-badge.success {
-            background: #d1fae5;
-            color: #047857;
-        }
-
-        .quality-badge.warning {
-            background: #fef3c7;
-            color: #b45309;
-        }
-
-        .quality-badge.danger {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        /* Recent Wins */
         .wins-list {
-            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .win-item {
+        .win-card {
+            background: var(--bg-light);
+            padding: 16px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
-            background: var(--gray-100);
-            border-radius: var(--radius);
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .win-item:hover {
-            background: var(--gray-200);
-            transform: translateX(4px);
         }
 
         .win-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
+            flex: 1;
         }
 
-        .win-details h4 {
+        .win-name {
             font-weight: 600;
-            color: var(--dark);
+            font-size: 16px;
             margin-bottom: 4px;
         }
 
         .win-meta {
             font-size: 13px;
-            color: var(--gray-600);
+            color: var(--text-gray);
         }
 
-        .win-amount {
-            font-family: 'Space Grotesk', sans-serif;
+        .win-value {
             font-size: 20px;
             font-weight: 700;
-            color: var(--success);
+            color: var(--primary);
         }
 
-        /* Floor Pricing Tracker */
-        .floor-tracker {
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .badge-starter { background: #dbeafe; color: #1e40af; }
+        .badge-growth { background: #d1fae5; color: #065f46; }
+        .badge-pro { background: #fef3c7; color: #92400e; }
+        .badge-enterprise { background: #e0e7ff; color: #3730a3; }
+
+        .quality-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .quality-badge.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .quality-badge.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .activity-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
             text-align: center;
-            padding: 32px;
+            padding: 16px;
+            background: var(--bg-light);
+            border-radius: 12px;
         }
 
-        .capacity-circle {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 24px;
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-top: 4px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .floor-tracker-compact {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .capacity-circle-small {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            background: var(--gradient-primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--white);
-            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4);
-            position: relative;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            flex-shrink: 0;
         }
 
-        .capacity-circle::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            opacity: 0.3;
-            animation: pulse-ring 2s ease-out infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% { transform: scale(1); opacity: 0.3; }
-            100% { transform: scale(1.15); opacity: 0; }
-        }
-
-        .capacity-number {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 56px;
+        .capacity-number-small {
+            font-size: 32px;
             font-weight: 700;
-            position: relative;
-            z-index: 1;
         }
 
-        .capacity-label {
-            font-size: 14px;
+        .capacity-label-small {
+            font-size: 11px;
             opacity: 0.9;
-            position: relative;
-            z-index: 1;
         }
 
-        .capacity-percentage {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
+        .capacity-details {
+            flex: 1;
         }
 
-        .capacity-remaining {
-            color: var(--gray-600);
-            margin-bottom: 24px;
-        }
-
-        .capacity-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        .capacity-table th {
-            text-align: left;
-            padding: 14px 16px;
-            background: var(--gray-100);
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--gray-700);
-        }
-
-        .capacity-table th:first-child { border-radius: var(--radius) 0 0 var(--radius); }
-        .capacity-table th:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
-
-        .capacity-table td {
-            padding: 16px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .remaining-cell {
-            font-weight: 700;
-        }
-
-        .remaining-cell.low {
-            color: var(--warning);
-        }
-
-        .remaining-cell.zero {
-            color: var(--danger);
-        }
-
-        /* Rep Cards */
-        .rep-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .rep-card {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .rep-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
-        }
-
-        .rep-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .rep-avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 700;
-            font-size: 20px;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        .rep-name {
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--dark);
-            margin-bottom: 4px;
-        }
-
-        .rep-role {
-            font-size: 13px;
-            color: var(--gray-600);
-        }
-
-        .rep-metrics {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .rep-metric {
-            text-align: center;
-            padding: 12px;
-            background: var(--gray-100);
-            border-radius: var(--radius);
-        }
-
-        .rep-metric-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .rep-metric-label {
-            font-size: 12px;
-            color: var(--gray-600);
-            margin-top: 4px;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--white);
-            border-radius: var(--radius-xl);
-            max-width: 900px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modal-in 0.3s ease-out;
-        }
-
-        @keyframes modal-in {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .modal-header {
+        .capacity-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 24px 32px;
-            border-bottom: 1px solid var(--gray-200);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .modal-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
+        .capacity-row:last-child {
+            border-bottom: none;
         }
 
-        .modal-close {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: var(--gray-200);
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
+        .capacity-row.at-limit {
+            background: #fadbd8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 4px 0;
         }
 
-        .modal-close:hover {
-            background: var(--gray-300);
-        }
-
-        .modal-body {
-            padding: 32px;
-        }
-
-        /* Charts */
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-
-        /* Empty States */
-        .empty-state {
-            text-align: center;
-            padding: 48px;
-            color: var(--gray-500);
-        }
-
-        .empty-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        /* Loading */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px;
-            color: var(--gray-500);
-        }
-
-        .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid var(--gray-300);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 12px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 1100;
-        }
-
-        .toast {
-            background: var(--dark);
-            color: var(--white);
-            padding: 16px 24px;
-            border-radius: var(--radius);
-            margin-bottom: 12px;
-            box-shadow: var(--shadow-lg);
-            animation: slide-in 0.3s ease-out;
+        .alert-banner {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        @keyframes slide-in {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .alert-banner.success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left-color: #22c55e;
         }
 
-        .toast.success { border-left: 4px solid var(--success); }
-        .toast.error { border-left: 4px solid var(--danger); }
-        .toast.warning { border-left: 4px solid var(--warning); }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
+        .alert-banner.danger {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left-color: #ef4444;
         }
 
-        @media (max-width: 768px) {
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .scorecard-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 16px;
-            }
+        .alert-icon {
+            font-size: 24px;
         }
 
-        /* Settings Panel */
-        .settings-fab {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--white);
-            border: none;
-            box-shadow: var(--shadow-lg);
-            cursor: pointer;
-            font-size: 20px;
-            z-index: 90;
-            transition: all 0.2s;
+        .alert-content {
+            flex: 1;
         }
 
-        .settings-fab:hover {
-            transform: scale(1.1);
+        .alert-title {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 4px;
         }
 
-        .settings-panel {
-            position: fixed;
-            top: 80px;
-            right: 24px;
-            background: var(--white);
-            padding: 24px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-xl);
-            z-index: 95;
-            width: 320px;
+        .alert-text {
+            font-size: 13px;
+            color: var(--text-gray);
         }
 
-        .settings-header {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-light);
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: var(--bg-light);
+        }
+
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .kanban-column {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 16px;
+            min-height: 400px;
+        }
+
+        .kanban-header {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
         }
 
-        .settings-title {
-            font-weight: 700;
-            font-size: 18px;
+        .kanban-card {
+            background: var(--white);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
         }
+
+        .kanban-card-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .kanban-card-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-indicator.green { background: var(--success); }
+        .status-indicator.yellow { background: var(--warning); }
+        .status-indicator.red { background: var(--danger); }
     </style>
 </head>
 <body>
-    <!-- ==================== LOGIN SCREEN ==================== -->
     <div id="loginScreen" class="login-screen">
         <div class="login-card">
-            <div class="login-logo">🎯 NuConnect</div>
-            <p class="login-subtitle">CRM Dashboard</p>
-            
-            <div id="loginError" class="login-error hidden"></div>
-            
-            <div class="input-group">
-                <label class="input-label">Select Your Name</label>
-                <select id="loginUser" class="input-field">
-                    <option value="">-- Select User --</option>
-                    <option value="Javonte">Javonte (BDR)</option>
-                    <option value="Teslim">Teslim (BDR)</option>
-                    <option value="Israel">Israel (BDR)</option>
-                    <option value="Conrad">Conrad (AE)</option>
-                    <option value="Ramallah">Ramallah (Leadership)</option>
-                    <option value="Keyna">Keyna (Leadership)</option>
+            <div class="logo">🎯</div>
+            <h1>NuConnect CRM</h1>
+            <p>Sign in to your account</p>
+            <div class="form-group">
+                <label>Team Member</label>
+                <select id="userSelect">
+                    <option value="">Choose your name...</option>
                 </select>
             </div>
-            
-            <div class="input-group">
-                <label class="input-label">Password</label>
-                <input type="password" id="loginPassword" class="input-field" placeholder="Enter password">
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="passwordInput" placeholder="Enter your password">
             </div>
-            
-            <button class="btn btn-primary" onclick="handleLogin()">Sign In →</button>
-            
-            <p style="text-align: center; margin-top: 24px; color: var(--gray-500); font-size: 13px;">
-                BDRs/AE: <code>nuconnect2025</code><br>
-                Leadership: <code>admin2025</code>
-            </p>
+            <div id="loginError" class="hidden" style="color: var(--danger); margin-bottom: 16px; font-size: 14px;"></div>
+            <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
         </div>
     </div>
 
-    <!-- ==================== MAIN APP ==================== -->
     <div id="appContainer" class="app-container hidden">
-        <!-- Sidebar -->
-        <nav class="sidebar">
+        <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-logo">🎯 NuConnect</div>
+                <h2>🎯 NuConnect</h2>
+                <p id="currentUserName"></p>
             </div>
-            
-            <div class="sidebar-user">
-                <div class="sidebar-user-name" id="userName">-</div>
-                <div class="sidebar-user-role" id="userRole">-</div>
-            </div>
-            
-            <div class="sidebar-nav">
-                <div class="nav-item active" data-view="dashboard" onclick="switchNav(this)">
-                    <span class="nav-icon">📊</span> Dashboard
-                </div>
-                <div class="nav-item" data-view="deals" onclick="switchNav(this)">
-                    <span class="nav-icon">💼</span> Deals
-                </div>
-                <div class="nav-item" data-view="activities" onclick="switchNav(this)">
-                    <span class="nav-icon">⚡</span> Activities
-                </div>
-                <div class="nav-item" data-view="contacts" onclick="switchNav(this)">
-                    <span class="nav-icon">👥</span> Contacts
-                </div>
-            </div>
-            
-            <div class="sidebar-footer">
-                <button class="logout-btn" onclick="handleLogout()">🚪 Sign Out</button>
-            </div>
-        </nav>
+            <nav class="sidebar-nav" id="sidebarNav"></nav>
+        </aside>
 
-        <!-- Settings FAB -->
-        <button class="settings-fab" onclick="toggleSettings()">⚙️</button>
-
-        <!-- Settings Panel -->
-        <div id="settingsPanel" class="settings-panel hidden">
-            <div class="settings-header">
-                <span class="settings-title">Airtable Settings</span>
-                <button class="modal-close" onclick="toggleSettings()">×</button>
-            </div>
-            <div class="input-group">
-                <label class="input-label">Base ID</label>
-                <input type="text" id="baseIdInput" class="input-field" placeholder="appXXXXXXXXXXXXXX" value="app0WnWepz3soa88I">
-            </div>
-            <div class="input-group">
-                <label class="input-label">API Key</label>
-                <input type="password" id="apiKeyInput" class="input-field" placeholder="pat...">
-            </div>
-            <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
-        </div>
-
-        <!-- Main Content -->
         <main class="main-content">
-            <div class="page-header">
+            <div class="top-bar">
                 <div>
-                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
-                    <p class="page-subtitle" id="pageSubtitle">Track your performance</p>
+                    <h1 id="pageTitle">Dashboard</h1>
                 </div>
-                <div class="view-toggle" id="viewToggle">
-                    <button class="toggle-btn active" onclick="switchView('rep', this)">My Dashboard</button>
-                    <button class="toggle-btn" onclick="switchView('leadership', this)">Leadership</button>
-                </div>
-            </div>
-
-            <!-- ==================== REP DASHBOARD ==================== -->
-            <div id="repDashboard">
-                <!-- Daily Scorecard -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">📋 Today's Scorecard</h2>
-                        <span style="font-size: 13px; color: var(--gray-500);" id="todayDate"></span>
-                    </div>
-                    <div class="scorecard-grid">
-                        <div class="scorecard-item" id="touchpointsCard">
-                            <div class="scorecard-label">Touchpoints</div>
-                            <div class="scorecard-value" id="touchpointsValue">0</div>
-                            <div class="scorecard-target">Target: 20-25</div>
-                        </div>
-                        <div class="scorecard-item" id="leadsCard">
-                            <div class="scorecard-label">New Leads</div>
-                            <div class="scorecard-value" id="leadsValue">0</div>
-                            <div class="scorecard-target">Target: 3-5</div>
-                        </div>
-                        <div class="scorecard-item" id="discoveryCard">
-                            <div class="scorecard-label">Discovery Calls</div>
-                            <div class="scorecard-value" id="discoveryValue">0</div>
-                            <div class="scorecard-target">Target: 1</div>
-                        </div>
-                        <div class="scorecard-item" id="dealsMovedCard">
-                            <div class="scorecard-label">Deals Moved</div>
-                            <div class="scorecard-value" id="dealsMovedValue">0</div>
-                            <div class="scorecard-target">Target: 1</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Monthly KPIs -->
-                <div class="kpi-grid">
-                    <div class="kpi-card gradient gradient-purple">
-                        <div class="kpi-label">Monthly Revenue</div>
-                        <div class="kpi-value" id="repRevenue">$0</div>
-                        <div class="kpi-target">Target: $9,750 - $12,700</div>
-                        <div class="kpi-progress">
-                            <div class="kpi-progress-bar" id="repRevenueBar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="kpi-card gradient gradient-pink">
-                        <div class="kpi-label">Deals Closed</div>
-                        <div class="kpi-value" id="repDeals">0</div>
-                        <div class="kpi-target">Target: 6-7 deals</div>
-                    </div>
-                    <div class="kpi-card gradient gradient-cyan">
-                        <div class="kpi-label">Quality Score</div>
-                        <div class="kpi-value" id="repQuality">0%</div>
-                        <div class="kpi-target">70%+ Growth or Higher</div>
-                    </div>
-                    <div class="kpi-card gradient gradient-amber">
-                        <div class="kpi-label">Avg Deal Size</div>
-                        <div class="kpi-value" id="repAvgDeal">$0</div>
-                        <div class="kpi-target">Varies by tier</div>
-                    </div>
-                </div>
-
-                <!-- Monthly Deal Mix -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">🎯 Monthly Deal Mix</h2>
-                        <div id="qualityBadge"></div>
-                    </div>
-                    <table class="deal-table">
-                        <thead>
-                            <tr>
-                                <th>Tier</th>
-                                <th>Target</th>
-                                <th>Closed</th>
-                                <th>Pipeline</th>
-                                <th>Revenue</th>
-                                <th>Avg Size</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dealMixBody">
-                            <tr><td colspan="6" class="loading"><div class="spinner"></div> Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Recent Wins -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">🏆 Recent Wins</h2>
-                    </div>
-                    <ul class="wins-list" id="recentWins">
-                        <li class="loading"><div class="spinner"></div> Loading...</li>
-                    </ul>
-                </div>
-
-                <!-- Revenue Chart -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">📈 Revenue Trend</h2>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="repRevenueChart"></canvas>
-                    </div>
+                <div>
+                    <button class="btn btn-secondary btn-small" onclick="openSettings()">⚙️</button>
+                    <button class="btn btn-danger btn-small" onclick="logout()">Logout</button>
                 </div>
             </div>
-
-            <!-- ==================== LEADERSHIP DASHBOARD ==================== -->
-            <div id="leadershipDashboard" class="hidden">
-                <!-- Team KPIs -->
-                <div class="kpi-grid">
-                    <div class="kpi-card gradient gradient-purple">
-                        <div class="kpi-label">Monthly Revenue</div>
-                        <div class="kpi-value" id="teamRevenue">$0</div>
-                        <div class="kpi-target">Target: $32K-$34K</div>
-                        <div class="kpi-progress">
-                            <div class="kpi-progress-bar" id="teamRevenueBar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="kpi-card gradient gradient-pink">
-                        <div class="kpi-label">Events Closed</div>
-                        <div class="kpi-value" id="teamEvents">0</div>
-                        <div class="kpi-target">Target: 18-21 events</div>
-                    </div>
-                    <div class="kpi-card gradient gradient-cyan">
-                        <div class="kpi-label">Team Quality</div>
-                        <div class="kpi-value" id="teamQuality">0%</div>
-                        <div class="kpi-target">70%+ Growth or Higher</div>
-                    </div>
-                    <div class="kpi-card gradient gradient-amber">
-                        <div class="kpi-label">Today's Touchpoints</div>
-                        <div class="kpi-value" id="teamTouchpoints">0</div>
-                        <div class="kpi-target">Target: 60-75</div>
-                    </div>
-                </div>
-
-                <!-- Floor Pricing Tracker -->
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <h2 class="card-title">🚨 Floor-Price Event Capacity</h2>
-                            <p class="card-subtitle">Maximum 8-10 events per year at floor pricing</p>
-                        </div>
-                    </div>
-                    <div class="floor-tracker">
-                        <div class="capacity-circle">
-                            <div class="capacity-number" id="floorUsed">0</div>
-                            <div class="capacity-label">of 10 used</div>
-                        </div>
-                        <div class="capacity-percentage" id="floorPercent">0% Utilized</div>
-                        <div class="capacity-remaining" id="floorRemaining">Remaining: 10</div>
-                        <table class="capacity-table">
-                            <thead>
-                                <tr>
-                                    <th>Tier</th>
-                                    <th>Max Floor</th>
-                                    <th>Used</th>
-                                    <th>Remaining</th>
-                                </tr>
-                            </thead>
-                            <tbody id="floorCapacityBody">
-                                <tr><td colspan="4" class="loading"><div class="spinner"></div></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Annual Progress -->
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-label" style="color: var(--gray-600)">Annual Revenue</div>
-                        <div class="kpi-value" style="color: var(--dark)" id="annualRevenue">$0</div>
-                        <div class="kpi-target" style="color: var(--gray-500)">Target: $335K-$340K</div>
-                        <div class="kpi-progress" style="background: var(--gray-200)">
-                            <div class="kpi-progress-bar" id="annualRevenueBar" style="width: 0%; background: var(--primary)"></div>
-                        </div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label" style="color: var(--gray-600)">Annual Events</div>
-                        <div class="kpi-value" style="color: var(--dark)" id="annualEvents">0</div>
-                        <div class="kpi-target" style="color: var(--gray-500)">Target: 140-200 events</div>
-                        <div class="kpi-progress" style="background: var(--gray-200)">
-                            <div class="kpi-progress-bar" id="annualEventsBar" style="width: 0%; background: var(--success)"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Team Performance -->
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <h2 class="card-title">👥 Team Performance</h2>
-                            <p class="card-subtitle">Click any card for detailed breakdown</p>
-                        </div>
-                    </div>
-                    <div class="rep-cards-grid" id="repCardsGrid">
-                        <div class="loading"><div class="spinner"></div> Loading...</div>
-                    </div>
-                </div>
-
-                <!-- Team Revenue Chart -->
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">📈 Revenue Trend vs Target</h2>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="teamRevenueChart"></canvas>
-                    </div>
-                </div>
-            </div>
+            <div id="contentArea"></div>
         </main>
     </div>
 
-    <!-- Rep Detail Modal -->
-    <div class="modal-overlay" id="repModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalRepName">Rep Details</h2>
-                <button class="modal-close" onclick="closeRepModal()">×</button>
-            </div>
-            <div class="modal-body" id="modalBody">
-                <div class="loading"><div class="spinner"></div> Loading...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <div id="modalContainer"></div>
 
     <script>
-        // ==================== CONFIGURATION ====================
-        const CONFIG = {
-            baseId: localStorage.getItem('airtableBaseId') || 'app0WnWepz3soa88I',
-            apiKey: localStorage.getItem('airtableApiKey') || '',
-            passwords: {
-                rep: 'nuconnect2025',
-                leadership: 'admin2025'
+        // PART 1: STATE AND CONFIGURATION
+        const state = {
+            currentUser: null,
+            currentView: 'dashboard',
+            baseId: localStorage.getItem('airtable_baseId') || '',
+            apiKey: localStorage.getItem('airtable_apiKey') || '',
+            data: {
+                deals: [],
+                activities: [],
+                tasks: [],
+                contacts: [],
+                accounts: [],
+                teamMembers: [],
+                pricingRules: []
             },
-            leadershipUsers: ['Ramallah', 'Keyna'],
-            tierTargets: {
-                rep: { Starter: 1, Growth: '2-3', Pro: 2, Enterprise: '0-1' },
-                team: { Starter: '3-4', Growth: '7-8', Pro: '5-6', Enterprise: '2-3' }
+            teamMemberMap: {},
+            pricingRuleMap: {},
+            dailyMetrics: {
+                touchpoints: 0,
+                newLeads: 0,
+                discoveryCalls: 0,
+                dealsMoved: 0
             },
-            floorLimits: { Starter: 2, Growth: 2, Pro: 3, Enterprise: 3 }
+            charts: {}
         };
 
-        let currentUser = null;
-        let isLeadership = false;
-        let currentView = 'rep';
-        let dataCache = { deals: [], activities: [], teamMembers: [] };
-        let charts = {};
+        const userPasswords = {
+            'Javonte': 'nuconnect2025',
+            'Teslim': 'nuconnect2025',
+            'Israel': 'nuconnect2025',
+            'Conrad': 'nuconnect2025',
+            'Test User': 'test2024',
+            'Test Leadership': 'testleader2024',
+            'Ramallah': 'admin2025',
+            'Keyna': 'admin2025'
+        };
 
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', {
-                weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+        const tierPricing = {
+            'Starter': 750,
+            'Growth': 1250,
+            'Pro': 2000,
+            'Enterprise': 4200
+        };
+
+        const allNavItems = [
+            { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+            { id: 'pipeline', icon: '📈', label: 'Pipeline' },
+            { id: 'tasks', icon: '✅', label: 'Tasks' },
+            { id: 'contacts', icon: '👥', label: 'Contacts' },
+            { id: 'accounts', icon: '🏢', label: 'Accounts' },
+            { id: 'activity', icon: '📝', label: 'Log Activity' },
+            { id: 'reports', icon: '📑', label: 'Reports' }
+        ];
+
+        const leadershipNavItems = [
+            { id: 'leadership', icon: '👔', label: 'Leadership' },
+            { id: 'team', icon: '👨\u200d👩\u200d👧\u200d👦', label: 'Team Overview' }
+        ];
+
+        // PART 1 ENDS HERE - PASTE PART 2 BELOW THIS LINE
+        // PART 2: CORE FUNCTIONS - PASTE THIS AFTER PART 1
+
+async function init() {
+    console.log('%c🚀 NuConnect CRM v2.5 - Complete Phase 2', 'background: #667eea; color: white; font-size: 16px; padding: 10px; font-weight: bold;');
+    console.log('✨ All Features: Charts, KPIs, Notifications, Team Analytics');
+    console.log('📅 Build: January 6, 2026');
+    
+    if (state.baseId && state.apiKey) {
+        await loadTeamMembers();
+        await loadPricingRules();
+        populateLoginSelect();
+    } else {
+        showConfigPrompt();
+    }
+}
+
+function showConfigPrompt() {
+    document.getElementById('loginScreen').innerHTML = `
+        <div class="login-card">
+            <div class="logo">⚙️</div>
+            <h1>Setup Required</h1>
+            <p>Configure your Airtable connection</p>
+            <div class="form-group">
+                <label>Airtable Base ID</label>
+                <input type="text" id="setupBaseId" placeholder="appXXXXXXXXXXXXXX" value="${state.baseId}">
+            </div>
+            <div class="form-group">
+                <label>Airtable API Key</label>
+                <input type="password" id="setupApiKey" placeholder="patXXXXXXXXXXXXXX">
+            </div>
+            <button class="btn btn-primary" onclick="saveConfig()">Connect</button>
+        </div>
+    `;
+}
+
+function saveConfig() {
+    const baseId = document.getElementById('setupBaseId').value.trim();
+    const apiKey = document.getElementById('setupApiKey').value.trim();
+    
+    if (baseId && apiKey) {
+        localStorage.setItem('airtable_baseId', baseId);
+        localStorage.setItem('airtable_apiKey', apiKey);
+        location.reload();
+    } else {
+        alert('Please fill in both fields');
+    }
+}
+
+function openSettings() {
+    const modal = document.getElementById('modalContainer');
+    const currentToken = state.apiKey;
+    const tokenPreview = currentToken ? `${currentToken.substring(0, 8)}...${currentToken.substring(currentToken.length - 4)}` : 'Not set';
+    
+    modal.innerHTML = `
+        <div class="modal active">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>⚙️ Settings</h2>
+                </div>
+                <div class="form-group">
+                    <label>Airtable Base ID</label>
+                    <input type="text" id="settingsBaseId" value="${state.baseId}" style="font-family: monospace;">
+                </div>
+                <div class="form-group">
+                    <label>Airtable API Key / Personal Access Token</label>
+                    <input type="password" id="settingsApiKey" value="${currentToken}" style="font-family: monospace;">
+                    <p style="font-size: 12px; color: var(--success); margin-top: 4px;">
+                        Current token: ${tokenPreview}
+                    </p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save & Reload</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function saveSettings() {
+    const baseId = document.getElementById('settingsBaseId').value.trim();
+    const apiKey = document.getElementById('settingsApiKey').value.trim();
+    
+    if (!baseId || !apiKey) {
+        alert('Both fields are required');
+        return;
+    }
+    
+    localStorage.setItem('airtable_baseId', baseId);
+    localStorage.setItem('airtable_apiKey', apiKey);
+    
+    alert('Settings saved! Reloading...');
+    location.reload();
+}
+
+async function loadTeamMembers() {
+    try {
+        const response = await fetchFromAirtable('Team Members');
+        if (response && response.records) {
+            state.data.teamMembers = response.records.map(r => ({
+                id: r.id,
+                name: r.fields.Name || '',
+                role: r.fields.Role || '',
+                quota: r.fields['Monthly Quota'] || 0
+            }));
+            
+            state.teamMemberMap = {};
+            response.records.forEach(r => {
+                if (r.fields.Name) {
+                    state.teamMemberMap[r.fields.Name] = r.id;
+                }
             });
+        }
+    } catch (error) {
+        console.error('Error loading team members:', error);
+        state.data.teamMembers = [
+            { id: 'rec1', name: 'Javonte', role: 'BDR', quota: 45000 },
+            { id: 'rec2', name: 'Teslim', role: 'BDR', quota: 45000 },
+            { id: 'rec3', name: 'Israel', role: 'BDR', quota: 45000 },
+            { id: 'rec4', name: 'Conrad', role: 'AE', quota: 60000 },
+            { id: 'rec5', name: 'Test User', role: 'BDR', quota: 45000 },
+            { id: 'rec6', name: 'Test Leadership', role: 'Leadership', quota: 0 },
+            { id: 'rec7', name: 'Ramallah', role: 'Leadership', quota: 0 },
+            { id: 'rec8', name: 'Keyna', role: 'Leadership', quota: 0 }
+        ];
+        
+        state.teamMemberMap = {
+            'Javonte': 'rec1',
+            'Teslim': 'rec2',
+            'Israel': 'rec3',
+            'Conrad': 'rec4',
+            'Test User': 'rec5',
+            'Test Leadership': 'rec6',
+            'Ramallah': 'rec7',
+            'Keyna': 'rec8'
+        };
+    }
+}
+
+async function loadPricingRules() {
+    try {
+        const response = await fetchFromAirtable('Pricing Rules');
+        if (response && response.records) {
+            state.data.pricingRules = response.records.map(r => ({
+                id: r.id,
+                tier: r.fields.Tier || '',
+                basePrice: r.fields['Base Price'] || 0
+            }));
             
-            // Check for saved session
-            const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = savedUser;
-                isLeadership = CONFIG.leadershipUsers.includes(savedUser);
-                showApp();
+            state.pricingRuleMap = {};
+            response.records.forEach(r => {
+                if (r.fields.Tier) {
+                    state.pricingRuleMap[r.fields.Tier] = r.id;
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error loading pricing rules:', error);
+    }
+}
+
+function populateLoginSelect() {
+    const select = document.getElementById('userSelect');
+    if (!select) return;
+    
+    state.data.teamMembers.forEach(member => {
+        const option = document.createElement('option');
+        option.value = member.name;
+        option.textContent = `${member.name} (${member.role})`;
+        select.appendChild(option);
+    });
+}
+
+async function handleLogin() {
+    const select = document.getElementById('userSelect');
+    const passwordInput = document.getElementById('passwordInput');
+    const errorDiv = document.getElementById('loginError');
+    
+    const selectedName = select.value;
+    const enteredPassword = passwordInput.value;
+    
+    if (!selectedName) {
+        errorDiv.textContent = 'Please select a team member';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+
+    if (!enteredPassword) {
+        errorDiv.textContent = 'Please enter your password';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+
+    if (userPasswords[selectedName] !== enteredPassword) {
+        errorDiv.textContent = 'Incorrect password';
+        errorDiv.classList.remove('hidden');
+        passwordInput.value = '';
+        return;
+    }
+
+    const user = state.data.teamMembers.find(m => m.name === selectedName);
+    if (user) {
+        state.currentUser = user;
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('appContainer').classList.remove('hidden');
+        await initApp();
+    }
+}
+
+async function initApp() {
+    document.getElementById('currentUserName').textContent = state.currentUser.name;
+    buildNavigation();
+    await loadAllData();
+    calculateDailyMetrics();
+    renderView('dashboard');
+    
+    setInterval(async () => {
+        await loadAllData();
+        calculateDailyMetrics();
+        if (state.currentView === 'dashboard' || state.currentView === 'leadership') {
+            renderView(state.currentView);
+        }
+    }, 5 * 60 * 1000);
+}
+
+function buildNavigation() {
+    const nav = document.getElementById('sidebarNav');
+    let items = [...allNavItems];
+    
+    if (state.currentUser.role === 'Leadership') {
+        items = items.concat(leadershipNavItems);
+    }
+    
+    nav.innerHTML = items.map(item => `
+        <div class="nav-item ${item.id === state.currentView ? 'active' : ''}" 
+             onclick="renderView('${item.id}')">
+            <span class="nav-item-icon">${item.icon}</span>
+            <span>${item.label}</span>
+        </div>
+    `).join('');
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        location.reload();
+    }
+}
+
+async function fetchFromAirtable(tableName, method = 'GET', body = null) {
+    try {
+        let url = `https://api.airtable.com/v0/${state.baseId}/${encodeURIComponent(tableName)}`;
+        
+        const options = {
+            method: method,
+            headers: {
+                'Authorization': `Bearer ${state.apiKey}`,
+                'Content-Type': 'application/json'
             }
-            
-            // Load saved credentials
-            document.getElementById('baseIdInput').value = CONFIG.baseId;
-            document.getElementById('apiKeyInput').value = CONFIG.apiKey;
+        };
+        
+        if (body && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+            options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, options);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`❌ ${tableName} request failed: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(`Error with ${tableName}:`, error);
+        throw error;
+    }
+}
+
+async function loadAllData() {
+    try {
+        await Promise.all([
+            loadDeals(),
+            loadActivities(),
+            loadTasks(),
+            loadContacts(),
+            loadAccounts()
+        ]);
+    } catch (error) {
+        console.error('Error loading data:', error);
+    }
+}
+
+function getOwnerName(ownerField) {
+    if (Array.isArray(ownerField) && ownerField.length > 0) {
+        const recordId = ownerField[0];
+        const member = state.data.teamMembers.find(m => m.id === recordId);
+        return member ? member.name : '';
+    }
+    return ownerField || '';
+}
+
+function getAccountName(accountField) {
+    if (Array.isArray(accountField) && accountField.length > 0) {
+        const accountId = accountField[0];
+        const account = state.data.accounts.find(a => a.id === accountId);
+        return account ? account.name : '';
+    }
+    return '';
+}
+
+function formatDateCST(dateString) {
+    if (!dateString) return '-';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleString('en-US', { 
+            timeZone: 'America/Chicago',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
         });
+    } catch (e) {
+        return dateString;
+    }
+}
 
-        // ==================== AUTH ====================
-        function handleLogin() {
-            const user = document.getElementById('loginUser').value;
-            const password = document.getElementById('loginPassword').value;
-            const errorEl = document.getElementById('loginError');
-            
-            if (!user) {
-                errorEl.textContent = 'Please select your name';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            
-            const isLeaderUser = CONFIG.leadershipUsers.includes(user);
-            const correctPassword = isLeaderUser ? CONFIG.passwords.leadership : CONFIG.passwords.rep;
-            
-            if (password !== correctPassword) {
-                errorEl.textContent = 'Incorrect password';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            
-            currentUser = user;
-            isLeadership = isLeaderUser;
-            localStorage.setItem('currentUser', user);
-            showApp();
+function calculateCycleTime(deal) {
+    if (!deal.createdTime || !deal.closeDate) return null;
+    const created = new Date(deal.createdTime);
+    const closed = new Date(deal.closeDate);
+    const days = Math.floor((closed - created) / (1000 * 60 * 60 * 24));
+    return days;
+}
+
+function daysSinceClosed(closeDate) {
+    if (!closeDate) return null;
+    const closed = new Date(closeDate);
+    const now = new Date();
+    const days = Math.floor((now - closed) / (1000 * 60 * 60 * 24));
+    return days;
+}
+
+async function loadDeals() {
+    const response = await fetchFromAirtable('Deals');
+    if (response && response.records) {
+        state.data.deals = response.records.map(r => ({
+            id: r.id,
+            name: r.fields['Deal Name'] || '',
+            owner: getOwnerName(r.fields.Owner),
+            tier: Array.isArray(r.fields['Tier (lookup)']) ? r.fields['Tier (lookup)'][0] : r.fields['Tier (lookup)'] || '',
+            stage: r.fields.Stage || '',
+            value: r.fields.Amount || 0,
+            eventName: r.fields['Event Name'] || '',
+            closeDate: r.fields['Close Date'] || '',
+            createdTime: r.createdTime,
+            pricingType: r.fields['Pricing Type'] || 'Public Price',
+            cycleTime: r.fields['Cycle Time (Days)'],
+            daysSince: r.fields['Days Since Closed']
+        }));
+    }
+}
+
+async function loadActivities() {
+    const response = await fetchFromAirtable('Activities');
+    if (response && response.records) {
+        state.data.activities = response.records.map(r => ({
+            id: r.id,
+            name: r.fields['Activity Name'] || '',
+            type: r.fields.Type || '',
+            date: r.fields['Activity Date/Time'] || r.fields.Date || '',
+            owner: r.fields.Owner || '',
+            account: r.fields.Account || '',
+            contact: Array.isArray(r.fields.Contact) ? r.fields.Contact[0] : r.fields.Contact || '',
+            result: r.fields.Result || '',
+            nextSteps: r.fields['Next Steps'] || '',
+            createdTime: r.createdTime
+        }));
+    }
+}
+
+async function loadTasks() {
+    const response = await fetchFromAirtable('Tasks');
+    if (response && response.records) {
+        state.data.tasks = response.records.map(r => ({
+            id: r.id,
+            name: r.fields['Task Name'] || '',
+            owner: getOwnerName(r.fields.Owner),
+            dueDate: r.fields['Due Date'] || '',
+            status: r.fields.Status || 'Open',
+            type: r.fields.Type || ''
+        }));
+    }
+}
+
+async function loadContacts() {
+    const response = await fetchFromAirtable('Contacts');
+    if (response && response.records) {
+        state.data.contacts = response.records.map(r => ({
+            id: r.id,
+            name: r.fields['Full Name'] || '',
+            email: r.fields.Email || '',
+            phone: r.fields.Phone || '',
+            company: getAccountName(r.fields.Account),
+            role: r.fields.Title || '',
+            owner: getOwnerName(r.fields['Contact Owner']),
+            createdTime: r.createdTime
+        }));
+    }
+}
+
+async function loadAccounts() {
+    const response = await fetchFromAirtable('Accounts');
+    if (response && response.records) {
+        state.data.accounts = response.records.map(r => ({
+            id: r.id,
+            name: r.fields['Account Name'] || '',
+            industry: r.fields.Industry || '',
+            owner: getOwnerName(r.fields['Account Owner']),
+            createdTime: r.createdTime
+        }));
+    }
+}
+
+function calculateDailyMetrics() {
+    const today = new Date().toISOString().split('T')[0];
+    const userActivities = state.data.activities.filter(a => 
+        a.owner === state.currentUser.name && 
+        a.createdTime && 
+        a.createdTime.split('T')[0] === today
+    );
+    
+    state.dailyMetrics.touchpoints = userActivities.length;
+    
+    const newContactsToday = state.data.contacts.filter(c => 
+        c.owner === state.currentUser.name &&
+        c.createdTime && 
+        c.createdTime.split('T')[0] === today
+    ).length;
+    
+    const newAccountsToday = state.data.accounts.filter(a => 
+        a.owner === state.currentUser.name &&
+        a.createdTime && 
+        a.createdTime.split('T')[0] === today
+    ).length;
+    
+    state.dailyMetrics.newLeads = newContactsToday + newAccountsToday;
+    
+    state.dailyMetrics.discoveryCalls = userActivities.filter(a => 
+        a.type && a.type.toLowerCase().includes('discovery')
+    ).length;
+    
+    state.dailyMetrics.dealsMoved = userActivities.filter(a => 
+        a.type && a.type.toLowerCase().includes('stage change')
+    ).length;
+}
+
+// CRUD Operations
+async function createDeal(dealData) {
+    try {
+        const response = await fetchFromAirtable('Deals', 'POST', {
+            fields: dealData
+        });
+        
+        if (response && response.id) {
+            await loadDeals();
+            closeModal();
+            renderView('pipeline');
+            alert('Deal created successfully!');
         }
+    } catch (error) {
+        alert('Error creating deal: ' + error.message);
+    }
+}
 
-        function handleLogout() {
-            localStorage.removeItem('currentUser');
-            currentUser = null;
-            isLeadership = false;
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('appContainer').classList.add('hidden');
+async function createContact(contactData) {
+    try {
+        const response = await fetchFromAirtable('Contacts', 'POST', {
+            fields: contactData
+        });
+        
+        if (response && response.id) {
+            await loadContacts();
+            calculateDailyMetrics();
+            closeModal();
+            renderView('contacts');
+            alert('Contact created! +1 New Lead!');
         }
+    } catch (error) {
+        alert('Error creating contact: ' + error.message);
+    }
+}
 
-        function showApp() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-            document.getElementById('userName').textContent = currentUser;
-            document.getElementById('userRole').textContent = isLeadership ? 'Leadership' : 'Sales Rep';
-            
-            // Show/hide leadership toggle
-            if (!isLeadership) {
-                document.getElementById('viewToggle').style.display = 'none';
-            }
-            
-            loadData();
+async function createAccount(accountData) {
+    try {
+        const response = await fetchFromAirtable('Accounts', 'POST', {
+            fields: accountData
+        });
+        
+        if (response && response.id) {
+            await loadAccounts();
+            calculateDailyMetrics();
+            closeModal();
+            renderView('accounts');
+            alert('Account created! +1 New Lead!');
         }
+    } catch (error) {
+        alert('Error creating account: ' + error.message);
+    }
+}
 
-        // ==================== DATA LOADING ====================
-        async function loadData() {
-            if (!CONFIG.apiKey) {
-                toggleSettings();
-                showToast('Please configure your Airtable API key', 'warning');
-                return;
-            }
+async function logActivity(activityData) {
+    try {
+        const response = await fetchFromAirtable('Activities', 'POST', {
+            fields: activityData
+        });
+        
+        if (response && response.id) {
+            await loadActivities();
+            calculateDailyMetrics();
+            closeModal();
+            renderView(state.currentView);
+            alert('Activity logged! +1 Touchpoint!');
+        }
+    } catch (error) {
+        alert('Error logging activity: ' + error.message);
+    }
+}
 
-            try {
-                // Load deals
-                const dealsRes = await fetch(`https://api.airtable.com/v0/${CONFIG.baseId}/Deals`, {
-                    headers: { 'Authorization': `Bearer ${CONFIG.apiKey}` }
-                });
-                if (!dealsRes.ok) throw new Error('Failed to load deals');
-                const dealsData = await dealsRes.json();
-                dataCache.deals = dealsData.records || [];
+// Modals
+function openAddDealModal() {
+    const modal = document.getElementById('modalContainer');
+    modal.innerHTML = `
+        <div class="modal active">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add New Deal</h2>
+                </div>
+                <div class="form-group">
+                    <label>Deal Name *</label>
+                    <input type="text" id="dealName" placeholder="Enter deal name">
+                </div>
+                <div class="form-group">
+                    <label>Tier *</label>
+                    <select id="dealTier" onchange="updateDealValue()">
+                        <option value="">Select tier...</option>
+                        <option value="Starter">Starter ($750)</option>
+                        <option value="Growth">Growth ($1,250)</option>
+                        <option value="Pro">Pro ($2,000)</option>
+                        <option value="Enterprise">Enterprise ($4,200)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Deal Value *</label>
+                    <input type="number" id="dealValue" readonly style="background: var(--bg-light);">
+                </div>
+                <div class="form-group">
+                    <label>Stage *</label>
+                    <select id="dealStage">
+                        <option value="Qualified">Qualified</option>
+                        <option value="Proposal Sent">Proposal Sent</option>
+                        <option value="Negotiation">Negotiation</option>
+                        <option value="Closed Won">Closed Won</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Event Name</label>
+                    <input type="text" id="dealEventName">
+                </div>
+                <div class="form-group">
+                    <label>Close Date</label>
+                    <input type="date" id="dealCloseDate">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveDeal()">Create Deal</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
 
-                // Load activities
-                const activitiesRes = await fetch(`https://api.airtable.com/v0/${CONFIG.baseId}/Activities`, {
-                    headers: { 'Authorization': `Bearer ${CONFIG.apiKey}` }
-                });
-                if (activitiesRes.ok) {
-                    const activitiesData = await activitiesRes.json();
-                    dataCache.activities = activitiesData.records || [];
+function updateDealValue() {
+    const tier = document.getElementById('dealTier').value;
+    const dealValueInput = document.getElementById('dealValue');
+    if (tier && tierPricing[tier]) {
+        dealValueInput.value = tierPricing[tier];
+    } else {
+        dealValueInput.value = '';
+    }
+}
+
+function saveDeal() {
+    const dealName = document.getElementById('dealName').value.trim();
+    const dealTier = document.getElementById('dealTier').value;
+    const dealValue = parseFloat(document.getElementById('dealValue').value) || 0;
+
+    if (!dealName || !dealTier || !dealValue) {
+        alert('Please fill in Deal Name and select Tier');
+        return;
+    }
+
+    const dealData = {
+        'Deal Name': dealName,
+        'Amount': dealValue,
+        'Stage': document.getElementById('dealStage').value
+    };
+
+    const pricingTierRecordId = state.pricingRuleMap[dealTier];
+    if (pricingTierRecordId) {
+        dealData['Pricing Tier'] = [pricingTierRecordId];
+    }
+
+    const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+    if (ownerRecordId) {
+        dealData['Owner'] = [ownerRecordId];
+    }
+
+    const eventName = document.getElementById('dealEventName').value.trim();
+    const closeDate = document.getElementById('dealCloseDate').value;
+
+    if (eventName) dealData['Event Name'] = eventName;
+    if (closeDate) dealData['Close Date'] = closeDate;
+
+    createDeal(dealData);
+}
+
+function openAddContactModal() {
+    const modal = document.getElementById('modalContainer');
+    const accounts = state.data.accounts;
+    
+    modal.innerHTML = `
+        <div class="modal active">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add New Contact</h2>
+                </div>
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="contactName">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="contactEmail">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="contactPhone">
+                </div>
+                <div class="form-group">
+                    <label>Company/Account</label>
+                    <select id="contactAccount">
+                        <option value="">Select company...</option>
+                        ${accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <input type="text" id="contactRole">
+                </div>
+                <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                    Owner: ${state.currentUser.name} (auto-assigned)
+                </p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveContact()">Create</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function saveContact() {
+    const contactData = {
+        'Full Name': document.getElementById('contactName').value,
+        'Email': document.getElementById('contactEmail').value,
+        'Phone': document.getElementById('contactPhone').value,
+        'Title': document.getElementById('contactRole').value
+    };
+
+    if (!contactData['Full Name'] || !contactData['Email']) {
+        alert('Please fill in Name and Email');
+        return;
+    }
+
+    const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+    if (ownerRecordId) {
+        contactData['Contact Owner'] = [ownerRecordId];
+    }
+
+    const accountRecordId = document.getElementById('contactAccount').value;
+    if (accountRecordId) {
+        contactData['Account'] = [accountRecordId];
+    }
+
+    createContact(contactData);
+}
+
+function openAddAccountModal() {
+    const modal = document.getElementById('modalContainer');
+    modal.innerHTML = `
+        <div class="modal active">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Add New Account</h2>
+                </div>
+                <div class="form-group">
+                    <label>Account Name *</label>
+                    <input type="text" id="accountName">
+                </div>
+                <div class="form-group">
+                    <label>Industry</label>
+                    <input type="text" id="accountIndustry" list="industryOptions">
+                    <datalist id="industryOptions">
+                        <option value="Technology">
+                        <option value="Finance">
+                        <option value="Education">
+                        <option value="Healthcare">
+                        <option value="Retail">
+                        <option value="Other">
+                    </datalist>
+                </div>
+                <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                    Owner: ${state.currentUser.name} (auto-assigned)
+                </p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveAccount()">Create</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function saveAccount() {
+    const accountData = {
+        'Account Name': document.getElementById('accountName').value,
+        'Industry': document.getElementById('accountIndustry').value
+    };
+
+    if (!accountData['Account Name']) {
+        alert('Please enter account name');
+        return;
+    }
+
+    const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+    if (ownerRecordId) {
+        accountData['Account Owner'] = [ownerRecordId];
+    }
+
+    createAccount(accountData);
+}
+
+function openLogActivityModal() {
+    const modal = document.getElementById('modalContainer');
+    const accounts = state.data.accounts;
+    const contacts = state.data.contacts;
+    
+    modal.innerHTML = `
+        <div class="modal active">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Log Activity</h2>
+                </div>
+                <div class="form-group">
+                    <label>Activity Type *</label>
+                    <select id="activityType">
+                        <option value="Call">Call</option>
+                        <option value="Email">Email</option>
+                        <option value="LinkedIn">LinkedIn Message</option>
+                        <option value="Discovery Call">Discovery Call</option>
+                        <option value="Demo">Demo</option>
+                        <option value="Proposal">Proposal Sent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Account *</label>
+                    <select id="activityAccount">
+                        <option value="">Select account...</option>
+                        ${accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Contact</label>
+                    <select id="activityContact">
+                        <option value="">Select contact...</option>
+                        ${contacts.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Result/Outcome *</label>
+                    <textarea id="activityResult"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Next Steps</label>
+                    <textarea id="activityNextSteps"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveActivity()">Log Activity</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function saveActivity() {
+    const accountRecordId = document.getElementById('activityAccount').value;
+    const result = document.getElementById('activityResult').value;
+    
+    if (!accountRecordId || !result) {
+        alert('Please select an Account and enter Result');
+        return;
+    }
+
+    const account = state.data.accounts.find(a => a.id === accountRecordId);
+    const accountName = account ? account.name : '';
+
+    const activityType = document.getElementById('activityType').value;
+    const activityName = `${activityType} - ${accountName}`;
+
+    const now = new Date();
+    const dateOnly = now.toISOString().split('T')[0];
+    const dateTime = now.toISOString();
+
+    const activityData = {
+        'Activity Name': activityName,
+        'Type': activityType,
+        'Date': dateOnly,
+        'Activity Date/Time': dateTime,
+        'Account': accountName,
+        'Owner': state.currentUser.name,
+        'Result': result
+    };
+
+    const contactRecordId = document.getElementById('activityContact').value;
+    const nextSteps = document.getElementById('activityNextSteps').value;
+
+    if (contactRecordId) activityData['Contact'] = [contactRecordId];
+    if (nextSteps) activityData['Next Steps'] = nextSteps;
+
+    logActivity(activityData);
+}
+
+function openDealDetailsModal(dealId) {
+    const deal = state.data.deals.find(d => d.id === dealId);
+    if (!deal) return;
+    
+    const modal = document.getElementById('modalContainer');
+    modal.innerHTML = `
+        <div class="modal active">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📊 ${deal.name}</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label>Deal Value</label>
+                    <input type="text" value="$${deal.value.toLocaleString()}" disabled style="background: var(--bg-light); font-weight: 600;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tier</label>
+                    <div><span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Current Stage</label>
+                    <select id="dealStageEdit">
+                        <option value="Qualified" ${deal.stage === 'Qualified' ? 'selected' : ''}>Qualified</option>
+                        <option value="Proposal Sent" ${deal.stage === 'Proposal Sent' ? 'selected' : ''}>Proposal Sent</option>
+                        <option value="Negotiation" ${deal.stage === 'Negotiation' ? 'selected' : ''}>Negotiation</option>
+                        <option value="Closed Won" ${deal.stage === 'Closed Won' ? 'selected' : ''}>Closed Won</option>
+                        <option value="Closed Lost" ${deal.stage === 'Closed Lost' ? 'selected' : ''}>Closed Lost</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="updateDealStage('${dealId}')">Update Stage</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+async function updateDealStage(dealId, newStage) {
+    if (!newStage) {
+        newStage = document.getElementById('dealStageEdit').value;
+    }
+    
+    const deal = state.data.deals.find(d => d.id === dealId);
+    
+    if (!deal || newStage === deal.stage) {
+        closeModal();
+        return;
+    }
+    
+    try {
+        const response = await fetch(`https://api.airtable.com/v0/${state.baseId}/Deals/${dealId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${state.apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fields: {
+                    'Stage': newStage
                 }
+            })
+        });
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        await loadDeals();
+        closeModal();
+        renderView('pipeline');
+        alert(`Deal moved to ${newStage}!`);
+    } catch (error) {
+        alert(`Error updating deal: ${error.message}`);
+    }
+}
 
-                // Load team members
-                const teamRes = await fetch(`https://api.airtable.com/v0/${CONFIG.baseId}/Team%20Members`, {
-                    headers: { 'Authorization': `Bearer ${CONFIG.apiKey}` }
-                });
-                if (teamRes.ok) {
-                    const teamData = await teamRes.json();
-                    dataCache.teamMembers = teamData.records || [];
-                }
+function closeModal() {
+    document.getElementById('modalContainer').innerHTML = '';
+}
 
-                renderDashboard();
-                showToast('Data loaded successfully', 'success');
-            } catch (error) {
-                console.error('Error loading data:', error);
-                showToast('Error loading data. Check your API settings.', 'error');
-                renderDemoData();
-            }
-        }
+function getUserDeals() {
+    if (state.currentUser.role === 'Leadership') {
+        return state.data.deals;
+    }
+    return state.data.deals.filter(d => d.owner === state.currentUser.name);
+}
 
-        // ==================== RENDER FUNCTIONS ====================
-        function renderDashboard() {
-            if (currentView === 'rep' || !isLeadership) {
-                renderRepDashboard();
-            } else {
-                renderLeadershipDashboard();
-            }
-        }
+function renderView(viewName) {
+    state.currentView = viewName;
+    document.getElementById('pageTitle').textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
+    
+    const views = {
+        'dashboard': renderDashboard,
+        'pipeline': renderPipeline,
+        'tasks': renderTasks,
+        'contacts': renderContacts,
+        'accounts': renderAccounts,
+        'activity': renderActivityView,
+        'reports': renderReports,
+        'leadership': renderLeadershipDashboard,
+        'team': renderTeamOverview
+    };
+    
+    if (views[viewName]) {
+        views[viewName]();
+        buildNavigation();
+    }
+}
 
-        function renderRepDashboard() {
-            const userDeals = getUserDeals(currentUser);
-            const monthDeals = getMonthDeals(userDeals);
-            const todayActivities = getTodayActivities(currentUser);
+// Simple view renders (Tasks, Contacts, Accounts, etc.)
+function renderTasks() {
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">✅ Tasks</h2>
+            </div>
+            <p style="text-align: center; padding: 40px; color: var(--text-gray);">
+                Task management coming soon
+            </p>
+        </div>
+    `;
+}
 
-            // Daily Scorecard
-            const touchpoints = todayActivities.length;
-            const newLeads = todayActivities.filter(a => (a.fields['Activity Type'] || '').includes('Lead')).length;
-            const discoveries = todayActivities.filter(a => (a.fields['Activity Type'] || '').includes('Discovery')).length;
-            const dealsMoved = todayActivities.filter(a => (a.fields['Activity Type'] || '').includes('Stage')).length;
-
-            updateScorecard('touchpointsCard', 'touchpointsValue', touchpoints, 20, 25);
-            updateScorecard('leadsCard', 'leadsValue', newLeads, 3, 5);
-            updateScorecard('discoveryCard', 'discoveryValue', discoveries, 1, 1);
-            updateScorecard('dealsMovedCard', 'dealsMovedValue', dealsMoved, 1, 1);
-
-            // Monthly KPIs
-            const totalRevenue = monthDeals.reduce((sum, d) => sum + (d.fields['Amount'] || 0), 0);
-            const dealsCount = monthDeals.length;
-            const quality = calculateQuality(monthDeals);
-            const avgDeal = dealsCount > 0 ? totalRevenue / dealsCount : 0;
-
-            document.getElementById('repRevenue').textContent = formatCurrency(totalRevenue);
-            document.getElementById('repRevenueBar').style.width = Math.min((totalRevenue / 9750) * 100, 100) + '%';
-            document.getElementById('repDeals').textContent = dealsCount;
-            document.getElementById('repQuality').textContent = quality + '%';
-            document.getElementById('repAvgDeal').textContent = formatCurrency(avgDeal);
-
-            // Quality Badge
-            const badgeEl = document.getElementById('qualityBadge');
-            const badgeClass = quality >= 70 ? 'success' : quality >= 50 ? 'warning' : 'danger';
-            const badgeText = quality >= 70 ? '✅ Quality Goal Met' : '⚠️ Need More Growth+ Deals';
-            badgeEl.innerHTML = `<span class="quality-badge ${badgeClass}">${badgeText}</span>`;
-
-            // Deal Mix Table
-            renderDealMixTable(monthDeals, userDeals);
-
-            // Recent Wins
-            renderRecentWins(monthDeals);
-
-            // Revenue Chart
-            renderRevenueChart('repRevenueChart', userDeals);
-        }
-
-        function renderLeadershipDashboard() {
-            const allDeals = dataCache.deals;
-            const wonDeals = allDeals.filter(d => d.fields['Stage'] === 'Closed Won');
-            const now = new Date();
+function renderContacts() {
+    const contacts = state.data.contacts;
+    const content = document.getElementById('contentArea');
+    
+    content.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">👥 Contacts</h2>
+                <button class="btn btn-primary btn-small" onclick="openAddContactModal()">+ Add Contact</button>
+            </div>
             
-            const monthDeals = wonDeals.filter(d => {
-                const closeDate = d.fields['Close Date'];
-                if (!closeDate) return false;
-                const date = new Date(closeDate);
-                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Company</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${contacts.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No contacts found</td></tr>' : contacts.map(contact => `
+                        <tr>
+                            <td><strong>${contact.name}</strong></td>
+                            <td>${contact.email}</td>
+                            <td>${contact.phone}</td>
+                            <td>${contact.company || '-'}</td>
+                            <td>${contact.role}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function renderAccounts() {
+    const accounts = state.data.accounts;
+    const content = document.getElementById('contentArea');
+    
+    content.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🏢 Accounts</h2>
+                <button class="btn btn-primary btn-small" onclick="openAddAccountModal()">+ Add Account</button>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Industry</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${accounts.length === 0 ? '<tr><td colspan="3" style="text-align: center; padding: 40px;">No accounts found</td></tr>' : accounts.map(account => `
+                        <tr>
+                            <td>${account.name}</td>
+                            <td>${account.industry}</td>
+                            <td>${account.owner}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function renderActivityView() {
+    const activities = state.data.activities.filter(a => a.owner === state.currentUser.name);
+    
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📝 Activity Log</h2>
+                <button class="btn btn-primary btn-small" onclick="openLogActivityModal()">+ Log Activity</button>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Account</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${activities.length === 0 ? '<tr><td colspan="4" style="text-align: center; padding: 40px;">No activities yet</td></tr>' : activities.map(activity => `
+                        <tr>
+                            <td>${formatDateCST(activity.date)}</td>
+                            <td><span class="badge" style="background: var(--primary); color: white;">${activity.type}</span></td>
+                            <td><strong>${activity.account}</strong></td>
+                            <td>${activity.result || '-'}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function renderReports() {
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📑 Reports</h2>
+            </div>
+            <p style="text-align: center; padding: 40px; color: var(--text-gray);">
+                Advanced reporting coming soon
+            </p>
+        </div>
+    `;
+}
+
+function renderTeamOverview() {
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">👨‍👩‍👧‍👦 Team Overview</h2>
+            </div>
+            <p style="text-align: center; padding: 40px; color: var(--text-gray);">
+                Use the Leadership Dashboard for detailed team insights
+            </p>
+        </div>
+    `;
+}
+
+function renderPipeline() {
+    const deals = getUserDeals();
+    const stages = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won'];
+    
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📊 Pipeline</h2>
+                <button class="btn btn-primary btn-small" onclick="openAddDealModal()">+ Add Deal</button>
+            </div>
+            
+            <div class="kanban-board">
+                ${stages.map(stage => {
+                    const stageDeals = deals.filter(d => d.stage === stage);
+                    return `
+                        <div class="kanban-column">
+                            <div class="kanban-header">
+                                <span>${stage}</span>
+                                <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">${stageDeals.length}</span>
+                            </div>
+                            ${stageDeals.length === 0 ? '<p style="text-align: center; color: var(--text-gray); padding: 20px; font-size: 13px;">No deals</p>' : stageDeals.map(deal => `
+                                <div class="kanban-card" onclick="openDealDetailsModal('${deal.id}')" style="cursor: pointer;">
+                                    <div class="kanban-card-title">${deal.name}</div>
+                                    <div class="kanban-card-value">$${deal.value.toLocaleString()}</div>
+                                    <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+}
+
+window.addEventListener('DOMContentLoaded', init);
+
+// PART 2 ENDS HERE - PASTE PART 3 AFTER THIS
+    // PART 3: DASHBOARD RENDERING WITH CHARTS
+// PASTE THIS AFTER PART 2
+
+// Show notifications for below-target KPIs
+function showKPINotifications(metrics) {
+    const content = document.getElementById('contentArea');
+    let alerts = [];
+    
+    const quota = state.currentUser.quota || 45000;
+    const minMonthlyTarget = quota * 0.7;
+    
+    // Check revenue
+    if (metrics.monthRevenue < minMonthlyTarget && metrics.monthRevenue > 0) {
+        const percentOfTarget = ((metrics.monthRevenue / quota) * 100).toFixed(0);
+        alerts.push({
+            type: 'danger',
+            title: '⚠️ Revenue Below Target',
+            text: `You're at ${percentOfTarget}% of your quota. Let's close some deals!`
+        });
+    }
+    
+    // Check touchpoints
+    const hour = new Date().getHours();
+    if (metrics.todayTouchpoints < 15 && hour >= 14) {
+        alerts.push({
+            type: 'warning',
+            title: '🎯 Touchpoints Reminder',
+            text: `Only ${metrics.todayTouchpoints}/25 touchpoints today. Keep the momentum going!`
+        });
+    }
+    
+    // Check quality score
+    if (metrics.qualityScore < 70 && metrics.totalDeals >= 3) {
+        alerts.push({
+            type: 'warning',
+            title: '📊 Quality Score Low',
+            text: `Your quality score is ${metrics.qualityScore.toFixed(0)}%. Focus on Growth+ deals!`
+        });
+    }
+    
+    // Show success message if exceeding
+    if (metrics.monthRevenue >= quota) {
+        alerts.push({
+            type: 'success',
+            title: '🎉 Crushing It!',
+            text: `You're at ${((metrics.monthRevenue / quota) * 100).toFixed(0)}% of quota. Amazing work!`
+        });
+    }
+    
+    return alerts.map(alert => `
+        <div class="alert-banner ${alert.type}">
+            <div class="alert-icon">${alert.type === 'success' ? '✅' : '⚠️'}</div>
+            <div class="alert-content">
+                <div class="alert-title">${alert.title}</div>
+                <div class="alert-text">${alert.text}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// REP DASHBOARD
+function renderDashboard() {
+    const deals = getUserDeals();
+    const isLeadership = state.currentUser.role === 'Leadership';
+    
+    if (isLeadership) {
+        renderLeadershipDashboard();
+        return;
+    }
+    
+    // Calculate date ranges
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayISO = today.toISOString().split('T')[0];
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay());
+    
+    // Get user's activities
+    const userActivities = state.data.activities.filter(a => a.owner === state.currentUser.name);
+    
+    // TODAY
+    const todayActivities = userActivities.filter(a => {
+        const activityDate = a.date ? a.date.split('T')[0] : null;
+        return activityDate === todayISO;
+    });
+    
+    // THIS WEEK
+    const weekActivities = userActivities.filter(a => {
+        if (!a.date) return false;
+        const activityDate = new Date(a.date);
+        return activityDate >= weekStart;
+    });
+    
+    const weekCalls = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+    const weekEmails = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+    const weekLinkedIn = weekActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
+    const weekDemos = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
+    const weekProposals = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
+    const weekDiscovery = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('discovery')).length;
+    
+    // Daily KPIs
+    const todayTouchpoints = todayActivities.length;
+    const todayNewLeads = state.data.contacts.filter(c => {
+        if (!c.createdTime) return false;
+        const created = new Date(c.createdTime).toISOString().split('T')[0];
+        return created === todayISO && c.owner === state.currentUser.name;
+    }).length;
+    
+    const todayDiscoveryCalls = todayActivities.filter(a => 
+        a.type && a.type.toLowerCase().includes('discovery')
+    ).length;
+    
+    const todayDealsMovedCount = todayActivities.filter(a => 
+        a.type && a.type.toLowerCase().includes('stage change')
+    ).length;
+    
+    // Monthly KPIs
+    const quota = state.currentUser.quota || 45000;
+    const minTarget = 9750; // Lower target
+    const maxTarget = 12700; // Upper target
+    
+    const monthClosedDeals = deals.filter(d => {
+        if (!d.stage.toLowerCase().includes('won')) return false;
+        if (!d.createdTime) return true;
+        const dealDate = new Date(d.createdTime);
+        return dealDate >= monthStart;
+    });
+    
+    const monthRevenue = monthClosedDeals.reduce((sum, d) => sum + d.value, 0);
+    const revenuePercentOfMax = (monthRevenue / maxTarget) * 100;
+    
+    const totalEvents = monthClosedDeals.length;
+    const eventsMinTarget = 6;
+    const eventsMaxTarget = 7;
+    const eventsPercentOfMax = (totalEvents / eventsMaxTarget) * 100;
+    
+    // Deal mix
+    const starterDeals = monthClosedDeals.filter(d => d.tier === 'Starter');
+    const growthDeals = monthClosedDeals.filter(d => d.tier === 'Growth');
+    const proDeals = monthClosedDeals.filter(d => d.tier === 'Pro');
+    const enterpriseDeals = monthClosedDeals.filter(d => d.tier === 'Enterprise');
+    
+    const starterRevenue = starterDeals.reduce((sum, d) => sum + d.value, 0);
+    const growthRevenue = growthDeals.reduce((sum, d) => sum + d.value, 0);
+    const proRevenue = proDeals.reduce((sum, d) => sum + d.value, 0);
+    const enterpriseRevenue = enterpriseDeals.reduce((sum, d) => sum + d.value, 0);
+    
+    // Quality Score
+    const growthPlusCount = growthDeals.length + proDeals.length + enterpriseDeals.length;
+    const qualityScore = monthClosedDeals.length > 0 ? (growthPlusCount / monthClosedDeals.length) * 100 : 0;
+    const qualityMet = qualityScore >= 70;
+    
+    // Pipeline
+    const pipelineDeals = deals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'));
+    
+    // Performance by Tier
+    const performanceByTier = [
+        { tier: 'Starter', closed: starterDeals.length, revenue: starterRevenue, pipeline: pipelineDeals.filter(d => d.tier === 'Starter').length, avgSize: starterDeals.length > 0 ? starterRevenue / starterDeals.length : 0 },
+        { tier: 'Growth', closed: growthDeals.length, revenue: growthRevenue, pipeline: pipelineDeals.filter(d => d.tier === 'Growth').length, avgSize: growthDeals.length > 0 ? growthRevenue / growthDeals.length : 0 },
+        { tier: 'Pro', closed: proDeals.length, revenue: proRevenue, pipeline: pipelineDeals.filter(d => d.tier === 'Pro').length, avgSize: proDeals.length > 0 ? proRevenue / proDeals.length : 0 },
+        { tier: 'Enterprise', closed: enterpriseDeals.length, revenue: enterpriseRevenue, pipeline: pipelineDeals.filter(d => d.tier === 'Enterprise').length, avgSize: enterpriseDeals.length > 0 ? enterpriseRevenue / enterpriseDeals.length : 0 }
+    ];
+    
+    // Recent wins
+    const allClosedDeals = deals.filter(d => d.stage.toLowerCase().includes('won'))
+        .sort((a, b) => new Date(b.closeDate || b.createdTime) - new Date(a.closeDate || a.createdTime));
+    
+    // Pricing breakdown
+    const publicDeals = monthClosedDeals.filter(d => d.pricingType === 'Public Price');
+    const floorDeals = monthClosedDeals.filter(d => d.pricingType === 'Floor Price');
+    const publicRevenue = publicDeals.reduce((sum, d) => sum + d.value, 0);
+    const floorRevenue = floorDeals.reduce((sum, d) => sum + d.value, 0);
+    
+    // Status helpers
+    const getStatus = (value, min, max) => {
+        if (value >= min) return 'success';
+        if (value >= min * 0.5) return 'warning';
+        return 'danger';
+    };
+    
+    const getStatusColor = (status) => {
+        if (status === 'success') return 'var(--success)';
+        if (status === 'warning') return '#ff9800';
+        return 'var(--danger)';
+    };
+    
+    const touchpointStatus = getStatus(todayTouchpoints, 20, 25);
+    const newLeadsStatus = getStatus(todayNewLeads, 3, 5);
+    const callsStatus = getStatus(todayDiscoveryCalls, 1, 2);
+    const dealsMovedStatus = getStatus(todayDealsMovedCount, 1, 2);
+    
+    const metrics = {
+        monthRevenue,
+        qualityScore,
+        todayTouchpoints,
+        totalDeals: monthClosedDeals.length
+    };
+
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        ${showKPINotifications(metrics)}
+        
+        <div class="kpi-grid">
+            <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">💰 MONTHLY REVENUE</div>
+                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">$${(monthRevenue / 1000).toFixed(1)}K</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: $${minTarget / 1000}K - $${maxTarget / 1000}K</div>
+                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                    <div style="width: ${Math.min(revenuePercentOfMax, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                </div>
+                <div style="font-size: 15px; font-weight: 700;">${revenuePercentOfMax.toFixed(0)}% of Max Target</div>
+            </div>
+            
+            <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">🎉 TOTAL EVENTS</div>
+                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${totalEvents}</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: ${eventsMinTarget}-${eventsMaxTarget} events per month</div>
+                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                    <div style="width: ${Math.min(eventsPercentOfMax, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                </div>
+                <div style="font-size: 15px; font-weight: 700;">${eventsPercentOfMax.toFixed(0)}% of Max Target</div>
+            </div>
+            
+            <div class="kpi-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">📊 MONTHLY ATTAINMENT</div>
+                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${((monthRevenue / quota) * 100).toFixed(0)}%</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Quota: $${(quota / 1000).toFixed(0)}K</div>
+                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="width: ${Math.min((monthRevenue / quota) * 100, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📅 Daily Scorecard - ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px;">
+                
+                <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(touchpointStatus)};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">TOUCHPOINTS TODAY</div>
+                        <div style="font-size: 24px;">${touchpointStatus === 'success' ? '✅' : touchpointStatus === 'warning' ? '⚠️' : '❌'}</div>
+                    </div>
+                    <div class="kpi-value" style="color: ${getStatusColor(touchpointStatus)};">${todayTouchpoints}</div>
+                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 20-25/day</div>
+                    <div class="progress-bar" style="margin-top: 12px;">
+                        <div class="progress-fill" style="width: ${Math.min((todayTouchpoints / 25) * 100, 100)}%; background: ${getStatusColor(touchpointStatus)};"></div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(newLeadsStatus)};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">NEW LEADS TODAY</div>
+                        <div style="font-size: 24px;">${newLeadsStatus === 'success' ? '✅' : newLeadsStatus === 'warning' ? '⚠️' : '❌'}</div>
+                    </div>
+                    <div class="kpi-value" style="color: ${getStatusColor(newLeadsStatus)};">${todayNewLeads}</div>
+                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 3-5/day</div>
+                    <div class="progress-bar" style="margin-top: 12px;">
+                        <div class="progress-fill" style="width: ${Math.min((todayNewLeads / 5) * 100, 100)}%; background: ${getStatusColor(newLeadsStatus)};"></div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(callsStatus)};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">DISCOVERY CALLS</div>
+                        <div style="font-size: 24px;">${callsStatus === 'success' ? '✅' : callsStatus === 'warning' ? '⚠️' : '❌'}</div>
+                    </div>
+                    <div class="kpi-value" style="color: ${getStatusColor(callsStatus)};">${todayDiscoveryCalls}</div>
+                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 1+/day</div>
+                    <div class="progress-bar" style="margin-top: 12px;">
+                        <div class="progress-fill" style="width: ${Math.min(todayDiscoveryCalls * 100, 100)}%; background: ${getStatusColor(callsStatus)};"></div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(dealsMovedStatus)};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">DEALS MOVED</div>
+                        <div style="font-size: 24px;">${dealsMovedStatus === 'success' ? '✅' : dealsMovedStatus === 'warning' ? '⚠️' : '❌'}</div>
+                    </div>
+                    <div class="kpi-value" style="color: ${getStatusColor(dealsMovedStatus)};">${todayDealsMovedCount}</div>
+                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 1+/day</div>
+                    <div class="progress-bar" style="margin-top: 12px;">
+                        <div class="progress-fill" style="width: ${Math.min(todayDealsMovedCount * 100, 100)}%; background: ${getStatusColor(dealsMovedStatus)};"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📊 This Week's Activity</h2>
+            </div>
+            <div class="activity-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📞</div>
+                    <div class="stat-value">${weekCalls}</div>
+                    <div class="stat-label">Calls</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-value">${weekEmails}</div>
+                    <div class="stat-label">Emails</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💼</div>
+                    <div class="stat-value">${weekLinkedIn}</div>
+                    <div class="stat-label">Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎥</div>
+                    <div class="stat-value">${weekDemos}</div>
+                    <div class="stat-label">Demos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📄</div>
+                    <div class="stat-value">${weekProposals}</div>
+                    <div class="stat-label">Proposals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">${weekDiscovery}</div>
+                    <div class="stat-label">Discovery</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📊 Performance by Tier</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tier</th>
+                        <th>Closed</th>
+                        <th>Revenue</th>
+                        <th>Pipeline</th>
+                        <th>Avg Size</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${performanceByTier.map(t => `
+                        <tr>
+                            <td><span class="badge badge-${t.tier.toLowerCase()}">${t.tier}</span></td>
+                            <td><strong>${t.closed}</strong></td>
+                            <td>$${(t.revenue / 1000).toFixed(1)}K</td>
+                            <td>${t.pipeline}</td>
+                            <td>${t.avgSize > 0 ? '$' + Math.round(t.avgSize).toLocaleString() : '-'}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🎯 Monthly Deal Mix</h2>
+                <span class="quality-badge ${qualityMet ? 'success' : 'warning'}">
+                    ${qualityMet ? '✅ Quality Goal Met' : '⚠️ Need More Growth+ Deals'}
+                </span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tier</th>
+                        <th>Target</th>
+                        <th>Closed</th>
+                        <th>Pipeline</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-starter">Starter</span></td>
+                        <td>1</td>
+                        <td><strong>${starterDeals.length}</strong></td>
+                        <td>${pipelineDeals.filter(d => d.tier === 'Starter').length}</td>
+                        <td>${starterDeals.length >= 1 ? '✅' : '⚠️'}</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-growth">Growth</span></td>
+                        <td>2-3</td>
+                        <td><strong>${growthDeals.length}</strong></td>
+                        <td>${pipelineDeals.filter(d => d.tier === 'Growth').length}</td>
+                        <td>${growthDeals.length >= 2 ? '✅' : '⚠️'}</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-pro">Pro</span></td>
+                        <td>2</td>
+                        <td><strong>${proDeals.length}</strong></td>
+                        <td>${pipelineDeals.filter(d => d.tier === 'Pro').length}</td>
+                        <td>${proDeals.length >= 2 ? '✅' : '⚠️'}</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-enterprise">Enterprise</span></td>
+                        <td>0-1</td>
+                        <td><strong>${enterpriseDeals.length}</strong></td>
+                        <td>${pipelineDeals.filter(d => d.tier === 'Enterprise').length}</td>
+                        <td>${enterpriseDeals.length <= 1 ? '✅' : '⚠️'}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🏆 Recent Wins</h2>
+            </div>
+            <div class="wins-list">
+                ${allClosedDeals.length === 0 ? '<p style="text-align: center; color: var(--text-gray); padding: 40px;">No wins yet. Keep closing!</p>' : allClosedDeals.slice(0, 5).map(deal => {
+                    const cycleTime = calculateCycleTime(deal);
+                    const daysAgo = daysSinceClosed(deal.closeDate);
+                    return `
+                        <div class="win-card">
+                            <div class="win-info">
+                                <div class="win-name">${deal.name}</div>
+                                <div class="win-meta">
+                                    <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                    <span style="color: var(--text-gray); font-size: 13px;">
+                                        👤 Rep: <strong>${deal.owner}</strong>
+                                        ${cycleTime ? ` • ⏱️ ${cycleTime} days` : ''}
+                                        ${daysAgo !== null ? ` • 🕐 ${daysAgo === 0 ? 'Today' : daysAgo === 1 ? '1 day ago' : daysAgo + ' days ago'}` : ''}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="win-value">$${deal.value.toLocaleString()}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📊 Quality Score</h2>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+                <div style="font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
+                    ${qualityScore.toFixed(0)}%
+                </div>
+                <div style="font-size: 16px; color: var(--text-gray); margin-bottom: 20px;">
+                    Growth or Higher Deals (Target: 70%+)
+                </div>
+                <div class="progress-bar" style="max-width: 400px; margin: 0 auto;">
+                    <div class="progress-fill" style="width: ${Math.min(qualityScore, 100)}%;"></div>
+                </div>
+                <div style="font-size: 14px; color: var(--text-gray); margin-top: 12px;">
+                    ${growthPlusCount} out of ${monthClosedDeals.length} deals are Growth+
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// LEADERSHIP DASHBOARD (condensed - full version will be in final file)
+function renderLeadershipDashboard() {
+    const allDeals = state.data.deals;
+    const allActivities = state.data.activities;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayISO = today.toISOString().split('T')[0];
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const yearStart = new Date(today.getFullYear(), 0, 1);
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay());
+    
+    // Team metrics
+    const monthClosedDeals = allDeals.filter(d => {
+        if (!d.stage.toLowerCase().includes('won')) return false;
+        if (!d.createdTime) return true;
+        const dealDate = new Date(d.createdTime);
+        return dealDate >= monthStart;
+    });
+    
+    const monthRevenue = monthClosedDeals.reduce((sum, d) => sum + d.value, 0);
+    const teamTargetMin = 28000;
+    const teamTargetMax = 35000;
+    const revenuePercentOfMax = (monthRevenue / teamTargetMax) * 100;
+    
+    const totalEvents = monthClosedDeals.length;
+    const eventsTargetMin = 18;
+    const eventsTargetMax = 22;
+    const eventsPercentOfMax = (totalEvents / eventsTargetMax) * 100;
+    
+    // THIS WEEK'S TEAM ACTIVITY
+    const weekActivities = allActivities.filter(a => {
+        if (!a.date) return false;
+        const activityDate = new Date(a.date);
+        return activityDate >= weekStart;
+    });
+    
+    const weekCalls = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+    const weekEmails = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+    const weekLinkedIn = weekActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
+    const weekDemos = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
+    const weekProposals = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
+    const weekDiscovery = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('discovery')).length;
+    
+    // Floor Pricing
+    const yearDeals = allDeals.filter(d => {
+        if (!d.createdTime) return true;
+        const dealDate = new Date(d.createdTime);
+        return dealDate >= yearStart;
+    });
+    
+    const floorDeals = yearDeals.filter(d => d.pricingType === 'Floor Price');
+    const floorStarter = floorDeals.filter(d => d.tier === 'Starter').length;
+    const floorGrowth = floorDeals.filter(d => d.tier === 'Growth').length;
+    const floorPro = floorDeals.filter(d => d.tier === 'Pro').length;
+    const floorEnterprise = floorDeals.filter(d => d.tier === 'Enterprise').length;
+    const totalFloorUsed = floorStarter + floorGrowth + floorPro + floorEnterprise;
+    const floorCapacity = 10;
+    const capacityPercent = (totalFloorUsed / floorCapacity) * 100;
+    
+    // Rep performance with KPI status
+    const repCards = state.data.teamMembers
+        .filter(m => m.role !== 'Leadership')
+        .map(member => {
+            const memberDeals = allDeals.filter(d => d.owner === member.name);
+            const memberMonthWon = memberDeals.filter(d => {
+                if (!d.stage.toLowerCase().includes('won')) return false;
+                if (!d.createdTime) return true;
+                const dealDate = new Date(d.createdTime);
+                return dealDate >= monthStart;
             });
-
-            const yearDeals = wonDeals.filter(d => {
-                const closeDate = d.fields['Close Date'];
-                if (!closeDate) return false;
-                return new Date(closeDate).getFullYear() === now.getFullYear();
+            const memberRevenue = memberMonthWon.reduce((sum, d) => sum + d.value, 0);
+            const memberQuota = member.quota || 45000;
+            const memberAttainment = (memberRevenue / memberQuota) * 100;
+            
+            const memberTodayActivities = allActivities.filter(a => {
+                const activityDate = a.date ? a.date.split('T')[0] : null;
+                return activityDate === todayISO && a.owner === member.name;
             });
-
-            // Monthly Team KPIs
-            const monthRevenue = monthDeals.reduce((sum, d) => sum + (d.fields['Amount'] || 0), 0);
-            const teamQuality = calculateQuality(monthDeals);
-            const todayTouchpoints = dataCache.activities.filter(a => {
-                const actDate = a.fields['Activity Date'];
-                return actDate && actDate.startsWith(new Date().toISOString().split('T')[0]);
-            }).length;
-
-            document.getElementById('teamRevenue').textContent = formatCurrency(monthRevenue);
-            document.getElementById('teamRevenueBar').style.width = Math.min((monthRevenue / 32000) * 100, 100) + '%';
-            document.getElementById('teamEvents').textContent = monthDeals.length;
-            document.getElementById('teamQuality').textContent = teamQuality + '%';
-            document.getElementById('teamTouchpoints').textContent = todayTouchpoints;
-
-            // Annual Progress
-            const annualRevenue = yearDeals.reduce((sum, d) => sum + (d.fields['Amount'] || 0), 0);
-            document.getElementById('annualRevenue').textContent = formatCurrency(annualRevenue);
-            document.getElementById('annualRevenueBar').style.width = Math.min((annualRevenue / 335000) * 100, 100) + '%';
-            document.getElementById('annualEvents').textContent = yearDeals.length;
-            document.getElementById('annualEventsBar').style.width = Math.min((yearDeals.length / 140) * 100, 100) + '%';
-
-            // Floor Pricing Tracker
-            renderFloorPricingTracker(yearDeals);
-
-            // Rep Cards
-            renderRepCards();
-
-            // Team Revenue Chart
-            renderRevenueChart('teamRevenueChart', allDeals, true);
-        }
-
-        function renderDealMixTable(monthDeals, allDeals) {
-            const tiers = {
-                Starter: { target: '1', closed: 0, pipeline: 0, revenue: 0 },
-                Growth: { target: '2-3', closed: 0, pipeline: 0, revenue: 0 },
-                Pro: { target: '2', closed: 0, pipeline: 0, revenue: 0 },
-                Enterprise: { target: '0-1', closed: 0, pipeline: 0, revenue: 0 }
+            
+            // Status indicators
+            let status = 'green';
+            let statusText = 'Exceeding Target';
+            if (memberAttainment < 100) {
+                status = 'yellow';
+                statusText = 'On Track';
+            }
+            if (memberAttainment < 70) {
+                status = 'red';
+                statusText = 'Needs Coaching';
+            }
+            
+            const getStatusColor = (att) => {
+                if (att >= 100) return 'var(--success)';
+                if (att >= 70) return 'var(--warning)';
+                return 'var(--danger)';
             };
-
-            monthDeals.forEach(d => {
-                const tier = d.fields['Tier'] || d.fields['Tier (calculated)'] || 'Growth';
-                if (tiers[tier]) {
-                    tiers[tier].closed++;
-                    tiers[tier].revenue += d.fields['Amount'] || 0;
-                }
-            });
-
-            allDeals.filter(d => !['Closed Won', 'Closed Lost'].includes(d.fields['Stage'])).forEach(d => {
-                const tier = d.fields['Tier'] || d.fields['Tier (calculated)'] || 'Growth';
-                if (tiers[tier]) tiers[tier].pipeline++;
-            });
-
-            const tbody = document.getElementById('dealMixBody');
-            tbody.innerHTML = Object.entries(tiers).map(([tier, data]) => {
-                const avgSize = data.closed > 0 ? data.revenue / data.closed : 0;
-                return `
-                    <tr>
-                        <td><span class="tier-badge ${tier.toLowerCase()}">${tier}</span></td>
-                        <td>${data.target}</td>
-                        <td><strong>${data.closed}</strong></td>
-                        <td>${data.pipeline}</td>
-                        <td>${formatCurrency(data.revenue)}</td>
-                        <td>${formatCurrency(avgSize)}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderRecentWins(deals) {
-            const list = document.getElementById('recentWins');
-            const recent = deals.slice(-5).reverse();
-
-            if (recent.length === 0) {
-                list.innerHTML = '<li class="empty-state"><div class="empty-icon">🎯</div>No wins yet this month. Keep pushing!</li>';
-                return;
-            }
-
-            list.innerHTML = recent.map(d => {
-                const tier = d.fields['Tier'] || d.fields['Tier (calculated)'] || 'Growth';
-                const cycleTime = d.fields['Cycle Time (Days)'] || '-';
-                const daysAgo = d.fields['Days Since Closed'] || 0;
-                const amount = d.fields['Amount'] || 0;
-                const eventName = d.fields['Event Name'] || d.fields['Deal Name'] || 'Event';
-
-                return `
-                    <li class="win-item">
-                        <div class="win-info">
-                            <span class="tier-badge ${tier.toLowerCase()}">${tier}</span>
-                            <div class="win-details">
-                                <h4>${eventName}</h4>
-                                <div class="win-meta">${cycleTime} day cycle • ${daysAgo} days ago</div>
-                            </div>
-                        </div>
-                        <div class="win-amount">${formatCurrency(amount)}</div>
-                    </li>
-                `;
-            }).join('');
-        }
-
-        function renderFloorPricingTracker(yearDeals) {
-            const floorDeals = yearDeals.filter(d => d.fields['Pricing Type'] === 'Floor Price');
-            const floorByTier = { Starter: 0, Growth: 0, Pro: 0, Enterprise: 0 };
-
-            floorDeals.forEach(d => {
-                const tier = d.fields['Tier'] || d.fields['Tier (calculated)'] || 'Growth';
-                if (floorByTier[tier] !== undefined) floorByTier[tier]++;
-            });
-
-            const totalUsed = Object.values(floorByTier).reduce((a, b) => a + b, 0);
-            const remaining = 10 - totalUsed;
-            const percent = Math.round((totalUsed / 10) * 100);
-
-            document.getElementById('floorUsed').textContent = totalUsed;
-            document.getElementById('floorPercent').textContent = percent + '% Utilized';
-            document.getElementById('floorRemaining').textContent = `Remaining: ${remaining}`;
-
-            const tbody = document.getElementById('floorCapacityBody');
-            tbody.innerHTML = Object.entries(CONFIG.floorLimits).map(([tier, max]) => {
-                const used = floorByTier[tier];
-                const left = max - used;
-                const cellClass = left === 0 ? 'zero' : left === 1 ? 'low' : '';
-                return `
-                    <tr>
-                        <td><span class="tier-badge ${tier.toLowerCase()}">${tier}</span></td>
-                        <td>${max}</td>
-                        <td>${used}</td>
-                        <td class="remaining-cell ${cellClass}">${left}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderRepCards() {
-            const reps = ['Javonte', 'Teslim', 'Israel', 'Conrad'];
-            const grid = document.getElementById('repCardsGrid');
-
-            grid.innerHTML = reps.map(rep => {
-                const deals = getUserDeals(rep);
-                const monthDeals = getMonthDeals(deals);
-                const revenue = monthDeals.reduce((sum, d) => sum + (d.fields['Amount'] || 0), 0);
-                const quality = calculateQuality(monthDeals);
-                const todayActs = getTodayActivities(rep);
-                const initials = rep.split(' ').map(n => n[0]).join('');
-
-                return `
-                    <div class="rep-card" onclick="showRepModal('${rep}')">
-                        <div class="rep-header">
-                            <div class="rep-avatar">${initials}</div>
-                            <div>
-                                <div class="rep-name">${rep}</div>
-                                <div class="rep-role">${rep === 'Conrad' ? 'AE' : 'BDR'}</div>
-                            </div>
-                        </div>
-                        <div class="rep-metrics">
-                            <div class="rep-metric">
-                                <div class="rep-metric-value">${formatCurrency(revenue, true)}</div>
-                                <div class="rep-metric-label">This Month</div>
-                            </div>
-                            <div class="rep-metric">
-                                <div class="rep-metric-value">${monthDeals.length}</div>
-                                <div class="rep-metric-label">Deals</div>
-                            </div>
-                            <div class="rep-metric">
-                                <div class="rep-metric-value">${quality}%</div>
-                                <div class="rep-metric-label">Quality</div>
-                            </div>
-                            <div class="rep-metric">
-                                <div class="rep-metric-value">${todayActs.length}</div>
-                                <div class="rep-metric-label">Today</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderRevenueChart(canvasId, deals, isTeam = false) {
-            const ctx = document.getElementById(canvasId);
-            if (!ctx) return;
-
-            // Destroy existing chart
-            if (charts[canvasId]) {
-                charts[canvasId].destroy();
-            }
-
-            // Get last 6 months of data
-            const months = [];
-            const revenues = [];
-            const targets = [];
-            const now = new Date();
-
-            for (let i = 5; i >= 0; i--) {
-                const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const monthName = date.toLocaleDateString('en-US', { month: 'short' });
-                months.push(monthName);
-
-                const monthDeals = deals.filter(d => {
-                    const closeDate = d.fields['Close Date'];
-                    if (!closeDate || d.fields['Stage'] !== 'Closed Won') return false;
-                    const dealDate = new Date(closeDate);
-                    return dealDate.getMonth() === date.getMonth() && dealDate.getFullYear() === date.getFullYear();
-                });
-
-                const revenue = monthDeals.reduce((sum, d) => sum + (d.fields['Amount'] || 0), 0);
-                revenues.push(revenue);
-                targets.push(isTeam ? 33000 : 11000);
-            }
-
-            charts[canvasId] = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [
-                        {
-                            label: 'Revenue',
-                            data: revenues,
-                            borderColor: '#6366f1',
-                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                            fill: true,
-                            tension: 0.4,
-                            borderWidth: 3
-                        },
-                        {
-                            label: 'Target',
-                            data: targets,
-                            borderColor: '#94a3b8',
-                            borderDash: [5, 5],
-                            fill: false,
-                            tension: 0.4,
-                            borderWidth: 2
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: value => '$' + (value / 1000) + 'K'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // ==================== HELPER FUNCTIONS ====================
-        function getUserDeals(userName) {
-            return dataCache.deals.filter(d => {
-                const ownerName = d.fields['Name (from Owner)'];
-                if (Array.isArray(ownerName)) return ownerName.includes(userName);
-                return ownerName === userName || d.fields['Owner'] === userName;
-            });
-        }
-
-        function getMonthDeals(deals) {
-            const now = new Date();
-            return deals.filter(d => {
-                const closeDate = d.fields['Close Date'];
-                if (!closeDate || d.fields['Stage'] !== 'Closed Won') return false;
-                const date = new Date(closeDate);
-                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-            });
-        }
-
-        function getTodayActivities(userName) {
-            const today = new Date().toISOString().split('T')[0];
-            return dataCache.activities.filter(a => {
-                const actDate = a.fields['Activity Date'];
-                const owner = a.fields['Name (from Owner)'] || a.fields['Owner'];
-                const isOwner = Array.isArray(owner) ? owner.includes(userName) : owner === userName;
-                return isOwner && actDate && actDate.startsWith(today);
-            });
-        }
-
-        function calculateQuality(deals) {
-            if (deals.length === 0) return 0;
-            const growthPlus = deals.filter(d => {
-                const tier = d.fields['Tier'] || d.fields['Tier (calculated)'];
-                return ['Growth', 'Pro', 'Enterprise'].includes(tier);
-            }).length;
-            return Math.round((growthPlus / deals.length) * 100);
-        }
-
-        function updateScorecard(cardId, valueId, value, min, max) {
-            document.getElementById(valueId).textContent = value;
-            const card = document.getElementById(cardId);
-            card.classList.remove('success', 'warning', 'danger');
-            if (value >= max) {
-                card.classList.add('success');
-            } else if (value >= min) {
-                card.classList.add('warning');
-            } else {
-                card.classList.add('danger');
-            }
-        }
-
-        function formatCurrency(amount, short = false) {
-            if (short && amount >= 1000) {
-                return '$' + (amount / 1000).toFixed(1) + 'K';
-            }
-            return '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-        }
-
-        // ==================== NAVIGATION ====================
-        function switchNav(el) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-            // In a full app, this would switch views
-        }
-
-        function switchView(view, btn) {
-            currentView = view;
-            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            if (view === 'rep') {
-                document.getElementById('repDashboard').classList.remove('hidden');
-                document.getElementById('leadershipDashboard').classList.add('hidden');
-                renderRepDashboard();
-            } else {
-                document.getElementById('repDashboard').classList.add('hidden');
-                document.getElementById('leadershipDashboard').classList.remove('hidden');
-                renderLeadershipDashboard();
-            }
-        }
-
-        // ==================== MODAL ====================
-        function showRepModal(repName) {
-            const modal = document.getElementById('repModal');
-            document.getElementById('modalRepName').textContent = repName + ' - Detailed Breakdown';
-
-            const deals = getUserDeals(repName);
-            const monthDeals = getMonthDeals(deals);
-            const todayActs = getTodayActivities(repName);
-            const revenue = monthDeals.reduce((sum, d) => sum + (d.fields['Amount'] || 0), 0);
-            const quality = calculateQuality(monthDeals);
-
-            // Activity breakdown
-            const activityTypes = {};
-            todayActs.forEach(a => {
-                const type = a.fields['Activity Type'] || 'Other';
-                activityTypes[type] = (activityTypes[type] || 0) + 1;
-            });
-
-            // Deal mix
-            const dealMix = { Starter: 0, Growth: 0, Pro: 0, Enterprise: 0 };
-            monthDeals.forEach(d => {
-                const tier = d.fields['Tier'] || d.fields['Tier (calculated)'] || 'Growth';
-                if (dealMix[tier] !== undefined) dealMix[tier]++;
-            });
-
-            document.getElementById('modalBody').innerHTML = `
-                <div class="kpi-grid" style="margin-bottom: 24px;">
-                    <div class="kpi-card gradient gradient-purple">
-                        <div class="kpi-label">Monthly Revenue</div>
-                        <div class="kpi-value">${formatCurrency(revenue)}</div>
-                        <div class="kpi-target">Target: $9.75K-$12.7K</div>
-                    </div>
-                    <div class="kpi-card gradient gradient-pink">
-                        <div class="kpi-label">Deals Closed</div>
-                        <div class="kpi-value">${monthDeals.length}</div>
-                        <div class="kpi-target">Target: 6-7</div>
-                    </div>
-                    <div class="kpi-card gradient gradient-cyan">
-                        <div class="kpi-label">Quality Score</div>
-                        <div class="kpi-value">${quality}%</div>
-                        <div class="kpi-target">Target: 70%+</div>
-                    </div>
-                    <div class="kpi-card gradient gradient-amber">
-                        <div class="kpi-label">Today's Activity</div>
-                        <div class="kpi-value">${todayActs.length}</div>
-                        <div class="kpi-target">Target: 20-25</div>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-bottom: 24px;">
-                    <h3 class="card-title" style="margin-bottom: 16px;">Activity Breakdown (Today)</h3>
-                    <table class="deal-table">
-                        ${Object.entries(activityTypes).map(([type, count]) => `
-                            <tr><td>${type}</td><td><strong>${count}</strong></td></tr>
-                        `).join('') || '<tr><td colspan="2" style="text-align: center; color: var(--gray-500);">No activities today</td></tr>'}
-                    </table>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title" style="margin-bottom: 16px;">Deal Mix This Month</h3>
-                    <table class="deal-table">
-                        ${Object.entries(dealMix).map(([tier, count]) => `
-                            <tr>
-                                <td><span class="tier-badge ${tier.toLowerCase()}">${tier}</span></td>
-                                <td><strong>${count}</strong> deals</td>
-                            </tr>
-                        `).join('')}
-                    </table>
-                </div>
-            `;
-
-            modal.classList.add('active');
-        }
-
-        function closeRepModal() {
-            document.getElementById('repModal').classList.remove('active');
-        }
-
-        document.getElementById('repModal').addEventListener('click', (e) => {
-            if (e.target.id === 'repModal') closeRepModal();
+            
+            return {
+                ...member,
+                revenue: memberRevenue,
+                attainment: memberAttainment,
+                deals: memberMonthWon.length,
+                touchpoints: memberTodayActivities.length,
+                status,
+                statusText,
+                statusColor: getStatusColor(memberAttainment)
+            };
         });
 
-        // ==================== SETTINGS ====================
-        function toggleSettings() {
-            document.getElementById('settingsPanel').classList.toggle('hidden');
-        }
+    const content = document.getElementById('contentArea');
+    content.innerHTML = `
+        <div class="kpi-grid">
+            <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">💰 TEAM REVENUE</div>
+                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">$${(monthRevenue / 1000).toFixed(1)}K</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: $${teamTargetMin / 1000}K - $${teamTargetMax / 1000}K</div>
+                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                    <div style="width: ${Math.min(revenuePercentOfMax, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                </div>
+                <div style="font-size: 15px; font-weight: 700;">${revenuePercentOfMax.toFixed(0)}% of Max Target</div>
+            </div>
+            
+            <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">🎉 TEAM EVENTS</div>
+                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${totalEvents}</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: ${eventsTargetMin}-${eventsTargetMax} events per month</div>
+                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                    <div style="width: ${Math.min(eventsPercentOfMax, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                </div>
+                <div style="font-size: 15px; font-weight: 700;">${eventsPercentOfMax.toFixed(0)}% of Max Target</div>
+            </div>
+        </div>
 
-        function saveSettings() {
-            const baseId = document.getElementById('baseIdInput').value.trim();
-            const apiKey = document.getElementById('apiKeyInput').value.trim();
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📊 This Week's Team Activity</h2>
+            </div>
+            <div class="activity-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📞</div>
+                    <div class="stat-value">${weekCalls}</div>
+                    <div class="stat-label">Total Calls</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-value">${weekEmails}</div>
+                    <div class="stat-label">Total Emails</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💼</div>
+                    <div class="stat-value">${weekLinkedIn}</div>
+                    <div class="stat-label">Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎥</div>
+                    <div class="stat-value">${weekDemos}</div>
+                    <div class="stat-label">Demos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📄</div>
+                    <div class="stat-value">${weekProposals}</div>
+                    <div class="stat-label">Proposals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">${weekDiscovery}</div>
+                    <div class="stat-label">Discovery</div>
+                </div>
+            </div>
+        </div>
 
-            if (!baseId || !apiKey) {
-                showToast('Please fill in both fields', 'warning');
-                return;
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🚨 Floor-Price Event Capacity (${new Date().getFullYear()})</h2>
+            </div>
+            <div class="floor-tracker-compact">
+                <div class="capacity-circle-small">
+                    <div class="capacity-number-small">${totalFloorUsed}/${floorCapacity}</div>
+                    <div class="capacity-label-small">events used</div>
+                </div>
+                <div class="capacity-details">
+                    <div style="font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 16px;">
+                        ${capacityPercent.toFixed(0)}% Utilized • ${floorCapacity - totalFloorUsed} Remaining
+                    </div>
+                    <div class="capacity-row ${floorStarter >= 2 ? 'at-limit' : ''}">
+                        <span><span class="badge badge-starter">Starter</span> ${floorStarter}/2</span>
+                        <span>${floorStarter >= 2 ? '⚠️ AT CAPACITY' : '✅ Available'}</span>
+                    </div>
+                    <div class="capacity-row ${floorGrowth >= 2 ? 'at-limit' : ''}">
+                        <span><span class="badge badge-growth">Growth</span> ${floorGrowth}/2</span>
+                        <span>${floorGrowth >= 2 ? '⚠️ AT CAPACITY' : '✅ Available'}</span>
+                    </div>
+                    <div class="capacity-row ${floorPro >= 3 ? 'at-limit' : ''}">
+                        <span><span class="badge badge-pro">Pro</span> ${floorPro}/3</span>
+                        <span>${floorPro >= 3 ? '⚠️ AT CAPACITY' : '✅ Available'}</span>
+                    </div>
+                    <div class="capacity-row ${floorEnterprise >= 3 ? 'at-limit' : ''}">
+                        <span><span class="badge badge-enterprise">Enterprise</span> ${floorEnterprise}/3</span>
+                        <span>${floorEnterprise >= 3 ? '⚠️ AT CAPACITY' : '✅ Available'}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">👥 Sales Team Performance</h2>
+                <p style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Color-coded: 🟢 Exceeding • 🟡 On Track • 🔴 Needs Coaching</p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px;">
+                ${repCards.map(rep => `
+                    <div class="kpi-card" style="border-left: 4px solid ${rep.statusColor}; cursor: pointer;" onclick="alert('Rep: ${rep.name}\\nRevenue: $${(rep.revenue / 1000).toFixed(1)}K\\nAttainment: ${rep.attainment.toFixed(0)}%\\nDeals: ${rep.deals}\\nToday: ${rep.touchpoints} touchpoints')">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                            <div>
+                                <div style="font-size: 16px; font-weight: 700;">${rep.name}</div>
+                                <div style="font-size: 13px; color: var(--text-gray);">${rep.role}</div>
+                            </div>
+                            <span class="status-indicator ${rep.status}"></span>
+                        </div>
+                        
+                        <div style="font-size: 28px; font-weight: 700; color: ${rep.statusColor}; margin-bottom: 8px;">
+                            $${(rep.revenue / 1000).toFixed(1)}K
+                        </div>
+                        
+                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">
+                            ${rep.deals} deals • ${rep.touchpoints} today
+                        </div>
+                        
+                        <div class="progress-bar" style="margin-bottom: 8px;">
+                            <div class="progress-fill" style="width: ${Math.min(rep.attainment, 100)}%; background: ${rep.statusColor};"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                            <span style="color: var(--text-gray);">${rep.statusText}</span>
+                            <span style="font-weight: 600; color: ${rep.statusColor};">${rep.attainment.toFixed(0)}%</span>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🚨 KPI Alerts - Reps Needing Attention</h2>
+            </div>
+            ${repCards.filter(r => r.status === 'red').length === 0 ? 
+                '<p style="text-align: center; padding: 40px; color: var(--success);">✅ All reps are on track or exceeding targets!</p>' :
+                '<div style="padding: 20px;">' + repCards.filter(r => r.status === 'red').map(rep => `
+                    <div class="alert-banner danger" style="margin-bottom: 16px;">
+                        <div class="alert-icon">🔴</div>
+                        <div class="alert-content">
+                            <div class="alert-title">${rep.name}: ${rep.attainment.toFixed(0)}% of Quota</div>
+                            <div class="alert-text">
+                                Revenue: $${(rep.revenue / 1000).toFixed(1)}K / $${(rep.quota / 1000).toFixed(0)}K
+                                • ${rep.deals} deals closed
+                                • ${rep.touchpoints} touchpoints today
+                                <br><strong>Action:</strong> Schedule coaching session to review pipeline and activity
+                            </div>
+                        </div>
+                    </div>
+                `).join('') + '</div>'
             }
+        </div>
+    `;
+}
 
-            CONFIG.baseId = baseId;
-            CONFIG.apiKey = apiKey;
-            localStorage.setItem('airtableBaseId', baseId);
-            localStorage.setItem('airtableApiKey', apiKey);
-
-            toggleSettings();
-            loadData();
-        }
-
-        // ==================== TOAST ====================
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : '⚠️'}</span> ${message}`;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.animation = 'slide-in 0.3s ease-out reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // ==================== DEMO DATA ====================
-        function renderDemoData() {
-            // Render with demo values if API fails
-            document.getElementById('touchpointsValue').textContent = '18';
-            document.getElementById('leadsValue').textContent = '4';
-            document.getElementById('discoveryValue').textContent = '1';
-            document.getElementById('dealsMovedValue').textContent = '2';
-            document.getElementById('repRevenue').textContent = '$9,250';
-            document.getElementById('repDeals').textContent = '5';
-            document.getElementById('repQuality').textContent = '80%';
-            document.getElementById('repAvgDeal').textContent = '$1,850';
-
-            document.getElementById('qualityBadge').innerHTML = '<span class="quality-badge success">✅ Quality Goal Met</span>';
-
-            document.getElementById('dealMixBody').innerHTML = `
-                <tr><td><span class="tier-badge starter">Starter</span></td><td>1</td><td><strong>1</strong></td><td>2</td><td>$750</td><td>$750</td></tr>
-                <tr><td><span class="tier-badge growth">Growth</span></td><td>2-3</td><td><strong>2</strong></td><td>5</td><td>$2,500</td><td>$1,250</td></tr>
-                <tr><td><span class="tier-badge pro">Pro</span></td><td>2</td><td><strong>2</strong></td><td>3</td><td>$4,000</td><td>$2,000</td></tr>
-                <tr><td><span class="tier-badge enterprise">Enterprise</span></td><td>0-1</td><td><strong>0</strong></td><td>1</td><td>$0</td><td>-</td></tr>
-            `;
-
-            document.getElementById('recentWins').innerHTML = `
-                <li class="win-item">
-                    <div class="win-info">
-                        <span class="tier-badge growth">Growth</span>
-                        <div class="win-details">
-                            <h4>Tech Summit 2026</h4>
-                            <div class="win-meta">18 day cycle • 2 days ago</div>
-                        </div>
-                    </div>
-                    <div class="win-amount">$1,250</div>
-                </li>
-                <li class="win-item">
-                    <div class="win-info">
-                        <span class="tier-badge pro">Pro</span>
-                        <div class="win-details">
-                            <h4>StartUp Connect</h4>
-                            <div class="win-meta">24 day cycle • 5 days ago</div>
-                        </div>
-                    </div>
-                    <div class="win-amount">$2,000</div>
-                </li>
-            `;
-        }
+// PART 3 ENDS HERE    
     </script>
 </body>
 </html>
