@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NuConnect CRM - Complete Phase 2</title>
+    <title>NuConnect CRM - Phase 2</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -262,7 +262,6 @@
             height: 100%;
             background: var(--gradient);
             border-radius: 10px;
-            transition: width 0.3s;
         }
 
         .card {
@@ -383,29 +382,16 @@
             margin-top: 4px;
         }
 
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-top: 20px;
+        /* Floor Pricing Tracker */
+        .floor-tracker {
+            text-align: center;
+            padding: 30px;
         }
 
-        .chart-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        .floor-tracker-compact {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            padding: 20px;
-        }
-
-        .capacity-circle-small {
-            width: 120px;
-            height: 120px;
+        .capacity-circle {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
             border-radius: 50%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
@@ -413,80 +399,25 @@
             align-items: center;
             justify-content: center;
             color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-            flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
 
-        .capacity-number-small {
-            font-size: 32px;
+        .capacity-number {
+            font-size: 48px;
             font-weight: 700;
         }
 
-        .capacity-label-small {
-            font-size: 11px;
+        .capacity-label {
+            font-size: 14px;
             opacity: 0.9;
+            margin-top: 5px;
         }
 
-        .capacity-details {
-            flex: 1;
-        }
-
-        .capacity-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .capacity-row:last-child {
-            border-bottom: none;
-        }
-
-        .capacity-row.at-limit {
-            background: #fadbd8;
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin: 4px 0;
-        }
-
-        .alert-banner {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border-left: 4px solid #f59e0b;
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .alert-banner.success {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            border-left-color: #22c55e;
-        }
-
-        .alert-banner.danger {
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            border-left-color: #ef4444;
-        }
-
-        .alert-icon {
-            font-size: 24px;
-        }
-
-        .alert-content {
-            flex: 1;
-        }
-
-        .alert-title {
-            font-weight: 700;
-            font-size: 15px;
-            margin-bottom: 4px;
-        }
-
-        .alert-text {
-            font-size: 13px;
-            color: var(--text-gray);
+        .capacity-percentage {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 20px;
         }
 
         table {
@@ -598,17 +529,34 @@
             margin-top: 24px;
         }
 
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border);
         }
 
-        .status-indicator.green { background: var(--success); }
-        .status-indicator.yellow { background: var(--warning); }
-        .status-indicator.red { background: var(--danger); }
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-gray);
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -658,7 +606,6 @@
     <div id="modalContainer"></div>
 
     <script>
-        // PART 1: STATE AND CONFIGURATION
         const state = {
             currentUser: null,
             currentView: 'dashboard',
@@ -680,8 +627,7 @@
                 newLeads: 0,
                 discoveryCalls: 0,
                 dealsMoved: 0
-            },
-            charts: {}
+            }
         };
 
         const userPasswords = {
@@ -717,1876 +663,2033 @@
             { id: 'team', icon: '👨\u200d👩\u200d👧\u200d👦', label: 'Team Overview' }
         ];
 
-        // PART 1 ENDS HERE - PASTE PART 2 BELOW THIS LINE
-        // PART 2: CORE FUNCTIONS - PASTE THIS AFTER PART 1
-
-async function init() {
-    console.log('%c🚀 NuConnect CRM v2.5 - Complete Phase 2', 'background: #667eea; color: white; font-size: 16px; padding: 10px; font-weight: bold;');
-    console.log('✨ All Features: Charts, KPIs, Notifications, Team Analytics');
-    console.log('📅 Build: January 6, 2026');
-    
-    if (state.baseId && state.apiKey) {
-        await loadTeamMembers();
-        await loadPricingRules();
-        populateLoginSelect();
-    } else {
-        showConfigPrompt();
-    }
-}
-
-function showConfigPrompt() {
-    document.getElementById('loginScreen').innerHTML = `
-        <div class="login-card">
-            <div class="logo">⚙️</div>
-            <h1>Setup Required</h1>
-            <p>Configure your Airtable connection</p>
-            <div class="form-group">
-                <label>Airtable Base ID</label>
-                <input type="text" id="setupBaseId" placeholder="appXXXXXXXXXXXXXX" value="${state.baseId}">
-            </div>
-            <div class="form-group">
-                <label>Airtable API Key</label>
-                <input type="password" id="setupApiKey" placeholder="patXXXXXXXXXXXXXX">
-            </div>
-            <button class="btn btn-primary" onclick="saveConfig()">Connect</button>
-        </div>
-    `;
-}
-
-function saveConfig() {
-    const baseId = document.getElementById('setupBaseId').value.trim();
-    const apiKey = document.getElementById('setupApiKey').value.trim();
-    
-    if (baseId && apiKey) {
-        localStorage.setItem('airtable_baseId', baseId);
-        localStorage.setItem('airtable_apiKey', apiKey);
-        location.reload();
-    } else {
-        alert('Please fill in both fields');
-    }
-}
-
-function openSettings() {
-    const modal = document.getElementById('modalContainer');
-    const currentToken = state.apiKey;
-    const tokenPreview = currentToken ? `${currentToken.substring(0, 8)}...${currentToken.substring(currentToken.length - 4)}` : 'Not set';
-    
-    modal.innerHTML = `
-        <div class="modal active">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>⚙️ Settings</h2>
-                </div>
-                <div class="form-group">
-                    <label>Airtable Base ID</label>
-                    <input type="text" id="settingsBaseId" value="${state.baseId}" style="font-family: monospace;">
-                </div>
-                <div class="form-group">
-                    <label>Airtable API Key / Personal Access Token</label>
-                    <input type="password" id="settingsApiKey" value="${currentToken}" style="font-family: monospace;">
-                    <p style="font-size: 12px; color: var(--success); margin-top: 4px;">
-                        Current token: ${tokenPreview}
-                    </p>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveSettings()">Save & Reload</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function saveSettings() {
-    const baseId = document.getElementById('settingsBaseId').value.trim();
-    const apiKey = document.getElementById('settingsApiKey').value.trim();
-    
-    if (!baseId || !apiKey) {
-        alert('Both fields are required');
-        return;
-    }
-    
-    localStorage.setItem('airtable_baseId', baseId);
-    localStorage.setItem('airtable_apiKey', apiKey);
-    
-    alert('Settings saved! Reloading...');
-    location.reload();
-}
-
-async function loadTeamMembers() {
-    try {
-        const response = await fetchFromAirtable('Team Members');
-        if (response && response.records) {
-            state.data.teamMembers = response.records.map(r => ({
-                id: r.id,
-                name: r.fields.Name || '',
-                role: r.fields.Role || '',
-                quota: r.fields['Monthly Quota'] || 0
-            }));
+        async function init() {
+            console.log('%c🚀 NuConnect CRM v2.1 - Phase 2 Enhanced', 'background: #667eea; color: white; font-size: 16px; padding: 10px; font-weight: bold;');
+            console.log('✨ New: Monthly Deal Mix, Quality Score, Floor Tracker, Enhanced Dashboards');
+            console.log('📅 Build: January 6, 2026');
+            console.log('---');
             
-            state.teamMemberMap = {};
-            response.records.forEach(r => {
-                if (r.fields.Name) {
-                    state.teamMemberMap[r.fields.Name] = r.id;
-                }
-            });
-        }
-    } catch (error) {
-        console.error('Error loading team members:', error);
-        state.data.teamMembers = [
-            { id: 'rec1', name: 'Javonte', role: 'BDR', quota: 45000 },
-            { id: 'rec2', name: 'Teslim', role: 'BDR', quota: 45000 },
-            { id: 'rec3', name: 'Israel', role: 'BDR', quota: 45000 },
-            { id: 'rec4', name: 'Conrad', role: 'AE', quota: 60000 },
-            { id: 'rec5', name: 'Test User', role: 'BDR', quota: 45000 },
-            { id: 'rec6', name: 'Test Leadership', role: 'Leadership', quota: 0 },
-            { id: 'rec7', name: 'Ramallah', role: 'Leadership', quota: 0 },
-            { id: 'rec8', name: 'Keyna', role: 'Leadership', quota: 0 }
-        ];
-        
-        state.teamMemberMap = {
-            'Javonte': 'rec1',
-            'Teslim': 'rec2',
-            'Israel': 'rec3',
-            'Conrad': 'rec4',
-            'Test User': 'rec5',
-            'Test Leadership': 'rec6',
-            'Ramallah': 'rec7',
-            'Keyna': 'rec8'
-        };
-    }
-}
-
-async function loadPricingRules() {
-    try {
-        const response = await fetchFromAirtable('Pricing Rules');
-        if (response && response.records) {
-            state.data.pricingRules = response.records.map(r => ({
-                id: r.id,
-                tier: r.fields.Tier || '',
-                basePrice: r.fields['Base Price'] || 0
-            }));
-            
-            state.pricingRuleMap = {};
-            response.records.forEach(r => {
-                if (r.fields.Tier) {
-                    state.pricingRuleMap[r.fields.Tier] = r.id;
-                }
-            });
-        }
-    } catch (error) {
-        console.error('Error loading pricing rules:', error);
-    }
-}
-
-function populateLoginSelect() {
-    const select = document.getElementById('userSelect');
-    if (!select) return;
-    
-    state.data.teamMembers.forEach(member => {
-        const option = document.createElement('option');
-        option.value = member.name;
-        option.textContent = `${member.name} (${member.role})`;
-        select.appendChild(option);
-    });
-}
-
-async function handleLogin() {
-    const select = document.getElementById('userSelect');
-    const passwordInput = document.getElementById('passwordInput');
-    const errorDiv = document.getElementById('loginError');
-    
-    const selectedName = select.value;
-    const enteredPassword = passwordInput.value;
-    
-    if (!selectedName) {
-        errorDiv.textContent = 'Please select a team member';
-        errorDiv.classList.remove('hidden');
-        return;
-    }
-
-    if (!enteredPassword) {
-        errorDiv.textContent = 'Please enter your password';
-        errorDiv.classList.remove('hidden');
-        return;
-    }
-
-    if (userPasswords[selectedName] !== enteredPassword) {
-        errorDiv.textContent = 'Incorrect password';
-        errorDiv.classList.remove('hidden');
-        passwordInput.value = '';
-        return;
-    }
-
-    const user = state.data.teamMembers.find(m => m.name === selectedName);
-    if (user) {
-        state.currentUser = user;
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('appContainer').classList.remove('hidden');
-        await initApp();
-    }
-}
-
-async function initApp() {
-    document.getElementById('currentUserName').textContent = state.currentUser.name;
-    buildNavigation();
-    await loadAllData();
-    calculateDailyMetrics();
-    renderView('dashboard');
-    
-    setInterval(async () => {
-        await loadAllData();
-        calculateDailyMetrics();
-        if (state.currentView === 'dashboard' || state.currentView === 'leadership') {
-            renderView(state.currentView);
-        }
-    }, 5 * 60 * 1000);
-}
-
-function buildNavigation() {
-    const nav = document.getElementById('sidebarNav');
-    let items = [...allNavItems];
-    
-    if (state.currentUser.role === 'Leadership') {
-        items = items.concat(leadershipNavItems);
-    }
-    
-    nav.innerHTML = items.map(item => `
-        <div class="nav-item ${item.id === state.currentView ? 'active' : ''}" 
-             onclick="renderView('${item.id}')">
-            <span class="nav-item-icon">${item.icon}</span>
-            <span>${item.label}</span>
-        </div>
-    `).join('');
-}
-
-function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        location.reload();
-    }
-}
-
-async function fetchFromAirtable(tableName, method = 'GET', body = null) {
-    try {
-        let url = `https://api.airtable.com/v0/${state.baseId}/${encodeURIComponent(tableName)}`;
-        
-        const options = {
-            method: method,
-            headers: {
-                'Authorization': `Bearer ${state.apiKey}`,
-                'Content-Type': 'application/json'
+            if (state.baseId && state.apiKey) {
+                await loadTeamMembers();
+                await loadPricingRules();
+                populateLoginSelect();
+            } else {
+                showConfigPrompt();
             }
-        };
-        
-        if (body && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
-            options.body = JSON.stringify(body);
         }
 
-        const response = await fetch(url, options);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`❌ ${tableName} request failed: ${response.status}`);
-            throw new Error(`HTTP error! status: ${response.status}`);
+        function showConfigPrompt() {
+            document.getElementById('loginScreen').innerHTML = `
+                <div class="login-card">
+                    <div class="logo">⚙️</div>
+                    <h1>Setup Required</h1>
+                    <p>Configure your Airtable connection</p>
+                    <div class="form-group">
+                        <label>Airtable Base ID</label>
+                        <input type="text" id="setupBaseId" placeholder="appXXXXXXXXXXXXXX" value="${state.baseId}">
+                    </div>
+                    <div class="form-group">
+                        <label>Airtable API Key</label>
+                        <input type="password" id="setupApiKey" placeholder="patXXXXXXXXXXXXXX">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveConfig()">Connect</button>
+                </div>
+            `;
         }
 
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error(`Error with ${tableName}:`, error);
-        throw error;
-    }
-}
-
-async function loadAllData() {
-    try {
-        await Promise.all([
-            loadDeals(),
-            loadActivities(),
-            loadTasks(),
-            loadContacts(),
-            loadAccounts()
-        ]);
-    } catch (error) {
-        console.error('Error loading data:', error);
-    }
-}
-
-function getOwnerName(ownerField) {
-    if (Array.isArray(ownerField) && ownerField.length > 0) {
-        const recordId = ownerField[0];
-        const member = state.data.teamMembers.find(m => m.id === recordId);
-        return member ? member.name : '';
-    }
-    return ownerField || '';
-}
-
-function getAccountName(accountField) {
-    if (Array.isArray(accountField) && accountField.length > 0) {
-        const accountId = accountField[0];
-        const account = state.data.accounts.find(a => a.id === accountId);
-        return account ? account.name : '';
-    }
-    return '';
-}
-
-function formatDateCST(dateString) {
-    if (!dateString) return '-';
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleString('en-US', { 
-            timeZone: 'America/Chicago',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    } catch (e) {
-        return dateString;
-    }
-}
-
-function calculateCycleTime(deal) {
-    if (!deal.createdTime || !deal.closeDate) return null;
-    const created = new Date(deal.createdTime);
-    const closed = new Date(deal.closeDate);
-    const days = Math.floor((closed - created) / (1000 * 60 * 60 * 24));
-    return days;
-}
-
-function daysSinceClosed(closeDate) {
-    if (!closeDate) return null;
-    const closed = new Date(closeDate);
-    const now = new Date();
-    const days = Math.floor((now - closed) / (1000 * 60 * 60 * 24));
-    return days;
-}
-
-async function loadDeals() {
-    const response = await fetchFromAirtable('Deals');
-    if (response && response.records) {
-        state.data.deals = response.records.map(r => ({
-            id: r.id,
-            name: r.fields['Deal Name'] || '',
-            owner: getOwnerName(r.fields.Owner),
-            tier: Array.isArray(r.fields['Tier (lookup)']) ? r.fields['Tier (lookup)'][0] : r.fields['Tier (lookup)'] || '',
-            stage: r.fields.Stage || '',
-            value: r.fields.Amount || 0,
-            eventName: r.fields['Event Name'] || '',
-            closeDate: r.fields['Close Date'] || '',
-            createdTime: r.createdTime,
-            pricingType: r.fields['Pricing Type'] || 'Public Price',
-            cycleTime: r.fields['Cycle Time (Days)'],
-            daysSince: r.fields['Days Since Closed']
-        }));
-    }
-}
-
-async function loadActivities() {
-    const response = await fetchFromAirtable('Activities');
-    if (response && response.records) {
-        state.data.activities = response.records.map(r => ({
-            id: r.id,
-            name: r.fields['Activity Name'] || '',
-            type: r.fields.Type || '',
-            date: r.fields['Activity Date/Time'] || r.fields.Date || '',
-            owner: r.fields.Owner || '',
-            account: r.fields.Account || '',
-            contact: Array.isArray(r.fields.Contact) ? r.fields.Contact[0] : r.fields.Contact || '',
-            result: r.fields.Result || '',
-            nextSteps: r.fields['Next Steps'] || '',
-            createdTime: r.createdTime
-        }));
-    }
-}
-
-async function loadTasks() {
-    const response = await fetchFromAirtable('Tasks');
-    if (response && response.records) {
-        state.data.tasks = response.records.map(r => ({
-            id: r.id,
-            name: r.fields['Task Name'] || '',
-            owner: getOwnerName(r.fields.Owner),
-            dueDate: r.fields['Due Date'] || '',
-            status: r.fields.Status || 'Open',
-            type: r.fields.Type || ''
-        }));
-    }
-}
-
-async function loadContacts() {
-    const response = await fetchFromAirtable('Contacts');
-    if (response && response.records) {
-        state.data.contacts = response.records.map(r => ({
-            id: r.id,
-            name: r.fields['Full Name'] || '',
-            email: r.fields.Email || '',
-            phone: r.fields.Phone || '',
-            company: getAccountName(r.fields.Account),
-            role: r.fields.Title || '',
-            owner: getOwnerName(r.fields['Contact Owner']),
-            createdTime: r.createdTime
-        }));
-    }
-}
-
-async function loadAccounts() {
-    const response = await fetchFromAirtable('Accounts');
-    if (response && response.records) {
-        state.data.accounts = response.records.map(r => ({
-            id: r.id,
-            name: r.fields['Account Name'] || '',
-            industry: r.fields.Industry || '',
-            owner: getOwnerName(r.fields['Account Owner']),
-            createdTime: r.createdTime
-        }));
-    }
-}
-
-function calculateDailyMetrics() {
-    const today = new Date().toISOString().split('T')[0];
-    const userActivities = state.data.activities.filter(a => 
-        a.owner === state.currentUser.name && 
-        a.createdTime && 
-        a.createdTime.split('T')[0] === today
-    );
-    
-    state.dailyMetrics.touchpoints = userActivities.length;
-    
-    const newContactsToday = state.data.contacts.filter(c => 
-        c.owner === state.currentUser.name &&
-        c.createdTime && 
-        c.createdTime.split('T')[0] === today
-    ).length;
-    
-    const newAccountsToday = state.data.accounts.filter(a => 
-        a.owner === state.currentUser.name &&
-        a.createdTime && 
-        a.createdTime.split('T')[0] === today
-    ).length;
-    
-    state.dailyMetrics.newLeads = newContactsToday + newAccountsToday;
-    
-    state.dailyMetrics.discoveryCalls = userActivities.filter(a => 
-        a.type && a.type.toLowerCase().includes('discovery')
-    ).length;
-    
-    state.dailyMetrics.dealsMoved = userActivities.filter(a => 
-        a.type && a.type.toLowerCase().includes('stage change')
-    ).length;
-}
-
-// CRUD Operations
-async function createDeal(dealData) {
-    try {
-        const response = await fetchFromAirtable('Deals', 'POST', {
-            fields: dealData
-        });
-        
-        if (response && response.id) {
-            await loadDeals();
-            closeModal();
-            renderView('pipeline');
-            alert('Deal created successfully!');
+        function saveConfig() {
+            const baseId = document.getElementById('setupBaseId').value.trim();
+            const apiKey = document.getElementById('setupApiKey').value.trim();
+            
+            if (baseId && apiKey) {
+                localStorage.setItem('airtable_baseId', baseId);
+                localStorage.setItem('airtable_apiKey', apiKey);
+                location.reload();
+            } else {
+                alert('Please fill in both fields');
+            }
         }
-    } catch (error) {
-        alert('Error creating deal: ' + error.message);
-    }
-}
 
-async function createContact(contactData) {
-    try {
-        const response = await fetchFromAirtable('Contacts', 'POST', {
-            fields: contactData
-        });
-        
-        if (response && response.id) {
-            await loadContacts();
-            calculateDailyMetrics();
-            closeModal();
-            renderView('contacts');
-            alert('Contact created! +1 New Lead!');
+        function openSettings() {
+            const modal = document.getElementById('modalContainer');
+            const currentToken = state.apiKey;
+            const tokenPreview = currentToken ? `${currentToken.substring(0, 8)}...${currentToken.substring(currentToken.length - 4)}` : 'Not set';
+            
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>⚙️ Settings</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Airtable Base ID</label>
+                            <input type="text" id="settingsBaseId" value="${state.baseId}" style="font-family: monospace;">
+                        </div>
+                        <div class="form-group">
+                            <label>Airtable API Key / Personal Access Token</label>
+                            <input type="password" id="settingsApiKey" value="${currentToken}" style="font-family: monospace;">
+                            <p style="font-size: 12px; color: var(--success); margin-top: 4px;">
+                                Current token: ${tokenPreview}
+                            </p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveSettings()">Save & Reload</button>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
-    } catch (error) {
-        alert('Error creating contact: ' + error.message);
-    }
-}
 
-async function createAccount(accountData) {
-    try {
-        const response = await fetchFromAirtable('Accounts', 'POST', {
-            fields: accountData
-        });
-        
-        if (response && response.id) {
-            await loadAccounts();
-            calculateDailyMetrics();
-            closeModal();
-            renderView('accounts');
-            alert('Account created! +1 New Lead!');
+        function saveSettings() {
+            const baseId = document.getElementById('settingsBaseId').value.trim();
+            const apiKey = document.getElementById('settingsApiKey').value.trim();
+            
+            if (!baseId || !apiKey) {
+                alert('Both fields are required');
+                return;
+            }
+            
+            localStorage.setItem('airtable_baseId', baseId);
+            localStorage.setItem('airtable_apiKey', apiKey);
+            
+            alert('Settings saved! Reloading...');
+            location.reload();
         }
-    } catch (error) {
-        alert('Error creating account: ' + error.message);
-    }
-}
 
-async function logActivity(activityData) {
-    try {
-        const response = await fetchFromAirtable('Activities', 'POST', {
-            fields: activityData
-        });
-        
-        if (response && response.id) {
-            await loadActivities();
-            calculateDailyMetrics();
-            closeModal();
-            renderView(state.currentView);
-            alert('Activity logged! +1 Touchpoint!');
-        }
-    } catch (error) {
-        alert('Error logging activity: ' + error.message);
-    }
-}
-
-// Modals
-function openAddDealModal() {
-    const modal = document.getElementById('modalContainer');
-    modal.innerHTML = `
-        <div class="modal active">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Add New Deal</h2>
-                </div>
-                <div class="form-group">
-                    <label>Deal Name *</label>
-                    <input type="text" id="dealName" placeholder="Enter deal name">
-                </div>
-                <div class="form-group">
-                    <label>Tier *</label>
-                    <select id="dealTier" onchange="updateDealValue()">
-                        <option value="">Select tier...</option>
-                        <option value="Starter">Starter ($750)</option>
-                        <option value="Growth">Growth ($1,250)</option>
-                        <option value="Pro">Pro ($2,000)</option>
-                        <option value="Enterprise">Enterprise ($4,200)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Deal Value *</label>
-                    <input type="number" id="dealValue" readonly style="background: var(--bg-light);">
-                </div>
-                <div class="form-group">
-                    <label>Stage *</label>
-                    <select id="dealStage">
-                        <option value="Qualified">Qualified</option>
-                        <option value="Proposal Sent">Proposal Sent</option>
-                        <option value="Negotiation">Negotiation</option>
-                        <option value="Closed Won">Closed Won</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Event Name</label>
-                    <input type="text" id="dealEventName">
-                </div>
-                <div class="form-group">
-                    <label>Close Date</label>
-                    <input type="date" id="dealCloseDate">
-                </div>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveDeal()">Create Deal</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function updateDealValue() {
-    const tier = document.getElementById('dealTier').value;
-    const dealValueInput = document.getElementById('dealValue');
-    if (tier && tierPricing[tier]) {
-        dealValueInput.value = tierPricing[tier];
-    } else {
-        dealValueInput.value = '';
-    }
-}
-
-function saveDeal() {
-    const dealName = document.getElementById('dealName').value.trim();
-    const dealTier = document.getElementById('dealTier').value;
-    const dealValue = parseFloat(document.getElementById('dealValue').value) || 0;
-
-    if (!dealName || !dealTier || !dealValue) {
-        alert('Please fill in Deal Name and select Tier');
-        return;
-    }
-
-    const dealData = {
-        'Deal Name': dealName,
-        'Amount': dealValue,
-        'Stage': document.getElementById('dealStage').value
-    };
-
-    const pricingTierRecordId = state.pricingRuleMap[dealTier];
-    if (pricingTierRecordId) {
-        dealData['Pricing Tier'] = [pricingTierRecordId];
-    }
-
-    const ownerRecordId = state.teamMemberMap[state.currentUser.name];
-    if (ownerRecordId) {
-        dealData['Owner'] = [ownerRecordId];
-    }
-
-    const eventName = document.getElementById('dealEventName').value.trim();
-    const closeDate = document.getElementById('dealCloseDate').value;
-
-    if (eventName) dealData['Event Name'] = eventName;
-    if (closeDate) dealData['Close Date'] = closeDate;
-
-    createDeal(dealData);
-}
-
-function openAddContactModal() {
-    const modal = document.getElementById('modalContainer');
-    const accounts = state.data.accounts;
-    
-    modal.innerHTML = `
-        <div class="modal active">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Add New Contact</h2>
-                </div>
-                <div class="form-group">
-                    <label>Name *</label>
-                    <input type="text" id="contactName">
-                </div>
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" id="contactEmail">
-                </div>
-                <div class="form-group">
-                    <label>Phone</label>
-                    <input type="tel" id="contactPhone">
-                </div>
-                <div class="form-group">
-                    <label>Company/Account</label>
-                    <select id="contactAccount">
-                        <option value="">Select company...</option>
-                        ${accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <input type="text" id="contactRole">
-                </div>
-                <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
-                    Owner: ${state.currentUser.name} (auto-assigned)
-                </p>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveContact()">Create</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function saveContact() {
-    const contactData = {
-        'Full Name': document.getElementById('contactName').value,
-        'Email': document.getElementById('contactEmail').value,
-        'Phone': document.getElementById('contactPhone').value,
-        'Title': document.getElementById('contactRole').value
-    };
-
-    if (!contactData['Full Name'] || !contactData['Email']) {
-        alert('Please fill in Name and Email');
-        return;
-    }
-
-    const ownerRecordId = state.teamMemberMap[state.currentUser.name];
-    if (ownerRecordId) {
-        contactData['Contact Owner'] = [ownerRecordId];
-    }
-
-    const accountRecordId = document.getElementById('contactAccount').value;
-    if (accountRecordId) {
-        contactData['Account'] = [accountRecordId];
-    }
-
-    createContact(contactData);
-}
-
-function openAddAccountModal() {
-    const modal = document.getElementById('modalContainer');
-    modal.innerHTML = `
-        <div class="modal active">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Add New Account</h2>
-                </div>
-                <div class="form-group">
-                    <label>Account Name *</label>
-                    <input type="text" id="accountName">
-                </div>
-                <div class="form-group">
-                    <label>Industry</label>
-                    <input type="text" id="accountIndustry" list="industryOptions">
-                    <datalist id="industryOptions">
-                        <option value="Technology">
-                        <option value="Finance">
-                        <option value="Education">
-                        <option value="Healthcare">
-                        <option value="Retail">
-                        <option value="Other">
-                    </datalist>
-                </div>
-                <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
-                    Owner: ${state.currentUser.name} (auto-assigned)
-                </p>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveAccount()">Create</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function saveAccount() {
-    const accountData = {
-        'Account Name': document.getElementById('accountName').value,
-        'Industry': document.getElementById('accountIndustry').value
-    };
-
-    if (!accountData['Account Name']) {
-        alert('Please enter account name');
-        return;
-    }
-
-    const ownerRecordId = state.teamMemberMap[state.currentUser.name];
-    if (ownerRecordId) {
-        accountData['Account Owner'] = [ownerRecordId];
-    }
-
-    createAccount(accountData);
-}
-
-function openLogActivityModal() {
-    const modal = document.getElementById('modalContainer');
-    const accounts = state.data.accounts;
-    const contacts = state.data.contacts;
-    
-    modal.innerHTML = `
-        <div class="modal active">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Log Activity</h2>
-                </div>
-                <div class="form-group">
-                    <label>Activity Type *</label>
-                    <select id="activityType">
-                        <option value="Call">Call</option>
-                        <option value="Email">Email</option>
-                        <option value="LinkedIn">LinkedIn Message</option>
-                        <option value="Discovery Call">Discovery Call</option>
-                        <option value="Demo">Demo</option>
-                        <option value="Proposal">Proposal Sent</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Account *</label>
-                    <select id="activityAccount">
-                        <option value="">Select account...</option>
-                        ${accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Contact</label>
-                    <select id="activityContact">
-                        <option value="">Select contact...</option>
-                        ${contacts.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Result/Outcome *</label>
-                    <textarea id="activityResult"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Next Steps</label>
-                    <textarea id="activityNextSteps"></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveActivity()">Log Activity</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function saveActivity() {
-    const accountRecordId = document.getElementById('activityAccount').value;
-    const result = document.getElementById('activityResult').value;
-    
-    if (!accountRecordId || !result) {
-        alert('Please select an Account and enter Result');
-        return;
-    }
-
-    const account = state.data.accounts.find(a => a.id === accountRecordId);
-    const accountName = account ? account.name : '';
-
-    const activityType = document.getElementById('activityType').value;
-    const activityName = `${activityType} - ${accountName}`;
-
-    const now = new Date();
-    const dateOnly = now.toISOString().split('T')[0];
-    const dateTime = now.toISOString();
-
-    const activityData = {
-        'Activity Name': activityName,
-        'Type': activityType,
-        'Date': dateOnly,
-        'Activity Date/Time': dateTime,
-        'Account': accountName,
-        'Owner': state.currentUser.name,
-        'Result': result
-    };
-
-    const contactRecordId = document.getElementById('activityContact').value;
-    const nextSteps = document.getElementById('activityNextSteps').value;
-
-    if (contactRecordId) activityData['Contact'] = [contactRecordId];
-    if (nextSteps) activityData['Next Steps'] = nextSteps;
-
-    logActivity(activityData);
-}
-
-function openDealDetailsModal(dealId) {
-    const deal = state.data.deals.find(d => d.id === dealId);
-    if (!deal) return;
-    
-    const modal = document.getElementById('modalContainer');
-    modal.innerHTML = `
-        <div class="modal active">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>📊 ${deal.name}</h2>
-                </div>
-                
-                <div class="form-group">
-                    <label>Deal Value</label>
-                    <input type="text" value="$${deal.value.toLocaleString()}" disabled style="background: var(--bg-light); font-weight: 600;">
-                </div>
-                
-                <div class="form-group">
-                    <label>Tier</label>
-                    <div><span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Current Stage</label>
-                    <select id="dealStageEdit">
-                        <option value="Qualified" ${deal.stage === 'Qualified' ? 'selected' : ''}>Qualified</option>
-                        <option value="Proposal Sent" ${deal.stage === 'Proposal Sent' ? 'selected' : ''}>Proposal Sent</option>
-                        <option value="Negotiation" ${deal.stage === 'Negotiation' ? 'selected' : ''}>Negotiation</option>
-                        <option value="Closed Won" ${deal.stage === 'Closed Won' ? 'selected' : ''}>Closed Won</option>
-                        <option value="Closed Lost" ${deal.stage === 'Closed Lost' ? 'selected' : ''}>Closed Lost</option>
-                    </select>
-                </div>
-                
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button class="btn btn-primary" onclick="updateDealStage('${dealId}')">Update Stage</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-async function updateDealStage(dealId, newStage) {
-    if (!newStage) {
-        newStage = document.getElementById('dealStageEdit').value;
-    }
-    
-    const deal = state.data.deals.find(d => d.id === dealId);
-    
-    if (!deal || newStage === deal.stage) {
-        closeModal();
-        return;
-    }
-    
-    try {
-        const response = await fetch(`https://api.airtable.com/v0/${state.baseId}/Deals/${dealId}`, {
-            method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${state.apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                fields: {
-                    'Stage': newStage
+        async function loadTeamMembers() {
+            try {
+                const response = await fetchFromAirtable('Team Members');
+                if (response && response.records) {
+                    state.data.teamMembers = response.records.map(r => ({
+                        id: r.id,
+                        name: r.fields.Name || '',
+                        role: r.fields.Role || '',
+                        quota: r.fields['Monthly Quota'] || 0
+                    }));
+                    
+                    state.teamMemberMap = {};
+                    response.records.forEach(r => {
+                        if (r.fields.Name) {
+                            state.teamMemberMap[r.fields.Name] = r.id;
+                        }
+                    });
                 }
-            })
-        });
-        
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        await loadDeals();
-        closeModal();
-        renderView('pipeline');
-        alert(`Deal moved to ${newStage}!`);
-    } catch (error) {
-        alert(`Error updating deal: ${error.message}`);
-    }
-}
+            } catch (error) {
+                console.error('Error loading team members:', error);
+                state.data.teamMembers = [
+                    { id: 'rec1', name: 'Javonte', role: 'BDR', quota: 45000 },
+                    { id: 'rec2', name: 'Teslim', role: 'BDR', quota: 45000 },
+                    { id: 'rec3', name: 'Israel', role: 'BDR', quota: 45000 },
+                    { id: 'rec4', name: 'Conrad', role: 'AE', quota: 60000 },
+                    { id: 'rec5', name: 'Test User', role: 'BDR', quota: 45000 },
+                    { id: 'rec6', name: 'Test Leadership', role: 'Leadership', quota: 0 },
+                    { id: 'rec7', name: 'Ramallah', role: 'Leadership', quota: 0 },
+                    { id: 'rec8', name: 'Keyna', role: 'Leadership', quota: 0 }
+                ];
+                
+                state.teamMemberMap = {
+                    'Javonte': 'rec1',
+                    'Teslim': 'rec2',
+                    'Israel': 'rec3',
+                    'Conrad': 'rec4',
+                    'Test User': 'rec5',
+                    'Test Leadership': 'rec6',
+                    'Ramallah': 'rec7',
+                    'Keyna': 'rec8'
+                };
+            }
+        }
 
-function closeModal() {
-    document.getElementById('modalContainer').innerHTML = '';
-}
+        async function loadPricingRules() {
+            try {
+                const response = await fetchFromAirtable('Pricing Rules');
+                if (response && response.records) {
+                    state.data.pricingRules = response.records.map(r => ({
+                        id: r.id,
+                        tier: r.fields.Tier || '',
+                        basePrice: r.fields['Base Price'] || 0
+                    }));
+                    
+                    state.pricingRuleMap = {};
+                    response.records.forEach(r => {
+                        if (r.fields.Tier) {
+                            state.pricingRuleMap[r.fields.Tier] = r.id;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading pricing rules:', error);
+            }
+        }
 
-function getUserDeals() {
-    if (state.currentUser.role === 'Leadership') {
-        return state.data.deals;
-    }
-    return state.data.deals.filter(d => d.owner === state.currentUser.name);
-}
-
-function renderView(viewName) {
-    state.currentView = viewName;
-    document.getElementById('pageTitle').textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
-    
-    const views = {
-        'dashboard': renderDashboard,
-        'pipeline': renderPipeline,
-        'tasks': renderTasks,
-        'contacts': renderContacts,
-        'accounts': renderAccounts,
-        'activity': renderActivityView,
-        'reports': renderReports,
-        'leadership': renderLeadershipDashboard,
-        'team': renderTeamOverview
-    };
-    
-    if (views[viewName]) {
-        views[viewName]();
-        buildNavigation();
-    }
-}
-
-// Simple view renders (Tasks, Contacts, Accounts, etc.)
-function renderTasks() {
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">✅ Tasks</h2>
-            </div>
-            <p style="text-align: center; padding: 40px; color: var(--text-gray);">
-                Task management coming soon
-            </p>
-        </div>
-    `;
-}
-
-function renderContacts() {
-    const contacts = state.data.contacts;
-    const content = document.getElementById('contentArea');
-    
-    content.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">👥 Contacts</h2>
-                <button class="btn btn-primary btn-small" onclick="openAddContactModal()">+ Add Contact</button>
-            </div>
+        function populateLoginSelect() {
+            const select = document.getElementById('userSelect');
+            if (!select) return;
             
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Company</th>
-                        <th>Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${contacts.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No contacts found</td></tr>' : contacts.map(contact => `
-                        <tr>
-                            <td><strong>${contact.name}</strong></td>
-                            <td>${contact.email}</td>
-                            <td>${contact.phone}</td>
-                            <td>${contact.company || '-'}</td>
-                            <td>${contact.role}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
+            state.data.teamMembers.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.name;
+                option.textContent = `${member.name} (${member.role})`;
+                select.appendChild(option);
+            });
+        }
 
-function renderAccounts() {
-    const accounts = state.data.accounts;
-    const content = document.getElementById('contentArea');
-    
-    content.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">🏢 Accounts</h2>
-                <button class="btn btn-primary btn-small" onclick="openAddAccountModal()">+ Add Account</button>
-            </div>
+        async function handleLogin() {
+            const select = document.getElementById('userSelect');
+            const passwordInput = document.getElementById('passwordInput');
+            const errorDiv = document.getElementById('loginError');
             
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Industry</th>
-                        <th>Owner</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${accounts.length === 0 ? '<tr><td colspan="3" style="text-align: center; padding: 40px;">No accounts found</td></tr>' : accounts.map(account => `
-                        <tr>
-                            <td>${account.name}</td>
-                            <td>${account.industry}</td>
-                            <td>${account.owner}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
-
-function renderActivityView() {
-    const activities = state.data.activities.filter(a => a.owner === state.currentUser.name);
-    
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">📝 Activity Log</h2>
-                <button class="btn btn-primary btn-small" onclick="openLogActivityModal()">+ Log Activity</button>
-            </div>
+            const selectedName = select.value;
+            const enteredPassword = passwordInput.value;
             
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Account</th>
-                        <th>Result</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${activities.length === 0 ? '<tr><td colspan="4" style="text-align: center; padding: 40px;">No activities yet</td></tr>' : activities.map(activity => `
-                        <tr>
-                            <td>${formatDateCST(activity.date)}</td>
-                            <td><span class="badge" style="background: var(--primary); color: white;">${activity.type}</span></td>
-                            <td><strong>${activity.account}</strong></td>
-                            <td>${activity.result || '-'}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
+            if (!selectedName) {
+                errorDiv.textContent = 'Please select a team member';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
 
-function renderReports() {
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">📑 Reports</h2>
-            </div>
-            <p style="text-align: center; padding: 40px; color: var(--text-gray);">
-                Advanced reporting coming soon
-            </p>
-        </div>
-    `;
-}
+            if (!enteredPassword) {
+                errorDiv.textContent = 'Please enter your password';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
 
-function renderTeamOverview() {
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">👨‍👩‍👧‍👦 Team Overview</h2>
-            </div>
-            <p style="text-align: center; padding: 40px; color: var(--text-gray);">
-                Use the Leadership Dashboard for detailed team insights
-            </p>
-        </div>
-    `;
-}
+            if (userPasswords[selectedName] !== enteredPassword) {
+                errorDiv.textContent = 'Incorrect password';
+                errorDiv.classList.remove('hidden');
+                passwordInput.value = '';
+                return;
+            }
 
-function renderPipeline() {
-    const deals = getUserDeals();
-    const stages = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won'];
-    
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">📊 Pipeline</h2>
-                <button class="btn btn-primary btn-small" onclick="openAddDealModal()">+ Add Deal</button>
-            </div>
+            const user = state.data.teamMembers.find(m => m.name === selectedName);
+            if (user) {
+                state.currentUser = user;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                await initApp();
+            }
+        }
+
+        async function initApp() {
+            document.getElementById('currentUserName').textContent = state.currentUser.name;
+            buildNavigation();
+            await loadAllData();
+            calculateDailyMetrics();
+            renderView('dashboard');
             
-            <div class="kanban-board">
-                ${stages.map(stage => {
-                    const stageDeals = deals.filter(d => d.stage === stage);
-                    return `
-                        <div class="kanban-column">
-                            <div class="kanban-header">
-                                <span>${stage}</span>
-                                <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">${stageDeals.length}</span>
-                            </div>
-                            ${stageDeals.length === 0 ? '<p style="text-align: center; color: var(--text-gray); padding: 20px; font-size: 13px;">No deals</p>' : stageDeals.map(deal => `
-                                <div class="kanban-card" onclick="openDealDetailsModal('${deal.id}')" style="cursor: pointer;">
-                                    <div class="kanban-card-title">${deal.name}</div>
-                                    <div class="kanban-card-value">$${deal.value.toLocaleString()}</div>
-                                    <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
-                                </div>
-                            `).join('')}
+            setInterval(async () => {
+                await loadAllData();
+                calculateDailyMetrics();
+            }, 5 * 60 * 1000);
+        }
+
+        function buildNavigation() {
+            const nav = document.getElementById('sidebarNav');
+            let items = [...allNavItems];
+            
+            if (state.currentUser.role === 'Leadership') {
+                items = items.concat(leadershipNavItems);
+            }
+            
+            nav.innerHTML = items.map(item => `
+                <div class="nav-item ${item.id === state.currentView ? 'active' : ''}" 
+                     onclick="renderView('${item.id}')">
+                    <span class="nav-item-icon">${item.icon}</span>
+                    <span>${item.label}</span>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                location.reload();
+            }
+        }
+
+        async function fetchFromAirtable(tableName, method = 'GET', body = null) {
+            try {
+                let url = `https://api.airtable.com/v0/${state.baseId}/${encodeURIComponent(tableName)}`;
+                
+                const options = {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${state.apiKey}`,
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (body && (method === 'POST' || method === 'PATCH' || method === 'PUT')) {
+                    options.body = JSON.stringify(body);
+                }
+
+                const response = await fetch(url, options);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`❌ ${tableName} request failed: ${response.status}`);
+                    console.error('Error details:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error(`Error with ${tableName}:`, error);
+                throw error;
+            }
+        }
+
+        async function loadAllData() {
+            try {
+                await Promise.all([
+                    loadDeals(),
+                    loadActivities(),
+                    loadTasks(),
+                    loadContacts(),
+                    loadAccounts()
+                ]);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function getOwnerName(ownerField) {
+            if (Array.isArray(ownerField) && ownerField.length > 0) {
+                const recordId = ownerField[0];
+                const member = state.data.teamMembers.find(m => m.id === recordId);
+                return member ? member.name : '';
+            }
+            return ownerField || '';
+        }
+
+        function getAccountName(accountField) {
+            if (Array.isArray(accountField) && accountField.length > 0) {
+                const accountId = accountField[0];
+                const account = state.data.accounts.find(a => a.id === accountId);
+                return account ? account.name : '';
+            }
+            return '';
+        }
+
+        function formatDateCST(dateString) {
+            if (!dateString) return '-';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleString('en-US', { 
+                    timeZone: 'America/Chicago',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // Calculate cycle time (days from created to closed)
+        function calculateCycleTime(deal) {
+            if (!deal.createdTime || !deal.closeDate) return null;
+            const created = new Date(deal.createdTime);
+            const closed = new Date(deal.closeDate);
+            const days = Math.floor((closed - created) / (1000 * 60 * 60 * 24));
+            return days;
+        }
+
+        // Calculate days since closed
+        function daysSinceClosed(closeDate) {
+            if (!closeDate) return null;
+            const closed = new Date(closeDate);
+            const now = new Date();
+            const days = Math.floor((now - closed) / (1000 * 60 * 60 * 24));
+            return days;
+        }
+
+        async function loadDeals() {
+            const response = await fetchFromAirtable('Deals');
+            if (response && response.records) {
+                state.data.deals = response.records.map(r => ({
+                    id: r.id,
+                    name: r.fields['Deal Name'] || '',
+                    owner: getOwnerName(r.fields.Owner),
+                    tier: Array.isArray(r.fields['Tier (lookup)']) ? r.fields['Tier (lookup)'][0] : r.fields['Tier (lookup)'] || '',
+                    stage: r.fields.Stage || '',
+                    value: r.fields.Amount || 0,
+                    eventName: r.fields['Event Name'] || '',
+                    closeDate: r.fields['Close Date'] || '',
+                    createdTime: r.createdTime,
+                    pricingType: r.fields['Pricing Type'] || 'Public Price', // From formula field
+                    cycleTime: r.fields['Cycle Time (Days)'], // From formula field
+                    daysSince: r.fields['Days Since Closed'] // From formula field
+                }));
+            }
+        }
+
+        async function loadActivities() {
+            const response = await fetchFromAirtable('Activities');
+            if (response && response.records) {
+                state.data.activities = response.records.map(r => ({
+                    id: r.id,
+                    name: r.fields['Activity Name'] || '',
+                    type: r.fields.Type || '',
+                    date: r.fields['Activity Date/Time'] || r.fields.Date || '',
+                    owner: r.fields.Owner || '',
+                    account: r.fields.Account || '',
+                    contact: Array.isArray(r.fields.Contact) ? r.fields.Contact[0] : r.fields.Contact || '',
+                    result: r.fields.Result || '',
+                    nextSteps: r.fields['Next Steps'] || '',
+                    createdTime: r.createdTime
+                }));
+            }
+        }
+
+        async function loadTasks() {
+            const response = await fetchFromAirtable('Tasks');
+            if (response && response.records) {
+                state.data.tasks = response.records.map(r => ({
+                    id: r.id,
+                    name: r.fields['Task Name'] || '',
+                    owner: getOwnerName(r.fields.Owner),
+                    dueDate: r.fields['Due Date'] || '',
+                    status: r.fields.Status || 'Open',
+                    type: r.fields.Type || ''
+                }));
+            }
+        }
+
+        async function loadContacts() {
+            const response = await fetchFromAirtable('Contacts');
+            if (response && response.records) {
+                state.data.contacts = response.records.map(r => ({
+                    id: r.id,
+                    name: r.fields['Full Name'] || '',
+                    email: r.fields.Email || '',
+                    phone: r.fields.Phone || '',
+                    company: getAccountName(r.fields.Account),
+                    role: r.fields.Title || '',
+                    owner: getOwnerName(r.fields['Contact Owner']),
+                    createdTime: r.createdTime
+                }));
+            }
+        }
+
+        async function loadAccounts() {
+            const response = await fetchFromAirtable('Accounts');
+            if (response && response.records) {
+                state.data.accounts = response.records.map(r => ({
+                    id: r.id,
+                    name: r.fields['Account Name'] || '',
+                    industry: r.fields.Industry || '',
+                    owner: getOwnerName(r.fields['Account Owner']),
+                    createdTime: r.createdTime
+                }));
+            }
+        }
+
+        function calculateDailyMetrics() {
+            const today = new Date().toISOString().split('T')[0];
+            const userActivities = state.data.activities.filter(a => 
+                a.owner === state.currentUser.name && 
+                a.createdTime && 
+                a.createdTime.split('T')[0] === today
+            );
+            
+            state.dailyMetrics.touchpoints = userActivities.length;
+            
+            const newContactsToday = state.data.contacts.filter(c => 
+                c.owner === state.currentUser.name &&
+                c.createdTime && 
+                c.createdTime.split('T')[0] === today
+            ).length;
+            
+            const newAccountsToday = state.data.accounts.filter(a => 
+                a.owner === state.currentUser.name &&
+                a.createdTime && 
+                a.createdTime.split('T')[0] === today
+            ).length;
+            
+            state.dailyMetrics.newLeads = newContactsToday + newAccountsToday;
+            
+            state.dailyMetrics.discoveryCalls = userActivities.filter(a => 
+                a.type && a.type.toLowerCase().includes('discovery')
+            ).length;
+            
+            state.dailyMetrics.dealsMoved = userActivities.filter(a => 
+                a.type && a.type.toLowerCase().includes('stage change')
+            ).length;
+        }
+
+        async function createDeal(dealData) {
+            try {
+                const response = await fetchFromAirtable('Deals', 'POST', {
+                    fields: dealData
+                });
+                
+                if (response && response.id) {
+                    await loadDeals();
+                    closeModal();
+                    renderView('pipeline');
+                    alert('Deal created successfully!');
+                } else {
+                    const errorMsg = response?.error?.message || JSON.stringify(response?.error) || 'Unknown error';
+                    alert('Failed to create deal: ' + errorMsg);
+                }
+            } catch (error) {
+                alert('Error creating deal: ' + error.message);
+            }
+        }
+
+        async function createContact(contactData) {
+            try {
+                const response = await fetchFromAirtable('Contacts', 'POST', {
+                    fields: contactData
+                });
+                
+                if (response && response.id) {
+                    await loadContacts();
+                    calculateDailyMetrics();
+                    closeModal();
+                    renderView('contacts');
+                    alert('Contact created! +1 New Lead Added today!');
+                }
+            } catch (error) {
+                alert('Error creating contact: ' + error.message);
+            }
+        }
+
+        async function createAccount(accountData) {
+            try {
+                const response = await fetchFromAirtable('Accounts', 'POST', {
+                    fields: accountData
+                });
+                
+                if (response && response.id) {
+                    await loadAccounts();
+                    calculateDailyMetrics();
+                    closeModal();
+                    renderView('accounts');
+                    alert('Account created! +1 New Lead Added today!');
+                }
+            } catch (error) {
+                alert('Error creating account: ' + error.message);
+            }
+        }
+
+        async function logActivity(activityData) {
+            try {
+                const response = await fetchFromAirtable('Activities', 'POST', {
+                    fields: activityData
+                });
+                
+                if (response && response.id) {
+                    await loadActivities();
+                    calculateDailyMetrics();
+                    closeModal();
+                    renderView(state.currentView);
+                    alert('Activity logged! +1 Touchpoint!');
+                }
+            } catch (error) {
+                alert('Error logging activity: ' + error.message);
+            }
+        }
+
+        function openAddDealModal() {
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Add New Deal</h2>
                         </div>
-                    `;
-                }).join('')}
-            </div>
-        </div>
-    `;
-}
-
-window.addEventListener('DOMContentLoaded', init);
-
-// PART 2 ENDS HERE - PASTE PART 3 AFTER THIS
-    // PART 3: DASHBOARD RENDERING WITH CHARTS
-// PASTE THIS AFTER PART 2
-
-// Show notifications for below-target KPIs
-function showKPINotifications(metrics) {
-    const content = document.getElementById('contentArea');
-    let alerts = [];
-    
-    const quota = state.currentUser.quota || 45000;
-    const minMonthlyTarget = quota * 0.7;
-    
-    // Check revenue
-    if (metrics.monthRevenue < minMonthlyTarget && metrics.monthRevenue > 0) {
-        const percentOfTarget = ((metrics.monthRevenue / quota) * 100).toFixed(0);
-        alerts.push({
-            type: 'danger',
-            title: '⚠️ Revenue Below Target',
-            text: `You're at ${percentOfTarget}% of your quota. Let's close some deals!`
-        });
-    }
-    
-    // Check touchpoints
-    const hour = new Date().getHours();
-    if (metrics.todayTouchpoints < 15 && hour >= 14) {
-        alerts.push({
-            type: 'warning',
-            title: '🎯 Touchpoints Reminder',
-            text: `Only ${metrics.todayTouchpoints}/25 touchpoints today. Keep the momentum going!`
-        });
-    }
-    
-    // Check quality score
-    if (metrics.qualityScore < 70 && metrics.totalDeals >= 3) {
-        alerts.push({
-            type: 'warning',
-            title: '📊 Quality Score Low',
-            text: `Your quality score is ${metrics.qualityScore.toFixed(0)}%. Focus on Growth+ deals!`
-        });
-    }
-    
-    // Show success message if exceeding
-    if (metrics.monthRevenue >= quota) {
-        alerts.push({
-            type: 'success',
-            title: '🎉 Crushing It!',
-            text: `You're at ${((metrics.monthRevenue / quota) * 100).toFixed(0)}% of quota. Amazing work!`
-        });
-    }
-    
-    return alerts.map(alert => `
-        <div class="alert-banner ${alert.type}">
-            <div class="alert-icon">${alert.type === 'success' ? '✅' : '⚠️'}</div>
-            <div class="alert-content">
-                <div class="alert-title">${alert.title}</div>
-                <div class="alert-text">${alert.text}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-// REP DASHBOARD
-function renderDashboard() {
-    const deals = getUserDeals();
-    const isLeadership = state.currentUser.role === 'Leadership';
-    
-    if (isLeadership) {
-        renderLeadershipDashboard();
-        return;
-    }
-    
-    // Calculate date ranges
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayISO = today.toISOString().split('T')[0];
-    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - today.getDay());
-    
-    // Get user's activities
-    const userActivities = state.data.activities.filter(a => a.owner === state.currentUser.name);
-    
-    // TODAY
-    const todayActivities = userActivities.filter(a => {
-        const activityDate = a.date ? a.date.split('T')[0] : null;
-        return activityDate === todayISO;
-    });
-    
-    // THIS WEEK
-    const weekActivities = userActivities.filter(a => {
-        if (!a.date) return false;
-        const activityDate = new Date(a.date);
-        return activityDate >= weekStart;
-    });
-    
-    const weekCalls = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
-    const weekEmails = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
-    const weekLinkedIn = weekActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
-    const weekDemos = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
-    const weekProposals = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
-    const weekDiscovery = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('discovery')).length;
-    
-    // Daily KPIs
-    const todayTouchpoints = todayActivities.length;
-    const todayNewLeads = state.data.contacts.filter(c => {
-        if (!c.createdTime) return false;
-        const created = new Date(c.createdTime).toISOString().split('T')[0];
-        return created === todayISO && c.owner === state.currentUser.name;
-    }).length;
-    
-    const todayDiscoveryCalls = todayActivities.filter(a => 
-        a.type && a.type.toLowerCase().includes('discovery')
-    ).length;
-    
-    const todayDealsMovedCount = todayActivities.filter(a => 
-        a.type && a.type.toLowerCase().includes('stage change')
-    ).length;
-    
-    // Monthly KPIs
-    const quota = state.currentUser.quota || 45000;
-    const minTarget = 9750; // Lower target
-    const maxTarget = 12700; // Upper target
-    
-    const monthClosedDeals = deals.filter(d => {
-        if (!d.stage.toLowerCase().includes('won')) return false;
-        if (!d.createdTime) return true;
-        const dealDate = new Date(d.createdTime);
-        return dealDate >= monthStart;
-    });
-    
-    const monthRevenue = monthClosedDeals.reduce((sum, d) => sum + d.value, 0);
-    const revenuePercentOfMax = (monthRevenue / maxTarget) * 100;
-    
-    const totalEvents = monthClosedDeals.length;
-    const eventsMinTarget = 6;
-    const eventsMaxTarget = 7;
-    const eventsPercentOfMax = (totalEvents / eventsMaxTarget) * 100;
-    
-    // Deal mix
-    const starterDeals = monthClosedDeals.filter(d => d.tier === 'Starter');
-    const growthDeals = monthClosedDeals.filter(d => d.tier === 'Growth');
-    const proDeals = monthClosedDeals.filter(d => d.tier === 'Pro');
-    const enterpriseDeals = monthClosedDeals.filter(d => d.tier === 'Enterprise');
-    
-    const starterRevenue = starterDeals.reduce((sum, d) => sum + d.value, 0);
-    const growthRevenue = growthDeals.reduce((sum, d) => sum + d.value, 0);
-    const proRevenue = proDeals.reduce((sum, d) => sum + d.value, 0);
-    const enterpriseRevenue = enterpriseDeals.reduce((sum, d) => sum + d.value, 0);
-    
-    // Quality Score
-    const growthPlusCount = growthDeals.length + proDeals.length + enterpriseDeals.length;
-    const qualityScore = monthClosedDeals.length > 0 ? (growthPlusCount / monthClosedDeals.length) * 100 : 0;
-    const qualityMet = qualityScore >= 70;
-    
-    // Pipeline
-    const pipelineDeals = deals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'));
-    
-    // Performance by Tier
-    const performanceByTier = [
-        { tier: 'Starter', closed: starterDeals.length, revenue: starterRevenue, pipeline: pipelineDeals.filter(d => d.tier === 'Starter').length, avgSize: starterDeals.length > 0 ? starterRevenue / starterDeals.length : 0 },
-        { tier: 'Growth', closed: growthDeals.length, revenue: growthRevenue, pipeline: pipelineDeals.filter(d => d.tier === 'Growth').length, avgSize: growthDeals.length > 0 ? growthRevenue / growthDeals.length : 0 },
-        { tier: 'Pro', closed: proDeals.length, revenue: proRevenue, pipeline: pipelineDeals.filter(d => d.tier === 'Pro').length, avgSize: proDeals.length > 0 ? proRevenue / proDeals.length : 0 },
-        { tier: 'Enterprise', closed: enterpriseDeals.length, revenue: enterpriseRevenue, pipeline: pipelineDeals.filter(d => d.tier === 'Enterprise').length, avgSize: enterpriseDeals.length > 0 ? enterpriseRevenue / enterpriseDeals.length : 0 }
-    ];
-    
-    // Recent wins
-    const allClosedDeals = deals.filter(d => d.stage.toLowerCase().includes('won'))
-        .sort((a, b) => new Date(b.closeDate || b.createdTime) - new Date(a.closeDate || a.createdTime));
-    
-    // Pricing breakdown
-    const publicDeals = monthClosedDeals.filter(d => d.pricingType === 'Public Price');
-    const floorDeals = monthClosedDeals.filter(d => d.pricingType === 'Floor Price');
-    const publicRevenue = publicDeals.reduce((sum, d) => sum + d.value, 0);
-    const floorRevenue = floorDeals.reduce((sum, d) => sum + d.value, 0);
-    
-    // Status helpers
-    const getStatus = (value, min, max) => {
-        if (value >= min) return 'success';
-        if (value >= min * 0.5) return 'warning';
-        return 'danger';
-    };
-    
-    const getStatusColor = (status) => {
-        if (status === 'success') return 'var(--success)';
-        if (status === 'warning') return '#ff9800';
-        return 'var(--danger)';
-    };
-    
-    const touchpointStatus = getStatus(todayTouchpoints, 20, 25);
-    const newLeadsStatus = getStatus(todayNewLeads, 3, 5);
-    const callsStatus = getStatus(todayDiscoveryCalls, 1, 2);
-    const dealsMovedStatus = getStatus(todayDealsMovedCount, 1, 2);
-    
-    const metrics = {
-        monthRevenue,
-        qualityScore,
-        todayTouchpoints,
-        totalDeals: monthClosedDeals.length
-    };
-
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        ${showKPINotifications(metrics)}
-        
-        <div class="kpi-grid">
-            <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">💰 MONTHLY REVENUE</div>
-                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">$${(monthRevenue / 1000).toFixed(1)}K</div>
-                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: $${minTarget / 1000}K - $${maxTarget / 1000}K</div>
-                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
-                    <div style="width: ${Math.min(revenuePercentOfMax, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
-                </div>
-                <div style="font-size: 15px; font-weight: 700;">${revenuePercentOfMax.toFixed(0)}% of Max Target</div>
-            </div>
-            
-            <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">🎉 TOTAL EVENTS</div>
-                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${totalEvents}</div>
-                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: ${eventsMinTarget}-${eventsMaxTarget} events per month</div>
-                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
-                    <div style="width: ${Math.min(eventsPercentOfMax, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
-                </div>
-                <div style="font-size: 15px; font-weight: 700;">${eventsPercentOfMax.toFixed(0)}% of Max Target</div>
-            </div>
-            
-            <div class="kpi-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">📊 MONTHLY ATTAINMENT</div>
-                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${((monthRevenue / quota) * 100).toFixed(0)}%</div>
-                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Quota: $${(quota / 1000).toFixed(0)}K</div>
-                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
-                    <div style="width: ${Math.min((monthRevenue / quota) * 100, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">📅 Daily Scorecard - ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h2>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px;">
-                
-                <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(touchpointStatus)};">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">TOUCHPOINTS TODAY</div>
-                        <div style="font-size: 24px;">${touchpointStatus === 'success' ? '✅' : touchpointStatus === 'warning' ? '⚠️' : '❌'}</div>
-                    </div>
-                    <div class="kpi-value" style="color: ${getStatusColor(touchpointStatus)};">${todayTouchpoints}</div>
-                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 20-25/day</div>
-                    <div class="progress-bar" style="margin-top: 12px;">
-                        <div class="progress-fill" style="width: ${Math.min((todayTouchpoints / 25) * 100, 100)}%; background: ${getStatusColor(touchpointStatus)};"></div>
-                    </div>
-                </div>
-                
-                <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(newLeadsStatus)};">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">NEW LEADS TODAY</div>
-                        <div style="font-size: 24px;">${newLeadsStatus === 'success' ? '✅' : newLeadsStatus === 'warning' ? '⚠️' : '❌'}</div>
-                    </div>
-                    <div class="kpi-value" style="color: ${getStatusColor(newLeadsStatus)};">${todayNewLeads}</div>
-                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 3-5/day</div>
-                    <div class="progress-bar" style="margin-top: 12px;">
-                        <div class="progress-fill" style="width: ${Math.min((todayNewLeads / 5) * 100, 100)}%; background: ${getStatusColor(newLeadsStatus)};"></div>
-                    </div>
-                </div>
-                
-                <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(callsStatus)};">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">DISCOVERY CALLS</div>
-                        <div style="font-size: 24px;">${callsStatus === 'success' ? '✅' : callsStatus === 'warning' ? '⚠️' : '❌'}</div>
-                    </div>
-                    <div class="kpi-value" style="color: ${getStatusColor(callsStatus)};">${todayDiscoveryCalls}</div>
-                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 1+/day</div>
-                    <div class="progress-bar" style="margin-top: 12px;">
-                        <div class="progress-fill" style="width: ${Math.min(todayDiscoveryCalls * 100, 100)}%; background: ${getStatusColor(callsStatus)};"></div>
-                    </div>
-                </div>
-                
-                <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(dealsMovedStatus)};">
-                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                        <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">DEALS MOVED</div>
-                        <div style="font-size: 24px;">${dealsMovedStatus === 'success' ? '✅' : dealsMovedStatus === 'warning' ? '⚠️' : '❌'}</div>
-                    </div>
-                    <div class="kpi-value" style="color: ${getStatusColor(dealsMovedStatus)};">${todayDealsMovedCount}</div>
-                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 1+/day</div>
-                    <div class="progress-bar" style="margin-top: 12px;">
-                        <div class="progress-fill" style="width: ${Math.min(todayDealsMovedCount * 100, 100)}%; background: ${getStatusColor(dealsMovedStatus)};"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">📊 This Week's Activity</h2>
-            </div>
-            <div class="activity-stats">
-                <div class="stat-card">
-                    <div class="stat-icon">📞</div>
-                    <div class="stat-value">${weekCalls}</div>
-                    <div class="stat-label">Calls</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📧</div>
-                    <div class="stat-value">${weekEmails}</div>
-                    <div class="stat-label">Emails</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💼</div>
-                    <div class="stat-value">${weekLinkedIn}</div>
-                    <div class="stat-label">Messages</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🎥</div>
-                    <div class="stat-value">${weekDemos}</div>
-                    <div class="stat-label">Demos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📄</div>
-                    <div class="stat-value">${weekProposals}</div>
-                    <div class="stat-label">Proposals</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-value">${weekDiscovery}</div>
-                    <div class="stat-label">Discovery</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">📊 Performance by Tier</h2>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tier</th>
-                        <th>Closed</th>
-                        <th>Revenue</th>
-                        <th>Pipeline</th>
-                        <th>Avg Size</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${performanceByTier.map(t => `
-                        <tr>
-                            <td><span class="badge badge-${t.tier.toLowerCase()}">${t.tier}</span></td>
-                            <td><strong>${t.closed}</strong></td>
-                            <td>$${(t.revenue / 1000).toFixed(1)}K</td>
-                            <td>${t.pipeline}</td>
-                            <td>${t.avgSize > 0 ? '$' + Math.round(t.avgSize).toLocaleString() : '-'}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">🎯 Monthly Deal Mix</h2>
-                <span class="quality-badge ${qualityMet ? 'success' : 'warning'}">
-                    ${qualityMet ? '✅ Quality Goal Met' : '⚠️ Need More Growth+ Deals'}
-                </span>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tier</th>
-                        <th>Target</th>
-                        <th>Closed</th>
-                        <th>Pipeline</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="badge badge-starter">Starter</span></td>
-                        <td>1</td>
-                        <td><strong>${starterDeals.length}</strong></td>
-                        <td>${pipelineDeals.filter(d => d.tier === 'Starter').length}</td>
-                        <td>${starterDeals.length >= 1 ? '✅' : '⚠️'}</td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-growth">Growth</span></td>
-                        <td>2-3</td>
-                        <td><strong>${growthDeals.length}</strong></td>
-                        <td>${pipelineDeals.filter(d => d.tier === 'Growth').length}</td>
-                        <td>${growthDeals.length >= 2 ? '✅' : '⚠️'}</td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-pro">Pro</span></td>
-                        <td>2</td>
-                        <td><strong>${proDeals.length}</strong></td>
-                        <td>${pipelineDeals.filter(d => d.tier === 'Pro').length}</td>
-                        <td>${proDeals.length >= 2 ? '✅' : '⚠️'}</td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-enterprise">Enterprise</span></td>
-                        <td>0-1</td>
-                        <td><strong>${enterpriseDeals.length}</strong></td>
-                        <td>${pipelineDeals.filter(d => d.tier === 'Enterprise').length}</td>
-                        <td>${enterpriseDeals.length <= 1 ? '✅' : '⚠️'}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">🏆 Recent Wins</h2>
-            </div>
-            <div class="wins-list">
-                ${allClosedDeals.length === 0 ? '<p style="text-align: center; color: var(--text-gray); padding: 40px;">No wins yet. Keep closing!</p>' : allClosedDeals.slice(0, 5).map(deal => {
-                    const cycleTime = calculateCycleTime(deal);
-                    const daysAgo = daysSinceClosed(deal.closeDate);
-                    return `
-                        <div class="win-card">
-                            <div class="win-info">
-                                <div class="win-name">${deal.name}</div>
-                                <div class="win-meta">
-                                    <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
-                                    <span style="color: var(--text-gray); font-size: 13px;">
-                                        👤 Rep: <strong>${deal.owner}</strong>
-                                        ${cycleTime ? ` • ⏱️ ${cycleTime} days` : ''}
-                                        ${daysAgo !== null ? ` • 🕐 ${daysAgo === 0 ? 'Today' : daysAgo === 1 ? '1 day ago' : daysAgo + ' days ago'}` : ''}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="win-value">$${deal.value.toLocaleString()}</div>
+                        <div class="form-group">
+                            <label>Deal Name *</label>
+                            <input type="text" id="dealName" placeholder="Enter deal name">
                         </div>
-                    `;
-                }).join('')}
-            </div>
-        </div>
+                        <div class="form-group">
+                            <label>Tier * (auto-fills value)</label>
+                            <select id="dealTier" onchange="updateDealValue()">
+                                <option value="">Select tier...</option>
+                                <option value="Starter">Starter ($750)</option>
+                                <option value="Growth">Growth ($1,250)</option>
+                                <option value="Pro">Pro ($2,000)</option>
+                                <option value="Enterprise">Enterprise ($4,200)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Deal Value *</label>
+                            <input type="number" id="dealValue" readonly style="background: var(--bg-light);">
+                        </div>
+                        <div class="form-group">
+                            <label>Stage *</label>
+                            <select id="dealStage">
+                                <option value="Qualified">Qualified</option>
+                                <option value="Proposal Sent">Proposal Sent</option>
+                                <option value="Negotiation">Negotiation</option>
+                                <option value="Closed Won">Closed Won</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Event Name</label>
+                            <input type="text" id="dealEventName">
+                        </div>
+                        <div class="form-group">
+                            <label>Close Date</label>
+                            <input type="date" id="dealCloseDate">
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveDeal()">Create Deal</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
 
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">📊 Quality Score</h2>
-            </div>
-            <div style="padding: 20px; text-align: center;">
-                <div style="font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">
-                    ${qualityScore.toFixed(0)}%
-                </div>
-                <div style="font-size: 16px; color: var(--text-gray); margin-bottom: 20px;">
-                    Growth or Higher Deals (Target: 70%+)
-                </div>
-                <div class="progress-bar" style="max-width: 400px; margin: 0 auto;">
-                    <div class="progress-fill" style="width: ${Math.min(qualityScore, 100)}%;"></div>
-                </div>
-                <div style="font-size: 14px; color: var(--text-gray); margin-top: 12px;">
-                    ${growthPlusCount} out of ${monthClosedDeals.length} deals are Growth+
-                </div>
-            </div>
-        </div>
-    `;
-}
+        function updateDealValue() {
+            const tier = document.getElementById('dealTier').value;
+            const dealValueInput = document.getElementById('dealValue');
+            if (tier && tierPricing[tier]) {
+                dealValueInput.value = tierPricing[tier];
+            } else {
+                dealValueInput.value = '';
+            }
+        }
 
-// LEADERSHIP DASHBOARD (condensed - full version will be in final file)
-function renderLeadershipDashboard() {
-    const allDeals = state.data.deals;
-    const allActivities = state.data.activities;
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayISO = today.toISOString().split('T')[0];
-    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const yearStart = new Date(today.getFullYear(), 0, 1);
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - today.getDay());
-    
-    // Team metrics
-    const monthClosedDeals = allDeals.filter(d => {
-        if (!d.stage.toLowerCase().includes('won')) return false;
-        if (!d.createdTime) return true;
-        const dealDate = new Date(d.createdTime);
-        return dealDate >= monthStart;
-    });
-    
-    const monthRevenue = monthClosedDeals.reduce((sum, d) => sum + d.value, 0);
-    const teamTargetMin = 28000;
-    const teamTargetMax = 35000;
-    const revenuePercentOfMax = (monthRevenue / teamTargetMax) * 100;
-    
-    const totalEvents = monthClosedDeals.length;
-    const eventsTargetMin = 18;
-    const eventsTargetMax = 22;
-    const eventsPercentOfMax = (totalEvents / eventsTargetMax) * 100;
-    
-    // THIS WEEK'S TEAM ACTIVITY
-    const weekActivities = allActivities.filter(a => {
-        if (!a.date) return false;
-        const activityDate = new Date(a.date);
-        return activityDate >= weekStart;
-    });
-    
-    const weekCalls = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
-    const weekEmails = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
-    const weekLinkedIn = weekActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
-    const weekDemos = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
-    const weekProposals = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
-    const weekDiscovery = weekActivities.filter(a => a.type && a.type.toLowerCase().includes('discovery')).length;
-    
-    // Floor Pricing
-    const yearDeals = allDeals.filter(d => {
-        if (!d.createdTime) return true;
-        const dealDate = new Date(d.createdTime);
-        return dealDate >= yearStart;
-    });
-    
-    const floorDeals = yearDeals.filter(d => d.pricingType === 'Floor Price');
-    const floorStarter = floorDeals.filter(d => d.tier === 'Starter').length;
-    const floorGrowth = floorDeals.filter(d => d.tier === 'Growth').length;
-    const floorPro = floorDeals.filter(d => d.tier === 'Pro').length;
-    const floorEnterprise = floorDeals.filter(d => d.tier === 'Enterprise').length;
-    const totalFloorUsed = floorStarter + floorGrowth + floorPro + floorEnterprise;
-    const floorCapacity = 10;
-    const capacityPercent = (totalFloorUsed / floorCapacity) * 100;
-    
-    // Rep performance with KPI status
-    const repCards = state.data.teamMembers
-        .filter(m => m.role !== 'Leadership')
-        .map(member => {
-            const memberDeals = allDeals.filter(d => d.owner === member.name);
-            const memberMonthWon = memberDeals.filter(d => {
+        function saveDeal() {
+            const dealName = document.getElementById('dealName').value.trim();
+            const dealTier = document.getElementById('dealTier').value;
+            const dealValue = parseFloat(document.getElementById('dealValue').value) || 0;
+
+            if (!dealName || !dealTier || !dealValue) {
+                alert('Please fill in Deal Name and select Tier');
+                return;
+            }
+
+            const dealData = {
+                'Deal Name': dealName,
+                'Amount': dealValue,
+                'Stage': document.getElementById('dealStage').value
+            };
+
+            const pricingTierRecordId = state.pricingRuleMap[dealTier];
+            if (pricingTierRecordId) {
+                dealData['Pricing Tier'] = [pricingTierRecordId];
+            }
+
+            const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+            if (ownerRecordId) {
+                dealData['Owner'] = [ownerRecordId];
+            }
+
+            const eventName = document.getElementById('dealEventName').value.trim();
+            const closeDate = document.getElementById('dealCloseDate').value;
+
+            if (eventName) dealData['Event Name'] = eventName;
+            if (closeDate) dealData['Close Date'] = closeDate;
+
+            createDeal(dealData);
+        }
+
+        function openAddContactModal() {
+            const modal = document.getElementById('modalContainer');
+            const accounts = state.data.accounts;
+            
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Add New Contact</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Name *</label>
+                            <input type="text" id="contactName">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="contactEmail">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="contactPhone">
+                        </div>
+                        <div class="form-group">
+                            <label>Company/Account</label>
+                            <select id="contactAccount">
+                                <option value="">Select company...</option>
+                                ${accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Role</label>
+                            <input type="text" id="contactRole">
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            Owner: ${state.currentUser.name} (auto-assigned)<br>
+                            Counts as +1 New Lead Added for today!
+                        </p>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveContact()">Create</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveContact() {
+            const contactData = {
+                'Full Name': document.getElementById('contactName').value,
+                'Email': document.getElementById('contactEmail').value,
+                'Phone': document.getElementById('contactPhone').value,
+                'Title': document.getElementById('contactRole').value
+            };
+
+            if (!contactData['Full Name'] || !contactData['Email']) {
+                alert('Please fill in Name and Email');
+                return;
+            }
+
+            const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+            if (ownerRecordId) {
+                contactData['Contact Owner'] = [ownerRecordId];
+            }
+
+            const accountRecordId = document.getElementById('contactAccount').value;
+            if (accountRecordId) {
+                contactData['Account'] = [accountRecordId];
+            }
+
+            createContact(contactData);
+        }
+
+        function openAddAccountModal() {
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Add New Account</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Name *</label>
+                            <input type="text" id="accountName" placeholder="Enter account name">
+                        </div>
+                        <div class="form-group">
+                            <label>Industry</label>
+                            <input type="text" id="accountIndustry" list="industryOptions" placeholder="Type to search or select...">
+                            <datalist id="industryOptions">
+                                <option value="Technology">
+                                <option value="Finance">
+                                <option value="Education">
+                                <option value="Healthcare">
+                                <option value="Retail">
+                                <option value="Other">
+                            </datalist>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            Owner: ${state.currentUser.name} (auto-assigned)<br>
+                            Counts as +1 New Lead Added for today!
+                        </p>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveAccount()">Create</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveAccount() {
+            const accountData = {
+                'Account Name': document.getElementById('accountName').value,
+                'Industry': document.getElementById('accountIndustry').value
+            };
+
+            if (!accountData['Account Name']) {
+                alert('Please enter account name');
+                return;
+            }
+
+            const ownerRecordId = state.teamMemberMap[state.currentUser.name];
+            if (ownerRecordId) {
+                accountData['Account Owner'] = [ownerRecordId];
+            }
+
+            createAccount(accountData);
+        }
+
+        function openLogActivityModal() {
+            const modal = document.getElementById('modalContainer');
+            const accounts = state.data.accounts;
+            const contacts = state.data.contacts;
+            
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Log Activity</h2>
+                        </div>
+                        <div class="form-group">
+                            <label>Activity Type *</label>
+                            <select id="activityType">
+                                <option value="Call">Call</option>
+                                <option value="Email">Email</option>
+                                <option value="LinkedIn">LinkedIn Message</option>
+                                <option value="Discovery Call">Discovery Call</option>
+                                <option value="Demo">Demo</option>
+                                <option value="Proposal">Proposal Sent</option>
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Meeting Booked">Meeting Booked</option>
+                                <option value="Meeting Held">Meeting Held</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Account *</label>
+                            <select id="activityAccount">
+                                <option value="">Select account...</option>
+                                ${accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Contact</label>
+                            <select id="activityContact">
+                                <option value="">Select contact...</option>
+                                ${contacts.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Result/Outcome *</label>
+                            <textarea id="activityResult" placeholder="What happened? What was discussed?"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Next Steps</label>
+                            <textarea id="activityNextSteps" placeholder="What needs to happen next?"></textarea>
+                        </div>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 10px;">
+                            Counts as +1 Touchpoint for today!
+                        </p>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveActivity()">Log Activity</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveActivity() {
+            const accountRecordId = document.getElementById('activityAccount').value;
+            const result = document.getElementById('activityResult').value;
+            
+            if (!accountRecordId || !result) {
+                alert('Please select an Account and enter Result');
+                return;
+            }
+
+            const account = state.data.accounts.find(a => a.id === accountRecordId);
+            const accountName = account ? account.name : '';
+
+            const activityType = document.getElementById('activityType').value;
+            const activityName = `${activityType} - ${accountName}`;
+
+            const now = new Date();
+            const dateOnly = now.toISOString().split('T')[0];
+            const dateTime = now.toISOString();
+
+            const activityData = {
+                'Activity Name': activityName,
+                'Type': activityType,
+                'Date': dateOnly,
+                'Activity Date/Time': dateTime,
+                'Account': accountName,
+                'Owner': state.currentUser.name,
+                'Result': result
+            };
+
+            const contactRecordId = document.getElementById('activityContact').value;
+            const nextSteps = document.getElementById('activityNextSteps').value;
+
+            if (contactRecordId) activityData['Contact'] = [contactRecordId];
+            if (nextSteps) activityData['Next Steps'] = nextSteps;
+
+            logActivity(activityData);
+        }
+
+        function openDealDetailsModal(dealId) {
+            const deal = state.data.deals.find(d => d.id === dealId);
+            if (!deal) {
+                alert('Deal not found');
+                return;
+            }
+            
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>📊 ${deal.name}</h2>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Deal Value</label>
+                            <input type="text" value="$${deal.value.toLocaleString()}" disabled style="background: var(--bg-light); font-weight: 600; font-size: 18px;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Tier</label>
+                            <div><span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Current Stage</label>
+                            <select id="dealStageEdit" class="form-control">
+                                <option value="Qualified" ${deal.stage === 'Qualified' ? 'selected' : ''}>Qualified</option>
+                                <option value="Proposal Sent" ${deal.stage === 'Proposal Sent' ? 'selected' : ''}>Proposal Sent</option>
+                                <option value="Negotiation" ${deal.stage === 'Negotiation' ? 'selected' : ''}>Negotiation</option>
+                                <option value="Closed Won" ${deal.stage === 'Closed Won' ? 'selected' : ''}>Closed Won</option>
+                                <option value="Closed Lost" ${deal.stage === 'Closed Lost' ? 'selected' : ''}>Closed Lost</option>
+                            </select>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="updateDealStage('${dealId}')">Update Stage</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function closeModal() {
+            document.getElementById('modalContainer').innerHTML = '';
+        }
+
+        function getUserDeals() {
+            if (state.currentUser.role === 'Leadership') {
+                return state.data.deals;
+            }
+            return state.data.deals.filter(d => d.owner === state.currentUser.name);
+        }
+
+        function renderView(viewName) {
+            state.currentView = viewName;
+            document.getElementById('pageTitle').textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
+            
+            const views = {
+                'dashboard': renderDashboard,
+                'pipeline': renderPipeline,
+                'tasks': renderTasks,
+                'contacts': renderContacts,
+                'accounts': renderAccounts,
+                'activity': renderActivityView,
+                'reports': renderReports,
+                'leadership': renderLeadershipDashboard,
+                'team': renderTeamOverview
+            };
+            
+            if (views[viewName]) {
+                views[viewName]();
+                buildNavigation();
+            }
+        }
+
+        function renderDashboard() {
+            const deals = getUserDeals();
+            const isLeadership = state.currentUser.role === 'Leadership';
+            
+            if (isLeadership) {
+                renderLeadershipDashboard();
+                return;
+            }
+            
+            // Calculate date ranges
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayISO = today.toISOString().split('T')[0];
+            
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay());
+            
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            const yearStart = new Date(today.getFullYear(), 0, 1);
+            
+            // Get user's activities
+            const userActivities = state.data.activities.filter(a => a.owner === state.currentUser.name);
+            
+            // TODAY's activities
+            const todayActivities = userActivities.filter(a => {
+                const activityDate = a.date ? a.date.split('T')[0] : null;
+                return activityDate === todayISO;
+            });
+            
+            // Activity type breakdown (all time)
+            const calls = userActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+            const emails = userActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+            const linkedin = userActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
+            const demos = userActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
+            const proposals = userActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
+            
+            // Daily KPIs
+            const todayTouchpoints = todayActivities.length;
+            const todayNewLeads = state.data.contacts.filter(c => {
+                if (!c.createdTime) return false;
+                const created = new Date(c.createdTime).toISOString().split('T')[0];
+                return created === todayISO && c.owner === state.currentUser.name;
+            }).length;
+            
+            const todayDiscoveryCalls = todayActivities.filter(a => 
+                a.type && (a.type.toLowerCase().includes('discovery') || a.type.toLowerCase().includes('call'))
+            ).length;
+            
+            const todayDealsMovedCount = todayActivities.filter(a => 
+                a.result && a.result.toLowerCase().includes('moved')
+            ).length;
+            
+            // Monthly KPIs
+            const quota = state.currentUser.quota || 45000;
+            const monthClosedDeals = deals.filter(d => {
                 if (!d.stage.toLowerCase().includes('won')) return false;
                 if (!d.createdTime) return true;
                 const dealDate = new Date(d.createdTime);
                 return dealDate >= monthStart;
             });
+            
+            const monthRevenue = monthClosedDeals.reduce((sum, d) => sum + d.value, 0);
+            const attainment = (monthRevenue / quota) * 100;
+            
+            // Monthly deal mix by tier
+            const starterDeals = monthClosedDeals.filter(d => d.tier === 'Starter');
+            const growthDeals = monthClosedDeals.filter(d => d.tier === 'Growth');
+            const proDeals = monthClosedDeals.filter(d => d.tier === 'Pro');
+            const enterpriseDeals = monthClosedDeals.filter(d => d.tier === 'Enterprise');
+            
+            const starterRevenue = starterDeals.reduce((sum, d) => sum + d.value, 0);
+            const growthRevenue = growthDeals.reduce((sum, d) => sum + d.value, 0);
+            const proRevenue = proDeals.reduce((sum, d) => sum + d.value, 0);
+            const enterpriseRevenue = enterpriseDeals.reduce((sum, d) => sum + d.value, 0);
+            
+            // Quality Score: % of deals that are Growth or higher
+            const growthPlusCount = growthDeals.length + proDeals.length + enterpriseDeals.length;
+            const qualityScore = monthClosedDeals.length > 0 ? (growthPlusCount / monthClosedDeals.length) * 100 : 0;
+            const qualityMet = qualityScore >= 70;
+            
+            // Pipeline deals
+            const pipelineDeals = deals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'));
+            const starterPipeline = pipelineDeals.filter(d => d.tier === 'Starter').length;
+            const growthPipeline = pipelineDeals.filter(d => d.tier === 'Growth').length;
+            const proPipeline = pipelineDeals.filter(d => d.tier === 'Pro').length;
+            const enterprisePipeline = pipelineDeals.filter(d => d.tier === 'Enterprise').length;
+            
+            // All closed deals (for recent wins)
+            const allClosedDeals = deals.filter(d => d.stage.toLowerCase().includes('won'))
+                .sort((a, b) => new Date(b.closeDate || b.createdTime) - new Date(a.closeDate || a.createdTime));
+            
+            // Status helpers
+            const getStatus = (value, min, max) => {
+                if (value >= min) return 'success';
+                if (value >= min * 0.5) return 'warning';
+                return 'danger';
+            };
+            
+            const getStatusColor = (status) => {
+                if (status === 'success') return 'var(--success)';
+                if (status === 'warning') return '#ff9800';
+                return 'var(--danger)';
+            };
+            
+            const touchpointStatus = getStatus(todayTouchpoints, 20, 25);
+            const newLeadsStatus = getStatus(todayNewLeads, 3, 5);
+            const callsStatus = getStatus(todayDiscoveryCalls, 1, 2);
+            const dealsMovedStatus = getStatus(todayDealsMovedCount, 1, 2);
+
+            const content = document.getElementById('contentArea');
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📅 Daily Scorecard - ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px;">
+                        
+                        <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(touchpointStatus)};">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">TOUCHPOINTS TODAY</div>
+                                <div style="font-size: 24px;">${touchpointStatus === 'success' ? '✅' : touchpointStatus === 'warning' ? '⚠️' : '❌'}</div>
+                            </div>
+                            <div class="kpi-value" style="color: ${getStatusColor(touchpointStatus)};">${todayTouchpoints}</div>
+                            <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 20-25/day</div>
+                            <div class="progress-bar" style="margin-top: 12px;">
+                                <div class="progress-fill" style="width: ${Math.min((todayTouchpoints / 25) * 100, 100)}%; background: ${getStatusColor(touchpointStatus)};"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(newLeadsStatus)};">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">NEW LEADS TODAY</div>
+                                <div style="font-size: 24px;">${newLeadsStatus === 'success' ? '✅' : newLeadsStatus === 'warning' ? '⚠️' : '❌'}</div>
+                            </div>
+                            <div class="kpi-value" style="color: ${getStatusColor(newLeadsStatus)};">${todayNewLeads}</div>
+                            <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 3-5/day</div>
+                            <div class="progress-bar" style="margin-top: 12px;">
+                                <div class="progress-fill" style="width: ${Math.min((todayNewLeads / 5) * 100, 100)}%; background: ${getStatusColor(newLeadsStatus)};"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(callsStatus)};">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">DISCOVERY CALLS</div>
+                                <div style="font-size: 24px;">${callsStatus === 'success' ? '✅' : callsStatus === 'warning' ? '⚠️' : '❌'}</div>
+                            </div>
+                            <div class="kpi-value" style="color: ${getStatusColor(callsStatus)};">${todayDiscoveryCalls}</div>
+                            <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 1+/day</div>
+                            <div class="progress-bar" style="margin-top: 12px;">
+                                <div class="progress-fill" style="width: ${Math.min(todayDiscoveryCalls * 100, 100)}%; background: ${getStatusColor(callsStatus)};"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card" style="border-left: 4px solid ${getStatusColor(dealsMovedStatus)};">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div style="font-size: 13px; color: var(--text-gray); font-weight: 600;">DEALS MOVED FORWARD</div>
+                                <div style="font-size: 24px;">${dealsMovedStatus === 'success' ? '✅' : dealsMovedStatus === 'warning' ? '⚠️' : '❌'}</div>
+                            </div>
+                            <div class="kpi-value" style="color: ${getStatusColor(dealsMovedStatus)};">${todayDealsMovedCount}</div>
+                            <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Target: 1+/day</div>
+                            <div class="progress-bar" style="margin-top: 12px;">
+                                <div class="progress-fill" style="width: ${Math.min(todayDealsMovedCount * 100, 100)}%; background: ${getStatusColor(dealsMovedStatus)};"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 16px; opacity: 0.9;">💰 MONTHLY REVENUE</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">$${(monthRevenue / 1000).toFixed(1)}K</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: $9.8K - $12.7K</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min((monthRevenue / 9750) * 100, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                        </div>
+                        <div style="font-size: 13px; font-weight: 600; margin-top: 8px;">${((monthRevenue / quota) * 100).toFixed(0)}% of quota</div>
+                    </div>
+
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 16px; opacity: 0.9;">🎉 DEALS CLOSED</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${monthClosedDeals.length}</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: 6-7 deals</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min((monthClosedDeals.length / 6.5) * 100, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 16px; opacity: 0.9;">📊 QUALITY SCORE</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${qualityScore.toFixed(0)}%</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">${qualityMet ? '✅' : '⚠️'} 70%+ Growth+ Required</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min(qualityScore, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 16px; opacity: 0.9;">💵 AVG DEAL SIZE</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${monthClosedDeals.length > 0 ? '$' + Math.round(monthRevenue / monthClosedDeals.length).toLocaleString() : '$0'}</div>
+                        <div style="font-size: 14px; opacity: 0.9;">This month</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🎯 Monthly Deal Mix</h2>
+                        <span class="quality-badge ${qualityMet ? 'success' : 'warning'}">
+                            ${qualityMet ? '✅ Quality Goal Met' : '⚠️ Need More Growth+ Deals'}
+                        </span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tier</th>
+                                <th>Target</th>
+                                <th>Closed</th>
+                                <th>Pipeline</th>
+                                <th>Revenue</th>
+                                <th>Avg Size</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge badge-starter">Starter</span></td>
+                                <td>1</td>
+                                <td><strong>${starterDeals.length}</strong></td>
+                                <td>${starterPipeline}</td>
+                                <td>$${(starterRevenue / 1000).toFixed(1)}K</td>
+                                <td>${starterDeals.length > 0 ? '$' + Math.round(starterRevenue / starterDeals.length).toLocaleString() : '-'}</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-growth">Growth</span></td>
+                                <td>2-3</td>
+                                <td><strong>${growthDeals.length}</strong></td>
+                                <td>${growthPipeline}</td>
+                                <td>$${(growthRevenue / 1000).toFixed(1)}K</td>
+                                <td>${growthDeals.length > 0 ? '$' + Math.round(growthRevenue / growthDeals.length).toLocaleString() : '-'}</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-pro">Pro</span></td>
+                                <td>2</td>
+                                <td><strong>${proDeals.length}</strong></td>
+                                <td>${proPipeline}</td>
+                                <td>$${(proRevenue / 1000).toFixed(1)}K</td>
+                                <td>${proDeals.length > 0 ? '$' + Math.round(proRevenue / proDeals.length).toLocaleString() : '-'}</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-enterprise">Enterprise</span></td>
+                                <td>0-1</td>
+                                <td><strong>${enterpriseDeals.length}</strong></td>
+                                <td>${enterprisePipeline}</td>
+                                <td>$${(enterpriseRevenue / 1000).toFixed(1)}K</td>
+                                <td>${enterpriseDeals.length > 0 ? '$' + Math.round(enterpriseRevenue / enterpriseDeals.length).toLocaleString() : '-'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Activity Breakdown</h2>
+                    </div>
+                    <div class="activity-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">📞</div>
+                            <div class="stat-value">${calls}</div>
+                            <div class="stat-label">Calls Made</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📧</div>
+                            <div class="stat-value">${emails}</div>
+                            <div class="stat-label">Emails Sent</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💼</div>
+                            <div class="stat-value">${linkedin}</div>
+                            <div class="stat-label">Messages</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎥</div>
+                            <div class="stat-value">${demos}</div>
+                            <div class="stat-label">Demos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📄</div>
+                            <div class="stat-value">${proposals}</div>
+                            <div class="stat-label">Proposals</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎉</div>
+                            <div class="stat-value">${allClosedDeals.length}</div>
+                            <div class="stat-label">Total Wins</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🏆 Recent Wins</h2>
+                    </div>
+                    <div class="wins-list">
+                        ${allClosedDeals.length === 0 ? '<p style="text-align: center; color: var(--text-gray); padding: 40px;">No wins yet. Keep closing!</p>' : allClosedDeals.slice(0, 5).map(deal => {
+                            const cycleTime = calculateCycleTime(deal);
+                            const daysAgo = daysSinceClosed(deal.closeDate);
+                            return `
+                                <div class="win-card" style="cursor: pointer; transition: all 0.2s;" onclick="alert('Event details coming in Events table integration!')" onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                                    <div class="win-info">
+                                        <div class="win-name">${deal.name}</div>
+                                        <div class="win-meta">
+                                            <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                            <span style="color: var(--text-gray); font-size: 13px;">
+                                                📅 ${deal.eventName || 'Event TBD'}
+                                                ${cycleTime ? ` • ⏱️ ${cycleTime} days` : ''}
+                                                ${daysAgo !== null ? ` • 🕐 ${daysAgo === 0 ? 'Today' : daysAgo === 1 ? '1 day ago' : daysAgo + ' days ago'}` : ''}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="win-value">$${deal.value.toLocaleString()}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLeadershipDashboard() {
+            const allDeals = state.data.deals;
+            const allActivities = state.data.activities;
+            const allContacts = state.data.contacts;
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayISO = today.toISOString().split('T')[0];
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            const yearStart = new Date(today.getFullYear(), 0, 1);
+            
+            // TODAY's team metrics
+            const todayActivities = allActivities.filter(a => {
+                const activityDate = a.date ? a.date.split('T')[0] : null;
+                return activityDate === todayISO;
+            });
+            
+            const todayTouchpoints = todayActivities.length;
+            const todayNewLeads = allContacts.filter(c => {
+                if (!c.createdTime) return false;
+                const created = new Date(c.createdTime).toISOString().split('T')[0];
+                return created === todayISO;
+            }).length;
+            
+            const todayDiscoveryCalls = todayActivities.filter(a => 
+                a.type && (a.type.toLowerCase().includes('discovery') || a.type.toLowerCase().includes('call'))
+            ).length;
+            
+            // MONTH metrics
+            const monthClosedDeals = allDeals.filter(d => {
+                if (!d.stage.toLowerCase().includes('won')) return false;
+                if (!d.createdTime) return true;
+                const dealDate = new Date(d.createdTime);
+                return dealDate >= monthStart;
+            });
+            
+            const monthRevenue = monthClosedDeals.reduce((sum, d) => sum + d.value, 0);
+            const teamTargetLow = 28000;
+            const teamTargetHigh = 35000;
+            const teamTargetMid = (teamTargetLow + teamTargetHigh) / 2;
+            
+            // Deal Mix
+            const starterDeals = monthClosedDeals.filter(d => d.tier === 'Starter');
+            const growthDeals = monthClosedDeals.filter(d => d.tier === 'Growth');
+            const proDeals = monthClosedDeals.filter(d => d.tier === 'Pro');
+            const enterpriseDeals = monthClosedDeals.filter(d => d.tier === 'Enterprise');
+            
+            const starterRevenue = starterDeals.reduce((sum, d) => sum + d.value, 0);
+            const growthRevenue = growthDeals.reduce((sum, d) => sum + d.value, 0);
+            const proRevenue = proDeals.reduce((sum, d) => sum + d.value, 0);
+            const enterpriseRevenue = enterpriseDeals.reduce((sum, d) => sum + d.value, 0);
+            
+            const growthPlusDeals = growthDeals.length + proDeals.length + enterpriseDeals.length;
+            const qualityScore = monthClosedDeals.length > 0 ? (growthPlusDeals / monthClosedDeals.length) * 100 : 0;
+            
+            // Floor Pricing Tracker (Year-to-date)
+            const yearDeals = allDeals.filter(d => {
+                if (!d.createdTime) return true;
+                const dealDate = new Date(d.createdTime);
+                return dealDate >= yearStart;
+            });
+            
+            const floorDeals = yearDeals.filter(d => d.pricingType === 'Floor Price');
+            const floorStarter = floorDeals.filter(d => d.tier === 'Starter').length;
+            const floorGrowth = floorDeals.filter(d => d.tier === 'Growth').length;
+            const floorPro = floorDeals.filter(d => d.tier === 'Pro').length;
+            const floorEnterprise = floorDeals.filter(d => d.tier === 'Enterprise').length;
+            const totalFloorUsed = floorStarter + floorGrowth + floorPro + floorEnterprise;
+            
+            const floorCapacity = {
+                total: 10,
+                starter: { max: 2, used: floorStarter },
+                growth: { max: 2, used: floorGrowth },
+                pro: { max: 3, used: floorPro },
+                enterprise: { max: 3, used: floorEnterprise }
+            };
+            
+            const capacityPercentage = (totalFloorUsed / floorCapacity.total) * 100;
+            
+            // Individual Rep Performance
+            const repCards = state.data.teamMembers
+                .filter(m => m.role !== 'Leadership')
+                .map(member => {
+                    const memberDeals = allDeals.filter(d => d.owner === member.name);
+                    const memberWon = memberDeals.filter(d => d.stage.toLowerCase().includes('won'));
+                    const memberMonthWon = memberWon.filter(d => {
+                        if (!d.createdTime) return true;
+                        const dealDate = new Date(d.createdTime);
+                        return dealDate >= monthStart;
+                    });
+                    const memberRevenue = memberMonthWon.reduce((sum, d) => sum + d.value, 0);
+                    const memberQuota = member.quota || 45000;
+                    const memberAttainment = (memberRevenue / memberQuota) * 100;
+                    
+                    const memberTodayActivities = todayActivities.filter(a => a.owner === member.name);
+                    const memberTouchpoints = memberTodayActivities.length;
+                    
+                    const memberAllActivities = allActivities.filter(a => a.owner === member.name);
+                    
+                    const getStatusColor = (value, target) => {
+                        if (value >= target) return 'var(--success)';
+                        if (value >= target * 0.7) return '#ff9800';
+                        return 'var(--danger)';
+                    };
+                    
+                    return {
+                        id: member.id,
+                        name: member.name,
+                        role: member.role,
+                        quota: memberQuota,
+                        revenue: memberRevenue,
+                        attainment: memberAttainment,
+                        deals: memberMonthWon.length,
+                        touchpoints: memberTouchpoints,
+                        statusColor: getStatusColor(memberAttainment, 100),
+                        activePipeline: memberDeals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost')).length
+                    };
+                });
+
+            const content = document.getElementById('contentArea');
+            content.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">💰 MONTHLY REVENUE</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">$${(monthRevenue / 1000).toFixed(1)}K</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: $${teamTargetLow / 1000}K - $${teamTargetHigh / 1000}K</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min((monthRevenue / teamTargetMid) * 100, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                        </div>
+                        <div style="font-size: 13px; font-weight: 600; margin-top: 8px;">${((monthRevenue / teamTargetMid) * 100).toFixed(0)}% of target</div>
+                    </div>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">🎉 DEALS CLOSED</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${monthClosedDeals.length}</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: 18-22 deals</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min((monthClosedDeals.length / 20) * 100, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">📊 QUALITY SCORE</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${qualityScore.toFixed(0)}%</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Growth+ Tier Deals (Target: 70%)</div>
+                        <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${Math.min(qualityScore, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">🔥 TEAM ACTIVITY TODAY</div>
+                        <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${todayTouchpoints}</div>
+                        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Touchpoints Logged</div>
+                        <div style="font-size: 13px; opacity: 0.8;">${todayDiscoveryCalls} Discovery Calls • ${todayNewLeads} New Leads</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🚨 Floor-Price Event Capacity (${new Date().getFullYear()})</h2>
+                    </div>
+                    <div class="floor-tracker">
+                        <div class="capacity-circle">
+                            <div class="capacity-number">${totalFloorUsed}/${floorCapacity.total}</div>
+                            <div class="capacity-label">events used</div>
+                        </div>
+                        <div class="capacity-percentage">${capacityPercentage.toFixed(0)}% Utilized</div>
+                        <p style="color: var(--text-gray); margin-bottom: 20px;">Remaining capacity: ${floorCapacity.total - totalFloorUsed}</p>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tier</th>
+                                    <th>Max Floor Events</th>
+                                    <th>Current Usage</th>
+                                    <th>Remaining</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: ${floorCapacity.starter.used >= floorCapacity.starter.max ? '#fadbd8' : 'transparent'};">
+                                    <td><span class="badge badge-starter">Starter</span></td>
+                                    <td>${floorCapacity.starter.max}</td>
+                                    <td><strong>${floorCapacity.starter.used}</strong></td>
+                                    <td>${floorCapacity.starter.max - floorCapacity.starter.used} ${floorCapacity.starter.used >= floorCapacity.starter.max ? '⚠️' : ''}</td>
+                                </tr>
+                                <tr style="background: ${floorCapacity.growth.used >= floorCapacity.growth.max ? '#fadbd8' : 'transparent'};">
+                                    <td><span class="badge badge-growth">Growth</span></td>
+                                    <td>${floorCapacity.growth.max}</td>
+                                    <td><strong>${floorCapacity.growth.used}</strong></td>
+                                    <td>${floorCapacity.growth.max - floorCapacity.growth.used} ${floorCapacity.growth.used >= floorCapacity.growth.max ? '⚠️' : ''}</td>
+                                </tr>
+                                <tr style="background: ${floorCapacity.pro.used >= floorCapacity.pro.max ? '#fadbd8' : 'transparent'};">
+                                    <td><span class="badge badge-pro">Pro</span></td>
+                                    <td>${floorCapacity.pro.max}</td>
+                                    <td><strong>${floorCapacity.pro.used}</strong></td>
+                                    <td>${floorCapacity.pro.max - floorCapacity.pro.used} ${floorCapacity.pro.used >= floorCapacity.pro.max ? '⚠️' : ''}</td>
+                                </tr>
+                                <tr style="background: ${floorCapacity.enterprise.used >= floorCapacity.enterprise.max ? '#fadbd8' : 'transparent'};">
+                                    <td><span class="badge badge-enterprise">Enterprise</span></td>
+                                    <td>${floorCapacity.enterprise.max}</td>
+                                    <td><strong>${floorCapacity.enterprise.used}</strong></td>
+                                    <td>${floorCapacity.enterprise.max - floorCapacity.enterprise.used} ${floorCapacity.enterprise.used >= floorCapacity.enterprise.max ? '⚠️' : ''}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Revenue by Tier - This Month</h2>
+                    </div>
+                    <div style="padding: 30px;">
+                        ${[
+                            { name: 'Starter', count: starterDeals.length, revenue: starterRevenue, color: '#9e9e9e', target: 3 },
+                            { name: 'Growth', count: growthDeals.length, revenue: growthRevenue, color: '#2196f3', target: 7 },
+                            { name: 'Pro', count: proDeals.length, revenue: proRevenue, color: '#9c27b0', target: 5 },
+                            { name: 'Enterprise', count: enterpriseDeals.length, revenue: enterpriseRevenue, color: '#ff9800', target: 2 }
+                        ].map(tier => {
+                            const maxRevenue = Math.max(starterRevenue, growthRevenue, proRevenue, enterpriseRevenue);
+                            const barWidth = maxRevenue > 0 ? (tier.revenue / maxRevenue) * 100 : 0;
+                            return `
+                                <div style="margin-bottom: 24px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <div>
+                                            <span class="badge badge-${tier.name.toLowerCase()}">${tier.name}</span>
+                                            <span style="font-size: 13px; color: var(--text-gray); margin-left: 12px;">${tier.count} deals • Target: ${tier.target}</span>
+                                        </div>
+                                        <div style="font-size: 16px; font-weight: 700; color: var(--text-dark);">$${(tier.revenue / 1000).toFixed(1)}K</div>
+                                    </div>
+                                    <div style="background: var(--bg-light); height: 32px; border-radius: 6px; overflow: hidden; position: relative;">
+                                        <div style="width: ${barWidth}%; height: 100%; background: ${tier.color}; transition: width 0.5s ease; display: flex; align-items: center; padding: 0 12px;">
+                                            <span style="color: white; font-weight: 600; font-size: 13px;">${tier.count > 0 ? tier.count + ' deal' + (tier.count > 1 ? 's' : '') : ''}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">👥 Sales Team - Click for Details</h2>
+                        <p style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Click any rep card to see full performance insights</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px;">
+                        ${repCards.map(rep => `
+                            <div class="kpi-card" onclick="openRepDetailsModal('${rep.id}')" style="cursor: pointer; border-left: 4px solid ${rep.statusColor}; transition: all 0.2s;" 
+                                 onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)'" 
+                                 onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                                    <div>
+                                        <div style="font-size: 16px; font-weight: 700; color: var(--text-dark);">${rep.name}</div>
+                                        <div style="font-size: 13px; color: var(--text-gray);">${rep.role}</div>
+                                    </div>
+                                    <div style="font-size: 32px;">👤</div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 12px;">
+                                    <div>
+                                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 4px;">This Month</div>
+                                        <div style="font-size: 28px; font-weight: 700; color: ${rep.statusColor};">$${(rep.revenue / 1000).toFixed(1)}K</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 13px; color: var(--text-gray);">Today</div>
+                                        <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${rep.touchpoints}</div>
+                                        <div style="font-size: 11px; color: var(--text-gray);">touchpoints</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">${rep.deals} deals • ${rep.activePipeline} in pipeline</div>
+                                
+                                <div style="background: var(--bg-light); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
+                                    <div style="width: ${Math.min(rep.attainment, 100)}%; height: 100%; background: ${rep.statusColor}; transition: width 0.3s;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                                    <span style="color: var(--text-gray);">Quota: $${(rep.quota / 1000).toFixed(0)}K</span>
+                                    <span style="font-weight: 600; color: ${rep.statusColor};">${rep.attainment.toFixed(0)}%</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function openRepDetailsModal(memberId) {
+            const member = state.data.teamMembers.find(m => m.id === memberId);
+            if (!member) return;
+            
+            const today = new Date();
+            const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            const todayISO = today.toISOString().split('T')[0];
+            
+            // Get member's data
+            const memberDeals = state.data.deals.filter(d => d.owner === member.name);
+            const memberWon = memberDeals.filter(d => d.stage.toLowerCase().includes('won'));
+            const memberMonthWon = memberWon.filter(d => {
+                if (!d.createdTime) return true;
+                const dealDate = new Date(d.createdTime);
+                return dealDate >= monthStart;
+            });
+            
+            const memberActivities = state.data.activities.filter(a => a.owner === member.name);
+            const memberTodayActivities = memberActivities.filter(a => {
+                const activityDate = a.date ? a.date.split('T')[0] : null;
+                return activityDate === todayISO;
+            });
+            
+            const memberMonthActivities = memberActivities.filter(a => {
+                if (!a.date) return false;
+                const activityDate = new Date(a.date);
+                return activityDate >= monthStart;
+            });
+            
+            const memberContacts = state.data.contacts.filter(c => c.owner === member.name);
+            const memberAccounts = state.data.accounts.filter(a => a.owner === member.name);
+            
+            // Activity breakdown
+            const calls = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+            const emails = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+            const linkedin = memberActivities.filter(a => a.type && (a.type.toLowerCase().includes('linkedin') || a.type.toLowerCase().includes('message'))).length;
+            const demos = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
+            const proposals = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
+            
+            // Deal mix
+            const starterDeals = memberMonthWon.filter(d => d.tier === 'Starter').length;
+            const growthDeals = memberMonthWon.filter(d => d.tier === 'Growth').length;
+            const proDeals = memberMonthWon.filter(d => d.tier === 'Pro').length;
+            const enterpriseDeals = memberMonthWon.filter(d => d.tier === 'Enterprise').length;
+            
             const memberRevenue = memberMonthWon.reduce((sum, d) => sum + d.value, 0);
             const memberQuota = member.quota || 45000;
             const memberAttainment = (memberRevenue / memberQuota) * 100;
             
-            const memberTodayActivities = allActivities.filter(a => {
-                const activityDate = a.date ? a.date.split('T')[0] : null;
-                return activityDate === todayISO && a.owner === member.name;
-            });
-            
-            // Status indicators
-            let status = 'green';
-            let statusText = 'Exceeding Target';
-            if (memberAttainment < 100) {
-                status = 'yellow';
-                statusText = 'On Track';
-            }
-            if (memberAttainment < 70) {
-                status = 'red';
-                statusText = 'Needs Coaching';
-            }
-            
-            const getStatusColor = (att) => {
-                if (att >= 100) return 'var(--success)';
-                if (att >= 70) return 'var(--warning)';
-                return 'var(--danger)';
-            };
-            
-            return {
-                ...member,
-                revenue: memberRevenue,
-                attainment: memberAttainment,
-                deals: memberMonthWon.length,
-                touchpoints: memberTodayActivities.length,
-                status,
-                statusText,
-                statusColor: getStatusColor(memberAttainment)
-            };
-        });
-
-    const content = document.getElementById('contentArea');
-    content.innerHTML = `
-        <div class="kpi-grid">
-            <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">💰 TEAM REVENUE</div>
-                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">$${(monthRevenue / 1000).toFixed(1)}K</div>
-                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: $${teamTargetMin / 1000}K - $${teamTargetMax / 1000}K</div>
-                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
-                    <div style="width: ${Math.min(revenuePercentOfMax, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
-                </div>
-                <div style="font-size: 15px; font-weight: 700;">${revenuePercentOfMax.toFixed(0)}% of Max Target</div>
-            </div>
-            
-            <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; opacity: 0.9;">🎉 TEAM EVENTS</div>
-                <div style="font-size: 42px; font-weight: 700; margin-bottom: 8px;">${totalEvents}</div>
-                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">Target: ${eventsTargetMin}-${eventsTargetMax} events per month</div>
-                <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
-                    <div style="width: ${Math.min(eventsPercentOfMax, 100)}%; height: 100%; background: white; transition: width 0.3s;"></div>
-                </div>
-                <div style="font-size: 15px; font-weight: 700;">${eventsPercentOfMax.toFixed(0)}% of Max Target</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">📊 This Week's Team Activity</h2>
-            </div>
-            <div class="activity-stats">
-                <div class="stat-card">
-                    <div class="stat-icon">📞</div>
-                    <div class="stat-value">${weekCalls}</div>
-                    <div class="stat-label">Total Calls</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📧</div>
-                    <div class="stat-value">${weekEmails}</div>
-                    <div class="stat-label">Total Emails</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💼</div>
-                    <div class="stat-value">${weekLinkedIn}</div>
-                    <div class="stat-label">Messages</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🎥</div>
-                    <div class="stat-value">${weekDemos}</div>
-                    <div class="stat-label">Demos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📄</div>
-                    <div class="stat-value">${weekProposals}</div>
-                    <div class="stat-label">Proposals</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-value">${weekDiscovery}</div>
-                    <div class="stat-label">Discovery</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">🚨 Floor-Price Event Capacity (${new Date().getFullYear()})</h2>
-            </div>
-            <div class="floor-tracker-compact">
-                <div class="capacity-circle-small">
-                    <div class="capacity-number-small">${totalFloorUsed}/${floorCapacity}</div>
-                    <div class="capacity-label-small">events used</div>
-                </div>
-                <div class="capacity-details">
-                    <div style="font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 16px;">
-                        ${capacityPercent.toFixed(0)}% Utilized • ${floorCapacity - totalFloorUsed} Remaining
-                    </div>
-                    <div class="capacity-row ${floorStarter >= 2 ? 'at-limit' : ''}">
-                        <span><span class="badge badge-starter">Starter</span> ${floorStarter}/2</span>
-                        <span>${floorStarter >= 2 ? '⚠️ AT CAPACITY' : '✅ Available'}</span>
-                    </div>
-                    <div class="capacity-row ${floorGrowth >= 2 ? 'at-limit' : ''}">
-                        <span><span class="badge badge-growth">Growth</span> ${floorGrowth}/2</span>
-                        <span>${floorGrowth >= 2 ? '⚠️ AT CAPACITY' : '✅ Available'}</span>
-                    </div>
-                    <div class="capacity-row ${floorPro >= 3 ? 'at-limit' : ''}">
-                        <span><span class="badge badge-pro">Pro</span> ${floorPro}/3</span>
-                        <span>${floorPro >= 3 ? '⚠️ AT CAPACITY' : '✅ Available'}</span>
-                    </div>
-                    <div class="capacity-row ${floorEnterprise >= 3 ? 'at-limit' : ''}">
-                        <span><span class="badge badge-enterprise">Enterprise</span> ${floorEnterprise}/3</span>
-                        <span>${floorEnterprise >= 3 ? '⚠️ AT CAPACITY' : '✅ Available'}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">👥 Sales Team Performance</h2>
-                <p style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Color-coded: 🟢 Exceeding • 🟡 On Track • 🔴 Needs Coaching</p>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px;">
-                ${repCards.map(rep => `
-                    <div class="kpi-card" style="border-left: 4px solid ${rep.statusColor}; cursor: pointer;" onclick="alert('Rep: ${rep.name}\\nRevenue: $${(rep.revenue / 1000).toFixed(1)}K\\nAttainment: ${rep.attainment.toFixed(0)}%\\nDeals: ${rep.deals}\\nToday: ${rep.touchpoints} touchpoints')">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
-                            <div>
-                                <div style="font-size: 16px; font-weight: 700;">${rep.name}</div>
-                                <div style="font-size: 13px; color: var(--text-gray);">${rep.role}</div>
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                        <div class="modal-header">
+                            <h2>${member.name} - Full Performance Insights</h2>
+                        </div>
+                        
+                        <div style="padding: 20px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 30px;">
+                                <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${memberTodayActivities.length}</div>
+                                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Touchpoints Today</div>
+                                </div>
+                                <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${memberMonthActivities.length}</div>
+                                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Activities This Month</div>
+                                </div>
+                                <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${memberContacts.length}</div>
+                                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Total Contacts</div>
+                                </div>
+                                <div style="text-align: center; padding: 20px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--primary);">${memberAccounts.length}</div>
+                                    <div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Total Accounts</div>
+                                </div>
                             </div>
-                            <span class="status-indicator ${rep.status}"></span>
-                        </div>
-                        
-                        <div style="font-size: 28px; font-weight: 700; color: ${rep.statusColor}; margin-bottom: 8px;">
-                            $${(rep.revenue / 1000).toFixed(1)}K
-                        </div>
-                        
-                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 12px;">
-                            ${rep.deals} deals • ${rep.touchpoints} today
-                        </div>
-                        
-                        <div class="progress-bar" style="margin-bottom: 8px;">
-                            <div class="progress-fill" style="width: ${Math.min(rep.attainment, 100)}%; background: ${rep.statusColor};"></div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                            <span style="color: var(--text-gray);">${rep.statusText}</span>
-                            <span style="font-weight: 600; color: ${rep.statusColor};">${rep.attainment.toFixed(0)}%</span>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">🚨 KPI Alerts - Reps Needing Attention</h2>
-            </div>
-            ${repCards.filter(r => r.status === 'red').length === 0 ? 
-                '<p style="text-align: center; padding: 40px; color: var(--success);">✅ All reps are on track or exceeding targets!</p>' :
-                '<div style="padding: 20px;">' + repCards.filter(r => r.status === 'red').map(rep => `
-                    <div class="alert-banner danger" style="margin-bottom: 16px;">
-                        <div class="alert-icon">🔴</div>
-                        <div class="alert-content">
-                            <div class="alert-title">${rep.name}: ${rep.attainment.toFixed(0)}% of Quota</div>
-                            <div class="alert-text">
-                                Revenue: $${(rep.revenue / 1000).toFixed(1)}K / $${(rep.quota / 1000).toFixed(0)}K
-                                • ${rep.deals} deals closed
-                                • ${rep.touchpoints} touchpoints today
-                                <br><strong>Action:</strong> Schedule coaching session to review pipeline and activity
+                            
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">📊 Activity Breakdown (All Time)</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 30px;">
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">📞</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${calls}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Calls</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">📧</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${emails}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Emails</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">💼</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${linkedin}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Messages</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">🎥</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${demos}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Demos</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <div style="font-size: 28px;">📄</div>
+                                    <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">${proposals}</div>
+                                    <div style="font-size: 12px; color: var(--text-gray);">Proposals</div>
+                                </div>
+                            </div>
+                            
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">💰 Revenue Performance - This Month</h3>
+                            <div style="background: var(--bg-light); padding: 24px; border-radius: 12px; margin-bottom: 30px;">
+                                <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 16px;">
+                                    <div>
+                                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 4px;">Revenue</div>
+                                        <div style="font-size: 36px; font-weight: 700; color: var(--primary);">$${(memberRevenue / 1000).toFixed(1)}K</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 4px;">Quota</div>
+                                        <div style="font-size: 24px; font-weight: 600; color: var(--text-gray);">$${(memberQuota / 1000).toFixed(0)}K</div>
+                                    </div>
+                                </div>
+                                <div style="background: white; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px;">
+                                    <div style="width: ${Math.min(memberAttainment, 100)}%; height: 100%; background: var(--success); transition: width 0.3s;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-size: 14px; color: var(--text-gray);">${memberMonthWon.length} deals closed</span>
+                                    <span style="font-size: 16px; font-weight: 700; color: var(--success);">${memberAttainment.toFixed(1)}% of quota</span>
+                                </div>
+                            </div>
+                            
+                            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">📊 Deal Mix - This Month</h3>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <span class="badge badge-starter">Starter</span>
+                                    <div style="font-size: 28px; font-weight: 700; margin-top: 12px;">${starterDeals}</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <span class="badge badge-growth">Growth</span>
+                                    <div style="font-size: 28px; font-weight: 700; margin-top: 12px;">${growthDeals}</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <span class="badge badge-pro">Pro</span>
+                                    <div style="font-size: 28px; font-weight: 700; margin-top: 12px;">${proDeals}</div>
+                                </div>
+                                <div style="text-align: center; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+                                    <span class="badge badge-enterprise">Enterprise</span>
+                                    <div style="font-size: 28px; font-weight: 700; margin-top: 12px;">${enterpriseDeals}</div>
+                                </div>
                             </div>
                         </div>
+                        
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                        </div>
                     </div>
-                `).join('') + '</div>'
-            }
-        </div>
-    `;
-}
+                </div>
+            `;
+        }
 
-// PART 3 ENDS HERE    
+        function renderTeamOverview() {
+            const content = document.getElementById('contentArea');
+            const teamPerformance = state.data.teamMembers
+                .filter(m => m.role !== 'Leadership')
+                .map(member => {
+                    const memberDeals = state.data.deals.filter(d => d.owner === member.name);
+                    const won = memberDeals.filter(d => d.stage.toLowerCase().includes('won'));
+                    const revenue = won.reduce((sum, d) => sum + d.value, 0);
+                    const attainment = member.quota > 0 ? (revenue / member.quota) * 100 : 0;
+                    
+                    return {
+                        name: member.name,
+                        role: member.role,
+                        quota: member.quota,
+                        revenue: revenue,
+                        attainment: attainment,
+                        deals: memberDeals.length,
+                        won: won.length
+                    };
+                });
+            
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">👨‍👩‍👧‍👦 Team Performance</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Quota</th>
+                                <th>Revenue</th>
+                                <th>Attainment</th>
+                                <th>Deals</th>
+                                <th>Wins</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${teamPerformance.map(member => `
+                                <tr>
+                                    <td>${member.name}</td>
+                                    <td>${member.role}</td>
+                                    <td>$${member.quota.toLocaleString()}</td>
+                                    <td>$${member.revenue.toLocaleString()}</td>
+                                    <td>
+                                        <span class="badge ${member.attainment >= 100 ? 'badge-growth' : member.attainment >= 80 ? 'badge-pro' : 'badge-starter'}">
+                                            ${member.attainment.toFixed(1)}%
+                                        </span>
+                                    </td>
+                                    <td>${member.deals}</td>
+                                    <td>${member.won}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderPipeline() {
+            const deals = getUserDeals();
+            const stages = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won'];
+            
+            const content = document.getElementById('contentArea');
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Pipeline</h2>
+                        <button class="btn btn-primary btn-small" onclick="openAddDealModal()">+ Add Deal</button>
+                    </div>
+                    
+                    <div class="kanban-board">
+                        ${stages.map(stage => {
+                            const stageDeals = deals.filter(d => d.stage === stage);
+                            return `
+                                <div class="kanban-column" data-stage="${stage}" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                                    <div class="kanban-header">
+                                        <span>${stage}</span>
+                                        <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">${stageDeals.length}</span>
+                                    </div>
+                                    <div class="kanban-cards">
+                                        ${stageDeals.length === 0 ? '<p style="color: var(--text-gray); text-align: center; padding: 20px; font-size: 13px;">No deals</p>' : stageDeals.map(deal => `
+                                            <div class="kanban-card" draggable="true" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" onclick="openDealDetailsModal('${deal.id}')" data-deal-id="${deal.id}" style="cursor: pointer;">
+                                                <div class="kanban-card-title">${deal.name}</div>
+                                                <div class="kanban-card-value">$${deal.value.toLocaleString()}</div>
+                                                <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        let draggedDealId = null;
+        let draggedElement = null;
+
+        function handleDragStart(event) {
+            draggedDealId = event.target.getAttribute('data-deal-id');
+            draggedElement = event.target;
+            event.target.style.opacity = '0.5';
+        }
+
+        function handleDragEnd(event) {
+            event.target.style.opacity = '1';
+            draggedElement = null;
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            
+            let column = event.target.closest('.kanban-column');
+            if (!column) {
+                column = event.target.classList.contains('kanban-column') ? event.target : null;
+            }
+            
+            const newStage = column?.getAttribute('data-stage');
+            
+            if (draggedDealId && newStage) {
+                updateDealStage(draggedDealId, newStage);
+            }
+            
+            if (draggedElement) {
+                draggedElement.style.opacity = '1';
+            }
+            draggedDealId = null;
+            draggedElement = null;
+        }
+
+        async function updateDealStage(dealId, newStage) {
+            if (!newStage) {
+                newStage = document.getElementById('dealStageEdit').value;
+            }
+            
+            const deal = state.data.deals.find(d => d.id === dealId);
+            
+            if (!deal) {
+                alert('Deal not found');
+                return;
+            }
+            
+            if (newStage === deal.stage) {
+                closeModal();
+                return;
+            }
+            
+            try {
+                const response = await fetch(`https://api.airtable.com/v0/${state.baseId}/Deals/${dealId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${state.apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fields: {
+                            'Stage': newStage
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                await loadDeals();
+                closeModal();
+                renderView('pipeline');
+                alert(`Deal moved to ${newStage}!`);
+                
+            } catch (error) {
+                console.error('Error updating deal stage:', error);
+                alert(`Error updating deal: ${error.message}`);
+            }
+        }
+
+        function renderTasks() {
+            const content = document.getElementById('contentArea');
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">✅ Tasks</h2>
+                    </div>
+                    <p style="text-align: center; padding: 40px; color: var(--text-gray);">
+                        Task management coming soon
+                    </p>
+                </div>
+            `;
+        }
+
+        function renderContacts() {
+            const contacts = state.data.contacts;
+            const content = document.getElementById('contentArea');
+            
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">👥 Contacts</h2>
+                        <button class="btn btn-primary btn-small" onclick="openAddContactModal()">+ Add Contact</button>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Company</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${contacts.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No contacts found</td></tr>' : contacts.map(contact => `
+                                <tr>
+                                    <td><strong>${contact.name}</strong></td>
+                                    <td>${contact.email}</td>
+                                    <td>${contact.phone}</td>
+                                    <td>${contact.company || '-'}</td>
+                                    <td>${contact.role}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderAccounts() {
+            const accounts = state.data.accounts;
+            const content = document.getElementById('contentArea');
+            
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🏢 Accounts</h2>
+                        <button class="btn btn-primary btn-small" onclick="openAddAccountModal()">+ Add Account</button>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Industry</th>
+                                <th>Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${accounts.length === 0 ? '<tr><td colspan="3" style="text-align: center; padding: 40px;">No accounts found</td></tr>' : accounts.map(account => `
+                                <tr>
+                                    <td>${account.name}</td>
+                                    <td>${account.industry}</td>
+                                    <td>${account.owner}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderActivityView() {
+            const activities = state.data.activities.filter(a => a.owner === state.currentUser.name);
+            
+            const content = document.getElementById('contentArea');
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📝 Activity Log</h2>
+                        <button class="btn btn-primary btn-small" onclick="openLogActivityModal()">+ Log Activity</button>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Account</th>
+                                <th>Result</th>
+                                <th>Next Steps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${activities.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 40px;">No activities logged yet. Click "+ Log Activity" to get started!</td></tr>' : activities.map(activity => `
+                                <tr>
+                                    <td>${formatDateCST(activity.date)}</td>
+                                    <td>
+                                        <span class="badge" style="background: var(--primary); color: white;">${activity.type}</span>
+                                    </td>
+                                    <td><strong>${activity.account}</strong></td>
+                                    <td>${activity.result || '-'}</td>
+                                    <td style="font-size: 13px; color: var(--text-gray);">${activity.nextSteps || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderReports() {
+            const content = document.getElementById('contentArea');
+            content.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📑 Reports</h2>
+                    </div>
+                    <p style="text-align: center; padding: 40px; color: var(--text-gray);">
+                        Advanced reporting coming soon
+                    </p>
+                </div>
+            `;
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
