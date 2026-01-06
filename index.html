@@ -602,6 +602,13 @@
         ];
 
         async function init() {
+            // Version banner
+            console.log('%c🚀 NuConnect CRM v2.0 - Direct API', 'background: #667eea; color: white; font-size: 16px; padding: 10px; font-weight: bold;');
+            console.log('✅ Using direct Airtable API calls (no proxy)');
+            console.log('📅 Build: January 5, 2026 - 8:00 PM CST');
+            console.log('🔧 If you see /api/airtable errors, clear cache!');
+            console.log('---');
+            
             if (state.baseId && state.apiKey) {
                 await loadTeamMembers();
                 await loadPricingRules();
