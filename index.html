@@ -594,6 +594,11 @@
                 <div>
                     <h1 id="pageTitle">Dashboard</h1>
                 </div>
+                <div style="flex: 1; max-width: 400px; margin: 0 20px;">
+                    <input type="text" id="globalSearch" placeholder="🔍 Search deals, contacts, accounts..." 
+                           style="width: 100%; padding: 10px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px;"
+                           onkeyup="handleGlobalSearch(event)">
+                </div>
                 <div>
                     <button class="btn btn-secondary btn-small" onclick="openSettings()">⚙️</button>
                     <button class="btn btn-danger btn-small" onclick="logout()">Logout</button>
@@ -2690,7 +2695,131 @@
         }
 
 
-        // ==================== CHART FUNCTIONS ====================
+        // ==================== CHART & SEARCH FUNCTIONS ====================
+        
+        function handleGlobalSearch(event) {
+            const query = event.target.value.toLowerCase().trim();
+            if (query.length < 2) return;
+            
+            const results = {
+                deals: state.data.deals.filter(d => 
+                    (d.name && d.name.toLowerCase().includes(query)) || 
+                    (d.owner && d.owner.toLowerCase().includes(query))
+                ),
+                contacts: state.data.contacts.filter(c => 
+                    (c.name && c.name.toLowerCase().includes(query)) || 
+                    (c.email && c.email.toLowerCase().includes(query)) ||
+                    (c.company && c.company.toLowerCase().includes(query))
+                ),
+                accounts: state.data.accounts.filter(a => 
+                    a.name && a.name.toLowerCase().includes(query)
+                ),
+                activities: state.data.activities.filter(a =>
+                    (a.name && a.name.toLowerCase().includes(query)) ||
+                    (a.account && a.account.toLowerCase().includes(query))
+                )
+            };
+            
+            showSearchResults(results);
+        }
+
+        function showSearchResults(results) {
+            const modal = document.getElementById('modalContainer');
+            modal.innerHTML = `
+                <div class="modal active">
+                    <div class="modal-content" style="max-width: 700px;">
+                        <div class="modal-header">
+                            <h2>🔍 Search Results</h2>
+                        </div>
+                        <div style="padding: 20px; max-height: 500px; overflow-y: auto;">
+                            <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">💼 Deals (${results.deals.length})</h3>
+                            ${results.deals.length === 0 ? '<p style="color: var(--text-gray); font-size: 14px;">No deals found</p>' : ''}
+                            ${results.deals.slice(0, 5).map(d => `
+                                <div style="padding: 12px; background: var(--bg-light); border-radius: 8px; margin-bottom: 8px; cursor: pointer;" onclick="closeModal(); openDealDetailsModal('${d.id}')">
+                                    <strong>${d.name}</strong> - $${d.value.toLocaleString()} <span class="badge badge-${d.tier.toLowerCase()}">${d.tier}</span>
+                                </div>
+                            `).join('')}
+                            
+                            <h3 style="font-size: 16px; font-weight: 700; margin: 20px 0 12px;">👤 Contacts (${results.contacts.length})</h3>
+                            ${results.contacts.length === 0 ? '<p style="color: var(--text-gray); font-size: 14px;">No contacts found</p>' : ''}
+                            ${results.contacts.slice(0, 5).map(c => `
+                                <div style="padding: 12px; background: var(--bg-light); border-radius: 8px; margin-bottom: 8px;">
+                                    <strong>${c.name}</strong><br>
+                                    <span style="font-size: 13px; color: var(--text-gray);">${c.email} • ${c.company || 'No company'}</span>
+                                </div>
+                            `).join('')}
+                            
+                            <h3 style="font-size: 16px; font-weight: 700; margin: 20px 0 12px;">🏢 Accounts (${results.accounts.length})</h3>
+                            ${results.accounts.length === 0 ? '<p style="color: var(--text-gray); font-size: 14px;">No accounts found</p>' : ''}
+                            ${results.accounts.slice(0, 5).map(a => `
+                                <div style="padding: 12px; background: var(--bg-light); border-radius: 8px; margin-bottom: 8px;">
+                                    <strong>${a.name}</strong>
+                                    <span style="font-size: 13px; color: var(--text-gray);"> • ${a.industry || 'No industry'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-primary" onclick="closeModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function deleteDeal(dealId) {
+            if (!confirm('Delete this deal? This cannot be undone.')) return;
+            
+            try {
+                await fetch(`https://api.airtable.com/v0/${state.baseId}/Deals/${dealId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${state.apiKey}` }
+                });
+                
+                await loadDeals();
+                closeModal();
+                renderView(state.currentView);
+                alert('Deal deleted successfully!');
+            } catch (error) {
+                alert('Error deleting deal: ' + error.message);
+            }
+        }
+        
+        async function deleteContact(contactId) {
+            if (!confirm('Delete this contact? This cannot be undone.')) return;
+            
+            try {
+                await fetch(`https://api.airtable.com/v0/${state.baseId}/Contacts/${contactId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${state.apiKey}` }
+                });
+                
+                await loadContacts();
+                closeModal();
+                renderView(state.currentView);
+                alert('Contact deleted successfully!');
+            } catch (error) {
+                alert('Error deleting contact: ' + error.message);
+            }
+        }
+        
+        async function deleteAccount(accountId) {
+            if (!confirm('Delete this account? This cannot be undone.')) return;
+            
+            try {
+                await fetch(`https://api.airtable.com/v0/${state.baseId}/Accounts/${accountId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${state.apiKey}` }
+                });
+                
+                await loadAccounts();
+                closeModal();
+                renderView(state.currentView);
+                alert('Account deleted successfully!');
+            } catch (error) {
+                alert('Error deleting account: ' + error.message);
+            }
+        }
+
         function createRevenueTrendChart(canvasId, revenueData, targetLine) {
             const ctx = document.getElementById(canvasId);
             if (!ctx) return;
@@ -2708,7 +2837,7 @@
                 data: {
                     labels: months,
                     datasets: [{
-                        label: 'Actual',
+                        label: 'Actual Revenue',
                         data: revenueData,
                         borderColor: 'rgb(102, 126, 234)',
                         backgroundColor: 'rgba(102, 126, 234, 0.1)',
@@ -2727,6 +2856,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: { legend: { display: true, position: 'top' } },
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -2742,16 +2872,37 @@
             if (!ctx) return;
             if (state.charts[canvasId]) state.charts[canvasId].destroy();
             
+            const total = data.starter + data.growth + data.pro + data.enterprise;
+            if (total === 0) return;
+            
             state.charts[canvasId] = new Chart(ctx, {
                 type: 'pie',
                 data: {
                     labels: ['Starter', 'Growth', 'Pro', 'Enterprise'],
                     datasets: [{
                         data: [data.starter, data.growth, data.pro, data.enterprise],
-                        backgroundColor: ['rgb(59,130,246)', 'rgb(34,197,94)', 'rgb(245,158,11)', 'rgb(139,92,246)']
+                        backgroundColor: ['rgb(59,130,246)', 'rgb(34,197,94)', 'rgb(245,158,11)', 'rgb(139,92,246)'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = ((value / total) * 100).toFixed(1);
+                                    return context.label + ': $' + (value / 1000).toFixed(1) + 'K (' + pct + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -2765,11 +2916,17 @@
                 data: {
                     labels: ['Starter', 'Growth', 'Pro', 'Enterprise'],
                     datasets: [{
+                        label: 'Events',
                         data: [data.starter, data.growth, data.pro, data.enterprise],
                         backgroundColor: ['rgb(59,130,246)', 'rgb(34,197,94)', 'rgb(245,158,11)', 'rgb(139,92,246)']
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
             });
         }
 
@@ -2778,19 +2935,29 @@
             if (!ctx) return;
             if (state.charts[canvasId]) state.charts[canvasId].destroy();
             
+            const total = publicRev + floorRev;
+            if (total === 0) return;
+            
             state.charts[canvasId] = new Chart(ctx, {
                 type: 'pie',
                 data: {
                     labels: ['Public Price', 'Floor Price'],
                     datasets: [{
                         data: [publicRev, floorRev],
-                        backgroundColor: ['rgb(102,126,234)', 'rgb(245,158,11)']
+                        backgroundColor: ['rgb(102,126,234)', 'rgb(245,158,11)'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
             });
         }
-        // ==================== END CHARTS ====================
+        
+        // ==================== END FUNCTIONS ====================
 
         window.addEventListener('DOMContentLoaded', init);
     </script>
