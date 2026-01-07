@@ -790,6 +790,10 @@ function init() {
             } else {
                 populateLoginSelect();
             }
+        }).catch(function() {
+            // If everything fails, still populate with fallback
+            setFallbackTeamMembers();
+            populateLoginSelect();
         });
     } else {
         showConfigPrompt();
@@ -822,16 +826,23 @@ function loadTeamMembers() {
                 if (r.fields.Name) state.teamMemberMap[r.fields.Name] = r.id;
             }
         }
+        if (state.data.teamMembers.length === 0) {
+            setFallbackTeamMembers();
+        }
     }).catch(function(error) {
         console.error('Error loading team members:', error);
-        state.data.teamMembers = [
-            { id: 'rec1', name: 'Javonte', role: 'BDR', quota: 45000 }, { id: 'rec2', name: 'Teslim', role: 'BDR', quota: 45000 },
-            { id: 'rec3', name: 'Israel', role: 'BDR', quota: 45000 }, { id: 'rec4', name: 'Conrad', role: 'AE', quota: 60000 },
-            { id: 'rec5', name: 'Test User', role: 'BDR', quota: 45000 }, { id: 'rec6', name: 'Test Leadership', role: 'Leadership', quota: 0 },
-            { id: 'rec7', name: 'Ramallah', role: 'Leadership', quota: 0 }, { id: 'rec8', name: 'Keyna', role: 'Leadership', quota: 0 }
-        ];
-        state.teamMemberMap = { 'Javonte': 'rec1', 'Teslim': 'rec2', 'Israel': 'rec3', 'Conrad': 'rec4', 'Test User': 'rec5', 'Test Leadership': 'rec6', 'Ramallah': 'rec7', 'Keyna': 'rec8' };
+        setFallbackTeamMembers();
     });
+}
+
+function setFallbackTeamMembers() {
+    state.data.teamMembers = [
+        { id: 'rec1', name: 'Javonte', role: 'BDR', quota: 45000 }, { id: 'rec2', name: 'Teslim', role: 'BDR', quota: 45000 },
+        { id: 'rec3', name: 'Israel', role: 'BDR', quota: 45000 }, { id: 'rec4', name: 'Conrad', role: 'AE', quota: 60000 },
+        { id: 'rec5', name: 'Test User', role: 'BDR', quota: 45000 }, { id: 'rec6', name: 'Test Leadership', role: 'Leadership', quota: 0 },
+        { id: 'rec7', name: 'Ramallah', role: 'Leadership', quota: 0 }, { id: 'rec8', name: 'Keyna', role: 'Leadership', quota: 0 }
+    ];
+    state.teamMemberMap = { 'Javonte': 'rec1', 'Teslim': 'rec2', 'Israel': 'rec3', 'Conrad': 'rec4', 'Test User': 'rec5', 'Test Leadership': 'rec6', 'Ramallah': 'rec7', 'Keyna': 'rec8' };
 }
 
 function populateLoginSelect() {
