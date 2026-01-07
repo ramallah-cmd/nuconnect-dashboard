@@ -384,6 +384,21 @@ var leadershipNavItems = [
 ];
 
 // ============ TIME DISPLAY ============
+var comparisonTimezone = localStorage.getItem('comparisonTimezone') || 'America/Chicago';
+var availableTimezones = [
+    { value: 'America/Chicago', label: 'CST (Chicago)' },
+    { value: 'America/New_York', label: 'EST (New York)' },
+    { value: 'America/Los_Angeles', label: 'PST (Los Angeles)' },
+    { value: 'America/Denver', label: 'MST (Denver)' },
+    { value: 'Europe/London', label: 'GMT (London)' },
+    { value: 'Europe/Paris', label: 'CET (Paris)' },
+    { value: 'Asia/Tokyo', label: 'JST (Tokyo)' },
+    { value: 'Asia/Shanghai', label: 'CST (Shanghai)' },
+    { value: 'Africa/Lagos', label: 'WAT (Lagos)' },
+    { value: 'Australia/Sydney', label: 'AEST (Sydney)' },
+    { value: 'Pacific/Honolulu', label: 'HST (Honolulu)' }
+];
+
 function updateTimeDisplay() {
     var container = document.getElementById('timeDisplay');
     if (!container) return;
@@ -392,10 +407,23 @@ function updateTimeDisplay() {
     var now = new Date();
     
     var userTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: userTz });
-    var cstTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Chicago' });
+    var compTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: comparisonTimezone });
+    
+    var tzOptions = '';
+    for (var i = 0; i < availableTimezones.length; i++) {
+        var tz = availableTimezones[i];
+        tzOptions += '<option value="' + tz.value + '"' + (comparisonTimezone === tz.value ? ' selected' : '') + '>' + tz.label + '</option>';
+    }
     
     container.innerHTML = '<div class="time-item"><div class="time-value">' + userTime + '</div><div class="time-label">Your Time</div></div>' +
-        '<div class="time-item"><div class="time-value">' + cstTime + '</div><div class="time-label">CST</div></div>';
+        '<div class="time-item"><div class="time-value">' + compTime + '</div>' +
+        '<select style="font-size:10px;border:none;background:transparent;color:var(--text-gray);cursor:pointer;text-align:center;" onchange="changeComparisonTimezone(this.value)">' + tzOptions + '</select></div>';
+}
+
+function changeComparisonTimezone(tz) {
+    comparisonTimezone = tz;
+    localStorage.setItem('comparisonTimezone', tz);
+    updateTimeDisplay();
 }
 
 setInterval(updateTimeDisplay, 60000);
@@ -504,13 +532,8 @@ function resetRepPassword() {
 
 // ============ CELEBRATIONS ============
 function showCelebration(type, message) {
-    if (state.celebratedToday.indexOf(type) !== -1) return;
-    
-    state.celebratedToday.push(type);
-    localStorage.setItem('celebratedToday_' + new Date().toDateString(), JSON.stringify(state.celebratedToday));
-    
-    var icons = { 'deal-moved': '🚀', 'kpi-hit': '🏆', 'revenue-goal': '💰', 'close-to-goal': '🔥', 'deal-won': '🎉', 'checklist-complete': '✅' };
-    var titles = { 'deal-moved': 'Deal Advanced!', 'kpi-hit': 'KPI Achieved!', 'revenue-goal': 'Revenue Goal Hit!', 'close-to-goal': 'Almost There!', 'deal-won': 'Deal Won!', 'checklist-complete': 'Checklist Complete!' };
+    var icons = { 'deal-moved': '🚀', 'kpi-hit': '🏆', 'revenue-goal': '💰', 'close-to-goal': '🔥', 'deal-won': '🎉', 'checklist-complete': '✅', 'target-hit': '🎯' };
+    var titles = { 'deal-moved': 'Deal Advanced!', 'kpi-hit': 'KPI Achieved!', 'revenue-goal': 'Revenue Goal Hit!', 'close-to-goal': 'Almost There!', 'deal-won': 'Deal Won!', 'checklist-complete': 'Checklist Complete!', 'target-hit': 'Target Hit!' };
     
     document.getElementById('celebrationContainer').innerHTML = 
         '<div class="celebration-overlay" onclick="closeCelebration()">' +
@@ -545,8 +568,8 @@ function saveChecklist(userName, checklist) {
     localStorage.setItem(key, JSON.stringify(checklist));
 }
 
-function autoCheckFromActivities(userName) {
-    var checklist = getChecklist(userName);
+// Get today's activity counts for auto-tracking
+function getTodayActivityCounts(userName) {
     var today = new Date().toISOString().split('T')[0];
     var userActivities = state.data.activities.filter(function(a) { 
         return a.owner === userName && a.date && a.date.split('T')[0] === today; 
@@ -554,18 +577,75 @@ function autoCheckFromActivities(userName) {
     
     var stats = getActivityStats(userActivities);
     
-    // Auto-check based on activity counts
-    if (stats.calls >= 2) checklist['daily-activity-3'] = true; // 2-5 call attempts
-    if (stats.emails >= 5) checklist['daily-activity-2'] = true; // 5-10 outbound
-    if (stats.followups >= 10) checklist['daily-activity-1'] = true; // 10 follow-ups
-    if (userActivities.length >= 20) {
-        checklist['daily-activity-0'] = true; // 20-25 touchpoints
-        checklist['daily-activity-4'] = true; // Log every touchpoint
-        checklist['eod-0'] = true; // Did I complete 20-25?
-        checklist['eod-3'] = true; // Did I log everything?
+    // Count contacts added today
+    var contactsAddedToday = state.data.contacts.filter(function(c) {
+        return c.owner === userName && c.createdTime && c.createdTime.split('T')[0] === today;
+    }).length;
+    
+    // Count deals created today (for pipeline movement tracking)
+    var dealsCreatedToday = state.data.deals.filter(function(d) {
+        return d.owner === userName && d.createdTime && d.createdTime.split('T')[0] === today;
+    }).length;
+    
+    // Count deals moved today (closed won)
+    var dealsWonToday = state.data.deals.filter(function(d) {
+        return d.owner === userName && d.stage.toLowerCase().indexOf('won') !== -1 && 
+               d.closeDate && d.closeDate.split('T')[0] === today;
+    }).length;
+    
+    return {
+        touchpoints: userActivities.length,
+        calls: stats.calls,
+        emails: stats.emails,
+        linkedin: stats.linkedin,
+        followups: stats.followups,
+        demos: stats.demos,
+        proposals: stats.proposals,
+        leadsAdded: contactsAddedToday,
+        dealsCreated: dealsCreatedToday,
+        dealsWon: dealsWonToday
+    };
+}
+
+// Define checklist item targets for auto-tracking
+var CHECKLIST_TARGETS = {
+    'leads-0': { field: 'leadsAdded', target: 20, label: 'leads added' },
+    'outbound-0': { field: 'emails', target: 20, label: 'emails sent' },
+    'outbound-1': { field: 'linkedin', target: 5, label: 'LinkedIn touches' },
+    'followups-0': { field: 'followups', target: 10, label: 'follow-ups' },
+    'daily-activity-0': { field: 'touchpoints', target: 20, label: 'touchpoints' },
+    'daily-activity-1': { field: 'followups', target: 10, label: 'follow-ups' },
+    'daily-activity-2': { field: 'emails', target: 5, label: 'outbound' },
+    'daily-activity-3': { field: 'calls', target: 2, label: 'calls' },
+    'daily-activity-4': { field: 'touchpoints', target: 1, label: 'logged' },
+    'eod-0': { field: 'touchpoints', target: 20, label: 'touchpoints' },
+    'eod-1': { field: 'leadsAdded', target: 1, label: 'leads' },
+    'eod-3': { field: 'touchpoints', target: 1, label: 'logged' }
+};
+
+function autoCheckFromActivities(userName, showCelebrations) {
+    var checklist = getChecklist(userName);
+    var counts = getTodayActivityCounts(userName);
+    var newlyCompleted = [];
+    
+    for (var key in CHECKLIST_TARGETS) {
+        var target = CHECKLIST_TARGETS[key];
+        var currentValue = counts[target.field] || 0;
+        var wasChecked = checklist[key];
+        
+        if (currentValue >= target.target && !wasChecked) {
+            checklist[key] = true;
+            newlyCompleted.push(target.label);
+        }
     }
     
     saveChecklist(userName, checklist);
+    
+    // Show celebration for newly completed items
+    if (showCelebrations && newlyCompleted.length > 0) {
+        showCelebration('target-hit', 'You hit your ' + newlyCompleted[0] + ' target! 🎯');
+    }
+    
     return checklist;
 }
 
@@ -1096,6 +1176,13 @@ function createContact(contactData) {
         if (response && response.id) { 
             loadContacts().then(function() { 
                 closeModal(); 
+                // Check if we hit leads target
+                if (state.currentUser.role !== 'Leadership') {
+                    var counts = getTodayActivityCounts(state.currentUser.name);
+                    if (counts.leadsAdded >= 20) {
+                        showCelebration('target-hit', 'You added ' + counts.leadsAdded + ' leads today! Target hit! 🎯');
+                    }
+                }
                 renderView('contacts'); 
                 alert('Contact created!'); 
             }); 
@@ -1120,9 +1207,9 @@ function logActivity(activityData) {
         if (response && response.id) { 
             loadActivities().then(function() { 
                 closeModal(); 
-                // Auto-check activities on checklist
+                // Auto-check activities on checklist AND show celebrations
                 if (state.currentUser.role !== 'Leadership') {
-                    autoCheckFromActivities(state.currentUser.name);
+                    autoCheckFromActivities(state.currentUser.name, true);
                 }
                 renderView(state.currentView); 
                 alert('Activity logged!'); 
@@ -1610,21 +1697,23 @@ function renderRepDashboard() {
         '<div class="card"><div class="card-header"><h2 class="card-title">📅 Daily Scorecard</h2><span style="font-size:13px;color:var(--text-gray);">' + dateStr + '</span></div>' +
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;">';
     
-    // Activity KPIs
+    // Activity KPIs with progress bars
     var kpis = [
-        { label: 'Touchpoints', value: todayActivities.length, target: targets.dailyTouchpointsMin },
-        { label: 'Calls Made', value: todayStats.calls, target: targets.dailyCalls },
-        { label: 'Emails Sent', value: todayStats.emails, target: targets.dailyEmails },
-        { label: 'LinkedIn', value: todayStats.linkedin, target: targets.dailyLinkedIn },
-        { label: 'Follow-ups', value: todayStats.followups, target: 10 }
+        { label: 'Touchpoints', value: todayActivities.length, target: targets.dailyTouchpointsMin, max: targets.dailyTouchpointsMax },
+        { label: 'Calls Made', value: todayStats.calls, target: targets.dailyCalls, max: targets.dailyCalls },
+        { label: 'Emails Sent', value: todayStats.emails, target: targets.dailyEmails, max: targets.dailyEmails },
+        { label: 'LinkedIn', value: todayStats.linkedin, target: targets.dailyLinkedIn, max: targets.dailyLinkedIn },
+        { label: 'Follow-ups', value: todayStats.followups, target: 10, max: 15 }
     ];
     
     for (var i = 0; i < kpis.length; i++) {
         var kpi = kpis[i];
-        html += '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(kpi.value, kpi.target) + ';">' +
+        var pct = Math.min((kpi.value / kpi.target) * 100, 100);
+        var progressColor = pct >= 100 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)';
+        html += '<div class="kpi-card" style="border-left:4px solid ' + progressColor + ';">' +
             '<div style="display:flex;justify-content:space-between;"><span class="kpi-label">' + kpi.label + '</span><span>' + getStatusIcon(kpi.value, kpi.target) + '</span></div>' +
-            '<div class="kpi-value" style="color:' + getStatusColor(kpi.value, kpi.target) + ';">' + kpi.value + '</div>' +
-            '<div style="font-size:11px;color:var(--text-gray);">Target: ' + kpi.target + '+</div></div>';
+            '<div class="kpi-value" style="color:' + progressColor + ';">' + kpi.value + '<span style="font-size:14px;color:var(--text-gray);">/' + kpi.target + '</span></div>' +
+            '<div class="progress-bar" style="height:8px;margin-top:8px;"><div class="progress-fill" style="width:' + pct + '%;background:' + progressColor + ';"></div></div></div>';
     }
     
     // Needs attention
@@ -1681,9 +1770,10 @@ function renderRepDashboard() {
 // ============ CHECKLIST VIEW ============
 function renderChecklist() {
     var checklist = getChecklist(state.currentUser.name);
+    var counts = getTodayActivityCounts(state.currentUser.name);
     
-    // Auto-check from activities
-    checklist = autoCheckFromActivities(state.currentUser.name);
+    // Auto-check from activities (with celebrations)
+    checklist = autoCheckFromActivities(state.currentUser.name, false);
     
     var totalItems = 0, completedItems = 0;
     for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
@@ -1699,6 +1789,17 @@ function renderChecklist() {
     
     var html = '<div class="greeting-banner"><div class="greeting-text">✅ Daily Checklist</div><div class="greeting-sub">' + today + '</div></div>' +
         '<div class="card"><div style="text-align:center;padding:16px;font-size:22px;font-weight:700;color:var(--primary);">"Talk to people. Move deals. Protect pricing."</div></div>' +
+        
+        // Quick stats bar
+        '<div class="card" style="background:var(--bg-light);">' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px;text-align:center;">' +
+        '<div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + counts.touchpoints + '</div><div style="font-size:11px;color:var(--text-gray);">Touchpoints</div></div>' +
+        '<div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + counts.leadsAdded + '</div><div style="font-size:11px;color:var(--text-gray);">Leads Added</div></div>' +
+        '<div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + counts.emails + '</div><div style="font-size:11px;color:var(--text-gray);">Emails</div></div>' +
+        '<div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + counts.calls + '</div><div style="font-size:11px;color:var(--text-gray);">Calls</div></div>' +
+        '<div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + counts.linkedin + '</div><div style="font-size:11px;color:var(--text-gray);">LinkedIn</div></div>' +
+        '<div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + counts.followups + '</div><div style="font-size:11px;color:var(--text-gray);">Follow-ups</div></div>' +
+        '</div></div>' +
         
         '<div class="card"><div class="checklist-progress"><div class="checklist-progress-text">' + completedItems + '/' + totalItems + ' completed</div>' +
         '<div style="flex:1;"><div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:' + progress + '%;background:var(--success);"></div></div></div>' +
@@ -1719,9 +1820,26 @@ function renderChecklist() {
             var key = section.id + '-' + j;
             var checked = checklist[key] ? ' checked' : '';
             var completedClass = checklist[key] ? ' completed' : '';
-            html += '<div class="checklist-item' + completedClass + '">' +
+            var itemText = section.items[j];
+            
+            // Check if this item has a trackable target
+            var targetInfo = CHECKLIST_TARGETS[key];
+            var progressHtml = '';
+            if (targetInfo) {
+                var currentValue = counts[targetInfo.field] || 0;
+                var targetValue = targetInfo.target;
+                var pct = Math.min((currentValue / targetValue) * 100, 100);
+                var progressColor = pct >= 100 ? 'var(--success)' : pct >= 50 ? 'var(--warning)' : 'var(--danger)';
+                progressHtml = '<div style="display:flex;align-items:center;gap:8px;margin-top:4px;">' +
+                    '<div style="flex:1;height:6px;background:var(--border);border-radius:3px;"><div style="width:' + pct + '%;height:100%;background:' + progressColor + ';border-radius:3px;"></div></div>' +
+                    '<span style="font-size:11px;font-weight:600;color:' + progressColor + ';">' + currentValue + '/' + targetValue + '</span></div>';
+            }
+            
+            html += '<div class="checklist-item' + completedClass + '" style="flex-direction:column;align-items:flex-start;">' +
+                '<div style="display:flex;align-items:flex-start;gap:10px;width:100%;">' +
                 '<input type="checkbox" id="' + key + '"' + checked + ' onchange="toggleChecklistItem(\'' + key + '\')">' +
-                '<label for="' + key + '">' + section.items[j] + '</label></div>';
+                '<label for="' + key + '" style="flex:1;">' + itemText + '</label></div>' +
+                progressHtml + '</div>';
         }
         html += '</div>';
     }
