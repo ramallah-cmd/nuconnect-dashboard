@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NuConnect CRM - Phase 2 Enhanced</title>
+    <title>NuConnect CRM - Phase 2 Complete</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -33,33 +33,16 @@
         .login-card h1 { color: var(--primary); font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 10px; }
         .login-card p { color: var(--text-gray); text-align: center; margin-bottom: 40px; }
         
-        /* FORMS - PROPER SIZING */
+        /* FORMS */
         .form-group { margin-bottom: 24px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 15px; color: var(--text-dark); }
         .form-group select, .form-group input, .form-group textarea { 
-            width: 100%; 
-            padding: 14px 16px; 
-            border: 2px solid var(--border); 
-            border-radius: 12px; 
-            font-size: 16px; 
-            font-family: inherit; 
-            background: var(--white);
-            color: var(--text-dark);
+            width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; 
+            font-size: 16px; font-family: inherit; background: var(--white); color: var(--text-dark);
         }
-        .form-group select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            padding-right: 44px;
-        }
+        .form-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 44px; }
         .form-group textarea { min-height: 120px; resize: vertical; }
-        .form-group select:focus, .form-group input:focus, .form-group textarea:focus { 
-            outline: none; 
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1); 
-        }
+        .form-group select:focus, .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
         .form-group small { display: block; margin-top: 6px; font-size: 13px; color: var(--text-gray); }
         
         /* Buttons */
@@ -72,85 +55,85 @@
         .btn-danger { background: var(--danger); color: var(--white); }
         .btn-warning { background: var(--warning); color: var(--white); }
         .btn-small { padding: 10px 18px; font-size: 14px; }
-        .btn-icon { padding: 8px 12px; font-size: 16px; border-radius: 8px; min-width: 40px; }
+        .btn-icon { padding: 8px 12px; font-size: 14px; border-radius: 8px; min-width: 36px; }
         .btn-full { width: 100%; }
         
         /* Layout */
         .app-container { display: flex; min-height: 100vh; }
-        .sidebar { width: 280px; background: var(--white); box-shadow: var(--shadow-md); padding: 24px 0; position: fixed; height: 100vh; overflow-y: auto; z-index: 100; }
+        .sidebar { width: 260px; background: var(--white); box-shadow: var(--shadow-md); padding: 24px 0; position: fixed; height: 100vh; overflow-y: auto; z-index: 100; }
         .sidebar-header { padding: 0 24px 24px; border-bottom: 1px solid var(--border); }
-        .sidebar-header h2 { color: var(--primary); font-size: 24px; font-weight: 800; margin-bottom: 4px; }
-        .sidebar-nav { padding: 24px 0; }
-        .nav-item { display: flex; align-items: center; padding: 14px 24px; color: var(--text-gray); cursor: pointer; transition: all 0.3s; font-weight: 500; font-size: 15px; }
+        .sidebar-header h2 { color: var(--primary); font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .sidebar-nav { padding: 16px 0; }
+        .nav-item { display: flex; align-items: center; padding: 12px 24px; color: var(--text-gray); cursor: pointer; transition: all 0.3s; font-weight: 500; font-size: 14px; }
         .nav-item:hover { background: var(--bg-light); color: var(--primary); }
         .nav-item.active { background: linear-gradient(90deg, rgba(102,126,234,0.1) 0%, transparent 100%); color: var(--primary); border-left: 4px solid var(--primary); }
-        .nav-item-icon { font-size: 20px; margin-right: 12px; }
-        .main-content { margin-left: 280px; flex: 1; padding: 24px; min-height: 100vh; }
+        .nav-item-icon { font-size: 18px; margin-right: 12px; }
+        .main-content { margin-left: 260px; flex: 1; padding: 24px; min-height: 100vh; }
         
         /* Top Bar */
-        .top-bar { background: var(--white); padding: 20px 30px; border-radius: 16px; box-shadow: var(--shadow-sm); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-        .top-bar h1 { font-size: 28px; font-weight: 800; color: var(--text-dark); }
-        .top-bar-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .top-bar { background: var(--white); padding: 16px 24px; border-radius: 16px; box-shadow: var(--shadow-sm); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .top-bar h1 { font-size: 24px; font-weight: 800; }
+        .top-bar-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         
         /* Search */
         .search-container { position: relative; }
-        .search-input { padding: 12px 18px 12px 44px; border: 2px solid var(--border); border-radius: 12px; font-size: 15px; width: 300px; font-family: inherit; transition: all 0.3s; }
-        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.1); width: 340px; }
-        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-gray); }
+        .search-input { padding: 10px 16px 10px 40px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; width: 260px; font-family: inherit; }
+        .search-input:focus { outline: none; border-color: var(--primary); width: 300px; }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-gray); }
         .search-results { position: absolute; top: 100%; left: 0; right: 0; background: var(--white); border-radius: 12px; box-shadow: var(--shadow-lg); margin-top: 8px; max-height: 400px; overflow-y: auto; z-index: 1000; display: none; }
         .search-results.active { display: block; }
-        .search-result-item { padding: 14px 18px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.2s; }
+        .search-result-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--border); }
         .search-result-item:hover { background: var(--bg-light); }
-        .search-result-item:last-child { border-bottom: none; }
-        .search-result-type { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-bottom: 4px; }
-        .search-result-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
-        .search-result-meta { font-size: 13px; color: var(--text-gray); }
+        .search-result-type { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-bottom: 2px; }
+        .search-result-title { font-weight: 600; font-size: 14px; }
+        .search-result-meta { font-size: 12px; color: var(--text-gray); }
+        
+        /* Filters */
+        .filters-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; padding: 16px 20px; background: var(--white); border-radius: 12px; box-shadow: var(--shadow-sm); }
+        .filter-select { padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit; min-width: 150px; }
+        .filter-input { padding: 10px 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit; width: 200px; }
         
         /* Nudges */
         .nudge-container { margin-bottom: 24px; }
-        .nudge-alert { padding: 18px 24px; border-radius: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; animation: slideIn 0.3s ease; }
+        .nudge-alert { padding: 16px 20px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease; }
         @keyframes slideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .nudge-alert.warning { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 5px solid var(--warning); }
-        .nudge-alert.danger { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 5px solid var(--danger); }
-        .nudge-alert.success { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 5px solid var(--success); }
-        .nudge-alert.info { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 5px solid var(--primary); }
-        .nudge-icon { font-size: 28px; }
-        .nudge-text { flex: 1; font-weight: 500; font-size: 15px; }
-        .nudge-dismiss { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.6; }
+        .nudge-alert.warning { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid var(--warning); }
+        .nudge-alert.danger { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 4px solid var(--danger); }
+        .nudge-alert.success { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 4px solid var(--success); }
+        .nudge-alert.info { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 4px solid var(--primary); }
+        .nudge-icon { font-size: 24px; }
+        .nudge-text { flex: 1; font-weight: 500; font-size: 14px; }
+        .nudge-dismiss { background: none; border: none; font-size: 18px; cursor: pointer; opacity: 0.6; padding: 4px 8px; }
         .nudge-dismiss:hover { opacity: 1; }
         
         /* KPI Cards */
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 24px; }
-        .kpi-card { background: var(--white); padding: 24px; border-radius: 16px; box-shadow: var(--shadow-sm); position: relative; transition: transform 0.2s, box-shadow 0.2s; }
-        .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-        .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--gradient); border-radius: 16px 0 0 16px; }
-        .kpi-value { font-size: 38px; font-weight: 800; margin-bottom: 8px; }
-        .kpi-label { font-size: 13px; font-weight: 600; color: var(--text-gray); text-transform: uppercase; }
-        .progress-bar { width: 100%; height: 10px; background: var(--bg-light); border-radius: 10px; overflow: hidden; margin: 12px 0; }
-        .progress-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 24px; }
+        .kpi-card { background: var(--white); padding: 22px; border-radius: 14px; box-shadow: var(--shadow-sm); position: relative; transition: transform 0.2s; }
+        .kpi-card:hover { transform: translateY(-2px); }
+        .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--gradient); border-radius: 14px 0 0 14px; }
+        .kpi-value { font-size: 34px; font-weight: 800; margin-bottom: 6px; }
+        .kpi-label { font-size: 12px; font-weight: 600; color: var(--text-gray); text-transform: uppercase; }
+        .progress-bar { width: 100%; height: 8px; background: var(--bg-light); border-radius: 8px; overflow: hidden; margin: 10px 0; }
+        .progress-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease; }
         
-        .card { background: var(--white); padding: 28px; border-radius: 16px; box-shadow: var(--shadow-sm); margin-bottom: 24px; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
-        .card-title { font-size: 20px; font-weight: 700; }
+        .card { background: var(--white); padding: 24px; border-radius: 14px; box-shadow: var(--shadow-sm); margin-bottom: 24px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        .card-title { font-size: 18px; font-weight: 700; }
         
         /* Profile Cards */
-        .profile-card { background: var(--white); border-radius: 16px; box-shadow: var(--shadow-sm); overflow: hidden; transition: all 0.2s; cursor: pointer; }
-        .profile-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
         .profile-card-header { background: var(--gradient); padding: 24px; color: white; }
-        .profile-card-avatar { width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 12px; }
+        .profile-card-avatar { width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 12px; }
         .profile-card-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
         .profile-card-subtitle { font-size: 14px; opacity: 0.9; }
         .profile-card-body { padding: 20px; }
-        .profile-card-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+        .profile-card-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
         .profile-card-row:last-child { border-bottom: none; }
         .profile-card-label { color: var(--text-gray); }
-        .profile-card-value { font-weight: 600; text-align: right; }
-        .profile-card-actions { padding: 16px 20px; background: var(--bg-light); display: flex; gap: 10px; flex-wrap: wrap; }
-        
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .profile-card-value { font-weight: 600; text-align: right; max-width: 60%; }
+        .profile-card-actions { padding: 16px 20px; background: var(--bg-light); display: flex; gap: 8px; flex-wrap: wrap; }
         
         /* Badges */
-        .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
         .badge-starter { background: #dbeafe; color: #1e40af; }
         .badge-growth { background: #d1fae5; color: #065f46; }
         .badge-pro { background: #fef3c7; color: #92400e; }
@@ -158,79 +141,101 @@
         .badge-success { background: #d1fae5; color: #065f46; }
         .badge-warning { background: #fef3c7; color: #92400e; }
         .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
         
-        /* Stats */
-        .activity-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
-        .stat-card { text-align: center; padding: 20px 16px; background: var(--bg-light); border-radius: 14px; transition: all 0.2s; }
+        /* Activity Stats */
+        .activity-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 14px; }
+        .stat-card { text-align: center; padding: 18px 14px; background: var(--bg-light); border-radius: 12px; transition: all 0.2s; }
         .stat-card:hover { background: var(--white); box-shadow: var(--shadow-sm); }
-        .stat-icon { font-size: 28px; margin-bottom: 10px; }
-        .stat-value { font-size: 32px; font-weight: 700; color: var(--primary); }
-        .stat-label { font-size: 13px; color: var(--text-gray); margin-top: 6px; }
+        .stat-icon { font-size: 24px; margin-bottom: 8px; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 12px; color: var(--text-gray); margin-top: 4px; }
         
         /* Floor Tracker */
-        .floor-tracker { text-align: center; padding: 30px; }
-        .capacity-circle { width: 180px; height: 180px; margin: 0 auto 20px; border-radius: 50%; background: var(--gradient); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(102,126,234,0.3); }
-        .capacity-number { font-size: 48px; font-weight: 800; }
-        .capacity-label { font-size: 14px; opacity: 0.9; }
+        .floor-tracker { text-align: center; padding: 24px; }
+        .capacity-circle { width: 160px; height: 160px; margin: 0 auto 16px; border-radius: 50%; background: var(--gradient); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(102,126,234,0.3); }
+        .capacity-number { font-size: 42px; font-weight: 800; }
+        .capacity-label { font-size: 13px; opacity: 0.9; }
         
         /* Tables */
         table { width: 100%; border-collapse: collapse; }
         thead { background: var(--bg-light); }
-        th { padding: 14px 18px; text-align: left; font-weight: 600; font-size: 13px; text-transform: uppercase; color: var(--text-gray); }
-        td { padding: 18px; border-bottom: 1px solid var(--border); font-size: 15px; }
-        tr:hover { background: rgba(102,126,234,0.03); }
-        .action-buttons { display: flex; gap: 8px; }
+        th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; color: var(--text-gray); }
+        td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        tr:hover { background: rgba(102,126,234,0.02); }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover { background: rgba(102,126,234,0.05); }
+        .action-buttons { display: flex; gap: 6px; }
         
         /* Kanban */
-        .kanban-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .kanban-column { background: var(--bg-light); border-radius: 14px; padding: 18px; min-height: 450px; }
-        .kanban-header { font-weight: 700; font-size: 15px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 2px solid var(--border); display: flex; justify-content: space-between; }
-        .kanban-count { background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; }
-        .kanban-card { background: var(--white); padding: 18px; border-radius: 12px; margin-bottom: 14px; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; }
+        .kanban-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .kanban-column { background: var(--bg-light); border-radius: 12px; padding: 16px; min-height: 400px; }
+        .kanban-header { font-weight: 700; font-size: 14px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 2px solid var(--border); display: flex; justify-content: space-between; }
+        .kanban-count { background: var(--primary); color: white; padding: 3px 10px; border-radius: 20px; font-size: 12px; }
+        .kanban-card { background: var(--white); padding: 16px; border-radius: 10px; margin-bottom: 12px; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; }
         .kanban-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
         .kanban-card.stale { border-left-color: var(--warning); background: linear-gradient(90deg, rgba(245,158,11,0.05) 0%, transparent 100%); }
-        .kanban-card-title { font-weight: 600; font-size: 15px; margin-bottom: 10px; }
-        .kanban-card-value { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
-        .kanban-card-meta { font-size: 13px; color: var(--text-gray); margin-top: 10px; }
-        .stale-indicator { display: inline-flex; align-items: center; gap: 6px; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-top: 10px; }
+        .kanban-card-title { font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+        .kanban-card-value { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .kanban-card-meta { font-size: 12px; color: var(--text-gray); margin-top: 8px; }
+        .stale-indicator { display: inline-flex; align-items: center; gap: 4px; background: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-top: 8px; }
+        
+        /* Touchpoint Tracker */
+        .touchpoint-timeline { display: flex; flex-direction: column; gap: 12px; }
+        .touchpoint-item { display: flex; align-items: center; gap: 16px; padding: 14px 18px; background: var(--bg-light); border-radius: 10px; position: relative; }
+        .touchpoint-item.completed { background: #d1fae5; }
+        .touchpoint-item.current { background: #dbeafe; border: 2px solid var(--primary); }
+        .touchpoint-item.upcoming { opacity: 0.6; }
+        .touchpoint-week { font-weight: 700; font-size: 13px; min-width: 70px; }
+        .touchpoint-action { flex: 1; }
+        .touchpoint-action-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+        .touchpoint-action-goal { font-size: 12px; color: var(--text-gray); }
+        .touchpoint-status { font-size: 20px; }
         
         /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-        .modal-content { background: var(--white); padding: 36px; border-radius: 20px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--white); padding: 32px; border-radius: 18px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
         .modal-content.wide { max-width: 900px; }
-        .modal-content.profile { max-width: 500px; padding: 0; overflow: hidden; }
-        .modal-header { margin-bottom: 28px; }
-        .modal-header h2 { font-size: 24px; font-weight: 700; }
-        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
+        .modal-content.profile { max-width: 480px; padding: 0; overflow: hidden; }
+        .modal-header { margin-bottom: 24px; }
+        .modal-header h2 { font-size: 22px; font-weight: 700; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
         
         /* Charts */
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; margin-bottom: 24px; }
-        .chart-card { background: var(--white); padding: 24px; border-radius: 16px; box-shadow: var(--shadow-sm); }
-        .chart-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
-        .chart-container { position: relative; height: 300px; }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; margin-bottom: 24px; }
+        .chart-card { background: var(--white); padding: 20px; border-radius: 14px; box-shadow: var(--shadow-sm); }
+        .chart-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+        .chart-container { position: relative; height: 280px; }
         
         /* Status Colors */
-        .rep-card-green { border-left: 5px solid var(--success) !important; }
-        .rep-card-yellow { border-left: 5px solid var(--warning) !important; }
-        .rep-card-red { border-left: 5px solid var(--danger) !important; }
+        .rep-card-green { border-left: 4px solid var(--success) !important; }
+        .rep-card-yellow { border-left: 4px solid var(--warning) !important; }
+        .rep-card-red { border-left: 4px solid var(--danger) !important; }
         
-        .clickable-stat { cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-        .clickable-stat:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .clickable-stat { cursor: pointer; border: 2px solid transparent; }
+        .clickable-stat:hover { border-color: var(--primary); transform: translateY(-2px); }
         
-        .kpi-alerts { margin-top: 20px; }
-        .kpi-alert-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--bg-light); border-radius: 10px; margin-bottom: 10px; font-size: 15px; }
+        .kpi-alerts { margin-top: 16px; }
+        .kpi-alert-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-light); border-radius: 8px; margin-bottom: 8px; font-size: 14px; }
         .kpi-alert-item.needs-attention { background: #fee2e2; border-left: 4px solid var(--danger); }
         .kpi-alert-item.on-track { background: #d1fae5; border-left: 4px solid var(--success); }
         
-        .quick-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+        .quick-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        
+        /* Leaderboard */
+        .leaderboard-item { display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--bg-light); border-radius: 10px; margin-bottom: 10px; }
+        .leaderboard-rank { font-size: 24px; font-weight: 800; color: var(--primary); min-width: 40px; }
+        .leaderboard-info { flex: 1; }
+        .leaderboard-name { font-weight: 700; font-size: 16px; }
+        .leaderboard-stats { font-size: 13px; color: var(--text-gray); }
+        .leaderboard-value { font-size: 20px; font-weight: 700; color: var(--success); }
         
         @media (max-width: 768px) {
             .charts-grid { grid-template-columns: 1fr; }
-            .search-input { width: 200px; }
+            .search-input { width: 180px; }
             .sidebar { transform: translateX(-100%); }
             .main-content { margin-left: 0; }
-            .cards-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -257,9 +262,12 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2>🎯 NuConnect</h2>
-                <p id="currentUserName" style="color: var(--text-gray); font-size: 14px; margin-top: 4px;"></p>
+                <p id="currentUserName" style="color: var(--text-gray); font-size: 13px; margin-top: 4px;"></p>
             </div>
             <nav class="sidebar-nav" id="sidebarNav"></nav>
+            <div style="padding: 16px 24px; border-top: 1px solid var(--border); margin-top: auto;">
+                <button class="btn btn-secondary btn-small btn-full" onclick="openChangePasswordModal()">🔐 Change Password</button>
+            </div>
         </aside>
         <main class="main-content">
             <div class="top-bar">
@@ -267,7 +275,7 @@
                 <div class="top-bar-actions">
                     <div class="search-container">
                         <span class="search-icon">🔍</span>
-                        <input type="text" class="search-input" id="globalSearch" placeholder="Search deals, contacts, accounts..." oninput="handleSearch(this.value)" onfocus="showSearchResults()" onblur="hideSearchResults()">
+                        <input type="text" class="search-input" id="globalSearch" placeholder="Search..." oninput="handleSearch(this.value)" onfocus="showSearchResults()" onblur="hideSearchResults()">
                         <div class="search-results" id="searchResults"></div>
                     </div>
                     <button class="btn btn-secondary btn-small" onclick="openSettings()">⚙️</button>
@@ -289,20 +297,30 @@ const state = {
     charts: {},
     filterRep: null,
     filterMonth: null,
-    data: { deals: [], activities: [], tasks: [], contacts: [], accounts: [], teamMembers: [], pricingRules: [] },
+    dismissedNudges: JSON.parse(localStorage.getItem('dismissedNudges') || '[]'),
+    data: { deals: [], activities: [], tasks: [], contacts: [], accounts: [], teamMembers: [], pricingRules: [], events: [] },
     teamMemberMap: {},
-    pricingRuleMap: {}
+    pricingRuleMap: {},
+    filters: { contacts: { search: '', owner: '' }, accounts: { search: '', industry: '', owner: '' }, pipeline: { tier: '', owner: '' } }
 };
 
-const userPasswords = {
+// Load saved session
+const savedSession = localStorage.getItem('nuconnect_session');
+if (savedSession) {
+    try { state.currentUser = JSON.parse(savedSession); } catch(e) {}
+}
+
+// Load saved passwords
+const savedPasswords = JSON.parse(localStorage.getItem('nuconnect_passwords') || '{}');
+const defaultPasswords = {
     'Javonte': 'nuconnect2025', 'Teslim': 'nuconnect2025', 'Israel': 'nuconnect2025', 'Conrad': 'nuconnect2025',
     'Test User': 'test2024', 'Test Leadership': 'testleader2024', 'Ramallah': 'admin2025', 'Keyna': 'admin2025'
 };
+const userPasswords = { ...defaultPasswords, ...savedPasswords };
 
 const tierPricing = { 'Starter': 750, 'Growth': 1250, 'Pro': 2000, 'Enterprise': 4200 };
 const tierColors = { 'Starter': '#9e9e9e', 'Growth': '#22c55e', 'Pro': '#f59e0b', 'Enterprise': '#667eea' };
 
-// FULL Industry Options List
 const industryOptions = [
     'Technology', 'Finance & Banking', 'Healthcare', 'Education', 'Retail & E-commerce',
     'Real Estate', 'Manufacturing', 'Entertainment & Media', 'Non-Profit', 'Government',
@@ -312,6 +330,19 @@ const industryOptions = [
     'Automotive', 'Aerospace', 'Pharmaceuticals', 'Biotechnology', 'Fashion & Apparel',
     'Beauty & Cosmetics', 'Travel & Tourism', 'Gaming & Esports', 'Music & Arts',
     'Consulting', 'Human Resources', 'Security Services', 'Environmental Services', 'Other'
+];
+
+// Touchpoint Cadence Schedule
+const TOUCHPOINT_CADENCE = [
+    { week: 1, action: 'Intro Email + Pitch Deck', goal: 'Position NuConnect as a strategic partner' },
+    { week: 2, action: 'Value Add, Demo Invite, Case Study', goal: 'Reinforce brand presence, warm up the lead, build trust' },
+    { week: 3, action: 'Follow-up Email, Pricing & Legal Readiness', goal: 'Drive engagement, show operational polish' },
+    { week: 4, action: 'Objection Handling', goal: 'Address concerns, clarify value' },
+    { week: 5, action: 'LinkedIn Touchpoint', goal: 'Reinforce brand presence' },
+    { week: 6, action: 'Call or Meeting', goal: 'Close the deal, align on scope' },
+    { week: 7, action: 'Review Contract', goal: 'Finalize terms' },
+    { week: 8, action: 'Secure Payment', goal: 'Complete the sale' },
+    { week: 9, action: 'Onboarding Kickoff', goal: 'Begin vendor setup, creative collaboration' }
 ];
 
 const KPI_TARGETS = {
@@ -329,8 +360,9 @@ const allNavItems = [
     { id: 'pipeline', icon: '📈', label: 'Pipeline' },
     { id: 'contacts', icon: '👥', label: 'Contacts' },
     { id: 'accounts', icon: '🏢', label: 'Accounts' },
+    { id: 'events', icon: '🎉', label: 'Events' },
     { id: 'activity', icon: '📝', label: 'Activities' },
-    { id: 'tasks', icon: '✅', label: 'Tasks' }
+    { id: 'reports', icon: '📑', label: 'Reports' }
 ];
 const leadershipNavItems = [
     { id: 'leadership', icon: '👔', label: 'Analytics' },
@@ -354,29 +386,24 @@ function performSearch(query) {
 
     state.data.deals.forEach(deal => {
         if (deal.name.toLowerCase().includes(q) || (deal.eventName && deal.eventName.toLowerCase().includes(q))) {
-            results.push({ type: 'Deal', title: deal.name, meta: `${deal.tier} • $${deal.value.toLocaleString()} • ${deal.stage}`, action: () => { closeSearch(); renderView('pipeline'); }});
+            results.push({ type: 'Deal', title: deal.name, meta: `${deal.tier} • $${deal.value.toLocaleString()}`, action: () => { closeSearch(); renderView('pipeline'); }});
         }
     });
     state.data.contacts.forEach(contact => {
-        if (contact.name.toLowerCase().includes(q) || (contact.email && contact.email.toLowerCase().includes(q)) || (contact.company && contact.company.toLowerCase().includes(q))) {
-            results.push({ type: 'Contact', title: contact.name, meta: `${contact.email || 'No email'} • ${contact.company || 'No company'}`, action: () => { closeSearch(); openContactDetailModal(contact.id); }});
+        if (contact.name.toLowerCase().includes(q) || (contact.email && contact.email.toLowerCase().includes(q))) {
+            results.push({ type: 'Contact', title: contact.name, meta: contact.email || 'No email', action: () => { closeSearch(); openContactDetailModal(contact.id); }});
         }
     });
     state.data.accounts.forEach(account => {
         if (account.name.toLowerCase().includes(q) || (account.industry && account.industry.toLowerCase().includes(q))) {
-            results.push({ type: 'Account', title: account.name, meta: `${account.industry || 'No industry'} • Owner: ${account.owner}`, action: () => { closeSearch(); openAccountDetailModal(account.id); }});
-        }
-    });
-    state.data.activities.forEach(activity => {
-        if ((activity.account && activity.account.toLowerCase().includes(q)) || (activity.result && activity.result.toLowerCase().includes(q))) {
-            results.push({ type: 'Activity', title: `${activity.type} - ${activity.account}`, meta: `${formatDateShort(activity.date)} • ${activity.owner}`, action: () => { closeSearch(); renderView('activity'); }});
+            results.push({ type: 'Account', title: account.name, meta: account.industry || 'No industry', action: () => { closeSearch(); openAccountDetailModal(account.id); }});
         }
     });
 
     if (results.length === 0) {
         resultsDiv.innerHTML = '<div class="search-result-item"><div class="search-result-title">No results found</div></div>';
     } else {
-        resultsDiv.innerHTML = results.slice(0, 10).map((r, i) => `
+        resultsDiv.innerHTML = results.slice(0, 8).map((r, i) => `
             <div class="search-result-item" onmousedown="window.searchResults[${i}].action()">
                 <div class="search-result-type">${r.type}</div>
                 <div class="search-result-title">${r.title}</div>
@@ -393,6 +420,12 @@ function hideSearchResults() { setTimeout(() => document.getElementById('searchR
 function closeSearch() { document.getElementById('globalSearch').value = ''; document.getElementById('searchResults').classList.remove('active'); }
 
 // ============ NUDGE NOTIFICATIONS ============
+function dismissNudge(nudgeId, element) {
+    state.dismissedNudges.push(nudgeId);
+    localStorage.setItem('dismissedNudges', JSON.stringify(state.dismissedNudges));
+    element.parentElement.remove();
+}
+
 function generateNudges() {
     const nudges = [];
     if (state.currentUser.role === 'Leadership') return nudges;
@@ -420,18 +453,21 @@ function generateNudges() {
     const growthPlusDeals = monthClosedDeals.filter(d => d.tier !== 'Starter').length;
     const qualityScore = monthClosedDeals.length > 0 ? (growthPlusDeals / monthClosedDeals.length) * 100 : 100;
     
-    if (revenuePercent < 50) {
-        nudges.push({ type: 'danger', icon: '🚨', text: `You're at ${revenuePercent.toFixed(0)}% of minimum target ($${(targets.monthlyRevenueMin/1000).toFixed(1)}K). Let's pick up the pace!` });
-    } else if (revenuePercent >= 100) {
-        nudges.push({ type: 'success', icon: '🎉', text: `Amazing! You've hit ${revenuePercent.toFixed(0)}% of your minimum target! Keep crushing it!` });
+    // Revenue nudges
+    if (revenuePercent < 50 && !state.dismissedNudges.includes('revenue-low')) {
+        nudges.push({ id: 'revenue-low', type: 'danger', icon: '🚨', text: `You're at ${revenuePercent.toFixed(0)}% of minimum target. Let's pick up the pace!` });
+    } else if (revenuePercent >= 100 && !state.dismissedNudges.includes('revenue-high')) {
+        nudges.push({ id: 'revenue-high', type: 'success', icon: '🎉', text: `Amazing! You've hit ${revenuePercent.toFixed(0)}% of your minimum target!` });
     }
     
-    if (hour >= 15 && todayTouchpoints < 15) {
-        nudges.push({ type: 'warning', icon: '⏰', text: `Only ${todayTouchpoints}/${targets.dailyTouchpointsMax} touchpoints today. It's after 3pm - time to hustle!` });
+    // Touchpoint nudges
+    if (hour >= 15 && todayTouchpoints < 15 && !state.dismissedNudges.includes('touchpoints-low-' + today)) {
+        nudges.push({ id: 'touchpoints-low-' + today, type: 'warning', icon: '⏰', text: `Only ${todayTouchpoints}/${targets.dailyTouchpointsMax} touchpoints today. Time to hustle!` });
     }
     
-    if (qualityScore < 70 && monthClosedDeals.length >= 2) {
-        nudges.push({ type: 'warning', icon: '📊', text: `Quality score is ${qualityScore.toFixed(0)}%. Focus on Growth+ tier deals to hit 70%!` });
+    // Quality score nudge
+    if (qualityScore < 70 && monthClosedDeals.length >= 2 && !state.dismissedNudges.includes('quality-low')) {
+        nudges.push({ id: 'quality-low', type: 'warning', icon: '📊', text: `Quality score is ${qualityScore.toFixed(0)}%. Focus on Growth+ tier deals!` });
     }
     
     // Stale deals nudge
@@ -442,11 +478,26 @@ function generateNudges() {
         return getDaysSince(lastActivity.date) >= 5;
     });
     
-    if (staleDeals.length > 0) {
-        nudges.push({ type: 'info', icon: '📌', text: `${staleDeals.length} deal${staleDeals.length > 1 ? 's need' : ' needs'} attention! Move them forward with a touchpoint today.` });
+    if (staleDeals.length > 0 && !state.dismissedNudges.includes('stale-deals-' + today)) {
+        nudges.push({ id: 'stale-deals-' + today, type: 'info', icon: '📌', text: `${staleDeals.length} deal${staleDeals.length > 1 ? 's need' : ' needs'} attention! Move to next touchpoint.` });
     }
     
-    return nudges;
+    // Touchpoint cadence reminder
+    const activeDeals = userDeals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'));
+    activeDeals.forEach(deal => {
+        const dealAge = getDaysSince(deal.createdTime);
+        const currentWeek = Math.min(Math.ceil(dealAge / 7), 9);
+        const cadenceItem = TOUCHPOINT_CADENCE[currentWeek - 1];
+        if (cadenceItem && !state.dismissedNudges.includes(`cadence-${deal.id}-week${currentWeek}`)) {
+            const lastActivity = userActivities.filter(a => a.account && deal.name.toLowerCase().includes(a.account.toLowerCase())).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+            const daysSinceActivity = lastActivity ? getDaysSince(lastActivity.date) : dealAge;
+            if (daysSinceActivity >= 3) {
+                nudges.push({ id: `cadence-${deal.id}-week${currentWeek}`, type: 'info', icon: '📅', text: `${deal.name}: Week ${currentWeek} - Time for "${cadenceItem.action}"` });
+            }
+        }
+    });
+    
+    return nudges.slice(0, 4); // Limit to 4 nudges
 }
 
 function renderNudges() {
@@ -456,7 +507,7 @@ function renderNudges() {
         <div class="nudge-alert ${n.type}">
             <span class="nudge-icon">${n.icon}</span>
             <span class="nudge-text">${n.text}</span>
-            <button class="nudge-dismiss" onclick="this.parentElement.remove()">×</button>
+            <button class="nudge-dismiss" onclick="dismissNudge('${n.id}', this)">×</button>
         </div>
     `).join('')}</div>`;
 }
@@ -491,7 +542,7 @@ function renderRevenueTrendChart(canvasId, deals, label = 'Revenue') {
     
     state.charts[canvasId] = new Chart(ctx, {
         type: 'line',
-        data: { labels, datasets: [{ label, data: monthlyData, borderColor: '#667eea', backgroundColor: 'rgba(102,126,234,0.1)', fill: true, tension: 0.4, pointBackgroundColor: '#667eea', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 6 }] },
+        data: { labels, datasets: [{ label, data: monthlyData, borderColor: '#667eea', backgroundColor: 'rgba(102,126,234,0.1)', fill: true, tension: 0.4, pointBackgroundColor: '#667eea', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K' } } } }
     });
 }
@@ -506,8 +557,8 @@ function renderRevenueByTierChart(canvasId, deals) {
     
     state.charts[canvasId] = new Chart(ctx, {
         type: 'pie',
-        data: { labels: Object.keys(tierData), datasets: [{ data: Object.values(tierData), backgroundColor: [tierColors.Starter, tierColors.Growth, tierColors.Pro, tierColors.Enterprise], borderWidth: 3, borderColor: '#fff' }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 20, font: { size: 13 } } }, tooltip: { callbacks: { label: ctx => ' $' + ctx.raw.toLocaleString() } } } }
+        data: { labels: Object.keys(tierData), datasets: [{ data: Object.values(tierData), backgroundColor: [tierColors.Starter, tierColors.Growth, tierColors.Pro, tierColors.Enterprise], borderWidth: 2, borderColor: '#fff' }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 } } } } }
     });
 }
 
@@ -521,7 +572,7 @@ function renderEventsByTierChart(canvasId, deals) {
     
     state.charts[canvasId] = new Chart(ctx, {
         type: 'bar',
-        data: { labels: Object.keys(tierCounts), datasets: [{ label: 'Events', data: Object.values(tierCounts), backgroundColor: [tierColors.Starter, tierColors.Growth, tierColors.Pro, tierColors.Enterprise], borderRadius: 8 }] },
+        data: { labels: Object.keys(tierCounts), datasets: [{ label: 'Events', data: Object.values(tierCounts), backgroundColor: [tierColors.Starter, tierColors.Growth, tierColors.Pro, tierColors.Enterprise], borderRadius: 6 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
     });
 }
@@ -536,19 +587,27 @@ function renderRevenueByPricingChart(canvasId, deals) {
     
     state.charts[canvasId] = new Chart(ctx, {
         type: 'doughnut',
-        data: { labels: ['Public Price', 'Floor Price'], datasets: [{ data: [publicRevenue, floorRevenue], backgroundColor: ['#667eea', '#f59e0b'], borderWidth: 3, borderColor: '#fff' }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 20, font: { size: 13 } } }, tooltip: { callbacks: { label: ctx => ' $' + ctx.raw.toLocaleString() } } } }
+        data: { labels: ['Public Price', 'Floor Price'], datasets: [{ data: [publicRevenue, floorRevenue], backgroundColor: ['#667eea', '#f59e0b'], borderWidth: 2, borderColor: '#fff' }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 } } } } }
     });
 }
 
 // ============ INITIALIZATION ============
 async function init() {
-    console.log('%c🚀 NuConnect CRM v2.4 - Enhanced Phase 2', 'background: #667eea; color: white; font-size: 16px; padding: 10px; font-weight: bold;');
+    console.log('%c🚀 NuConnect CRM v3.0 - Full Phase 2', 'background: #667eea; color: white; font-size: 16px; padding: 10px;');
     
     if (state.baseId && state.apiKey) {
         await loadTeamMembers();
         await loadPricingRules();
-        populateLoginSelect();
+        
+        // Check for saved session
+        if (state.currentUser) {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            await initApp();
+        } else {
+            populateLoginSelect();
+        }
     } else {
         showConfigPrompt();
     }
@@ -572,8 +631,7 @@ function saveConfig() {
 }
 
 function openSettings() {
-    const modal = document.getElementById('modalContainer');
-    modal.innerHTML = `<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>⚙️ Settings</h2></div>
+    document.getElementById('modalContainer').innerHTML = `<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>⚙️ Settings</h2></div>
         <div class="form-group"><label>Airtable Base ID</label><input type="text" id="settingsBaseId" value="${state.baseId}"></div>
         <div class="form-group"><label>Airtable API Key</label><input type="password" id="settingsApiKey" value="${state.apiKey}"></div>
         <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveSettings()">Save & Reload</button></div>
@@ -586,6 +644,31 @@ function saveSettings() {
     if (!baseId || !apiKey) { alert('Both fields required'); return; }
     localStorage.setItem('airtable_baseId', baseId); localStorage.setItem('airtable_apiKey', apiKey);
     location.reload();
+}
+
+function openChangePasswordModal() {
+    document.getElementById('modalContainer').innerHTML = `<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>🔐 Change Password</h2></div>
+        <div class="form-group"><label>Current Password</label><input type="password" id="currentPassword" placeholder="Enter current password"></div>
+        <div class="form-group"><label>New Password</label><input type="password" id="newPassword" placeholder="Enter new password"></div>
+        <div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPassword" placeholder="Confirm new password"></div>
+        <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="changePassword()">Change Password</button></div>
+    </div></div>`;
+}
+
+function changePassword() {
+    const current = document.getElementById('currentPassword').value;
+    const newPass = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    
+    if (userPasswords[state.currentUser.name] !== current) { alert('Current password is incorrect'); return; }
+    if (newPass.length < 6) { alert('New password must be at least 6 characters'); return; }
+    if (newPass !== confirm) { alert('New passwords do not match'); return; }
+    
+    userPasswords[state.currentUser.name] = newPass;
+    savedPasswords[state.currentUser.name] = newPass;
+    localStorage.setItem('nuconnect_passwords', JSON.stringify(savedPasswords));
+    closeModal();
+    alert('Password changed successfully!');
 }
 
 async function loadTeamMembers() {
@@ -641,7 +724,14 @@ async function handleLogin() {
     if (userPasswords[selectedName] !== enteredPassword) { errorDiv.textContent = 'Incorrect password'; errorDiv.classList.remove('hidden'); passwordInput.value = ''; return; }
     
     const user = state.data.teamMembers.find(m => m.name === selectedName);
-    if (user) { state.currentUser = user; document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('appContainer').classList.remove('hidden'); await initApp(); }
+    if (user) { 
+        state.currentUser = user; 
+        // Save session to localStorage
+        localStorage.setItem('nuconnect_session', JSON.stringify(user));
+        document.getElementById('loginScreen').classList.add('hidden'); 
+        document.getElementById('appContainer').classList.remove('hidden'); 
+        await initApp(); 
+    }
 }
 
 async function initApp() {
@@ -663,7 +753,12 @@ function buildNavigation() {
     `).join('');
 }
 
-function logout() { if (confirm('Are you sure you want to logout?')) location.reload(); }
+function logout() { 
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('nuconnect_session');
+        location.reload(); 
+    }
+}
 
 // ============ AIRTABLE API ============
 async function fetchFromAirtable(tableName, method = 'GET', body = null) {
@@ -712,12 +807,6 @@ function getAccountName(accountField) {
     return '';
 }
 
-function formatDateCST(dateString) {
-    if (!dateString) return '-';
-    try { return new Date(dateString).toLocaleString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }); }
-    catch (e) { return dateString; }
-}
-
 function formatDateShort(dateString) {
     if (!dateString) return '-';
     try { return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
@@ -737,7 +826,8 @@ async function loadDeals() {
             tier: Array.isArray(r.fields['Tier (lookup)']) ? r.fields['Tier (lookup)'][0] : r.fields['Tier (lookup)'] || '',
             stage: r.fields.Stage || '', value: r.fields.Amount || 0, eventName: r.fields['Event Name'] || '',
             closeDate: r.fields['Close Date'] || '', createdTime: r.createdTime,
-            pricingType: r.fields['Pricing Type'] || 'Public Price'
+            pricingType: r.fields['Pricing Type'] || 'Public Price',
+            status: r.fields['Status'] || 'Active' // interested/uninterested
         }));
     }
 }
@@ -791,11 +881,13 @@ function getUserDeals() {
     return state.data.deals.filter(d => d.owner === state.currentUser.name);
 }
 
+function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
+
 // ============ CRUD OPERATIONS ============
 async function createDeal(dealData) {
     try {
         const response = await fetchFromAirtable('Deals', 'POST', { fields: dealData });
-        if (response && response.id) { await loadDeals(); closeModal(); renderView('pipeline'); alert('Deal created successfully!'); }
+        if (response && response.id) { await loadDeals(); closeModal(); renderView('pipeline'); alert('Deal created!'); }
     } catch (error) { alert('Error: ' + error.message); }
 }
 
@@ -821,30 +913,28 @@ async function logActivity(activityData) {
 }
 
 async function deleteContact(contactId) {
-    if (!confirm('Delete this contact? This cannot be undone.')) return;
+    if (!confirm('Delete this contact?')) return;
     try { await deleteFromAirtable('Contacts', contactId); await loadContacts(); closeModal(); renderView('contacts'); }
     catch (error) { alert('Error: ' + error.message); }
 }
 
 async function deleteAccount(accountId) {
-    if (!confirm('Delete this account? This cannot be undone.')) return;
+    if (!confirm('Delete this account?')) return;
     try { await deleteFromAirtable('Accounts', accountId); await loadAccounts(); closeModal(); renderView('accounts'); }
     catch (error) { alert('Error: ' + error.message); }
 }
 
 async function deleteDeal(dealId) {
-    if (!confirm('Delete this deal? This cannot be undone.')) return;
+    if (!confirm('Delete this deal?')) return;
     try { await deleteFromAirtable('Deals', dealId); await loadDeals(); closeModal(); renderView('pipeline'); }
     catch (error) { alert('Error: ' + error.message); }
 }
 
 async function deleteActivity(activityId) {
-    if (!confirm('Delete this activity? This cannot be undone.')) return;
+    if (!confirm('Delete this activity?')) return;
     try { await deleteFromAirtable('Activities', activityId); await loadActivities(); renderView('activity'); }
     catch (error) { alert('Error: ' + error.message); }
 }
-
-function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
 
 // ============ DETAIL MODALS ============
 function openAccountDetailModal(accountId) {
@@ -868,21 +958,17 @@ function openAccountDetailModal(accountId) {
                 <div class="profile-card-row"><span class="profile-card-label">Website</span><span class="profile-card-value">${account.website || '-'}</span></div>
                 <div class="profile-card-row"><span class="profile-card-label">Phone</span><span class="profile-card-value">${account.phone || '-'}</span></div>
                 <div class="profile-card-row"><span class="profile-card-label">Address</span><span class="profile-card-value">${account.address || '-'}</span></div>
-                <div class="profile-card-row"><span class="profile-card-label">Created</span><span class="profile-card-value">${formatDateShort(account.createdTime)}</span></div>
-                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
-                    <div style="font-weight: 600; margin-bottom: 12px;">📊 Related Data</div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center;">
-                        <div style="background: var(--bg-light); padding: 12px; border-radius: 8px;"><div style="font-size: 24px; font-weight: 700; color: var(--primary);">${contacts.length}</div><div style="font-size: 12px; color: var(--text-gray);">Contacts</div></div>
-                        <div style="background: var(--bg-light); padding: 12px; border-radius: 8px;"><div style="font-size: 24px; font-weight: 700; color: var(--primary);">${deals.length}</div><div style="font-size: 12px; color: var(--text-gray);">Deals</div></div>
-                        <div style="background: var(--bg-light); padding: 12px; border-radius: 8px;"><div style="font-size: 24px; font-weight: 700; color: var(--primary);">${activities.length}</div><div style="font-size: 12px; color: var(--text-gray);">Activities</div></div>
-                    </div>
+                <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+                    <div style="background: var(--bg-light); padding: 12px; border-radius: 8px;"><div style="font-size: 22px; font-weight: 700; color: var(--primary);">${contacts.length}</div><div style="font-size: 11px; color: var(--text-gray);">Contacts</div></div>
+                    <div style="background: var(--bg-light); padding: 12px; border-radius: 8px;"><div style="font-size: 22px; font-weight: 700; color: var(--primary);">${deals.length}</div><div style="font-size: 11px; color: var(--text-gray);">Deals</div></div>
+                    <div style="background: var(--bg-light); padding: 12px; border-radius: 8px;"><div style="font-size: 22px; font-weight: 700; color: var(--primary);">${activities.length}</div><div style="font-size: 11px; color: var(--text-gray);">Activities</div></div>
                 </div>
             </div>
             <div class="profile-card-actions">
                 <button class="btn btn-secondary btn-small" onclick="closeModal()">Close</button>
                 ${isLeadership ? `<button class="btn btn-secondary btn-small" onclick="closeModal(); openEditAccountModal('${accountId}')">✏️ Edit</button>` : ''}
-                ${isLeadership ? `<button class="btn btn-danger btn-small" onclick="deleteAccount('${accountId}')">🗑️ Delete</button>` : ''}
-                <button class="btn btn-primary btn-small" onclick="closeModal(); openLogActivityModalForAccount('${account.name}')">📝 Log Activity</button>
+                ${isLeadership ? `<button class="btn btn-danger btn-small" onclick="deleteAccount('${accountId}')">🗑️</button>` : ''}
+                <button class="btn btn-primary btn-small" onclick="closeModal(); openLogActivityModalForAccount('${account.name}')">📝 Activity</button>
             </div>
         </div></div>
     `;
@@ -907,19 +993,16 @@ function openContactDetailModal(contactId) {
                 <div class="profile-card-row"><span class="profile-card-label">Phone</span><span class="profile-card-value">${contact.phone || '-'}</span></div>
                 <div class="profile-card-row"><span class="profile-card-label">Company</span><span class="profile-card-value">${contact.company || '-'}</span></div>
                 <div class="profile-card-row"><span class="profile-card-label">Owner</span><span class="profile-card-value">${contact.owner || 'Unassigned'}</span></div>
-                <div class="profile-card-row"><span class="profile-card-label">Created</span><span class="profile-card-value">${formatDateShort(contact.createdTime)}</span></div>
-                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
-                    <div style="background: var(--bg-light); padding: 16px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 28px; font-weight: 700; color: var(--primary);">${activities.length}</div>
-                        <div style="font-size: 13px; color: var(--text-gray);">Total Activities</div>
-                    </div>
+                <div style="margin-top: 16px; background: var(--bg-light); padding: 14px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${activities.length}</div>
+                    <div style="font-size: 12px; color: var(--text-gray);">Total Activities</div>
                 </div>
             </div>
             <div class="profile-card-actions">
                 <button class="btn btn-secondary btn-small" onclick="closeModal()">Close</button>
                 ${isLeadership ? `<button class="btn btn-secondary btn-small" onclick="closeModal(); openEditContactModal('${contactId}')">✏️ Edit</button>` : ''}
-                ${isLeadership ? `<button class="btn btn-danger btn-small" onclick="deleteContact('${contactId}')">🗑️ Delete</button>` : ''}
-                <button class="btn btn-primary btn-small" onclick="closeModal(); openLogActivityModal()">📝 Log Activity</button>
+                ${isLeadership ? `<button class="btn btn-danger btn-small" onclick="deleteContact('${contactId}')">🗑️</button>` : ''}
+                <button class="btn btn-primary btn-small" onclick="closeModal(); openLogActivityModal()">📝 Activity</button>
             </div>
         </div></div>
     `;
@@ -934,7 +1017,7 @@ function openEditContactModal(contactId) {
         <div class="form-group"><label>Email *</label><input type="email" id="editContactEmail" value="${contact.email}"></div>
         <div class="form-group"><label>Phone</label><input type="tel" id="editContactPhone" value="${contact.phone || ''}"></div>
         <div class="form-group"><label>Title / Role</label><input type="text" id="editContactRole" value="${contact.role || ''}"></div>
-        <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEditContact('${contactId}')">Save Changes</button></div>
+        <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEditContact('${contactId}')">Save</button></div>
     </div></div>`;
 }
 
@@ -955,10 +1038,10 @@ function openEditAccountModal(accountId) {
                 ${industryOptions.map(ind => `<option value="${ind}" ${account.industry === ind ? 'selected' : ''}>${ind}</option>`).join('')}
             </select>
         </div>
-        <div class="form-group"><label>Website</label><input type="url" id="editAccountWebsite" value="${account.website || ''}" placeholder="https://"></div>
+        <div class="form-group"><label>Website</label><input type="url" id="editAccountWebsite" value="${account.website || ''}"></div>
         <div class="form-group"><label>Phone</label><input type="tel" id="editAccountPhone" value="${account.phone || ''}"></div>
         <div class="form-group"><label>Address</label><input type="text" id="editAccountAddress" value="${account.address || ''}"></div>
-        <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEditAccount('${accountId}')">Save Changes</button></div>
+        <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEditAccount('${accountId}')">Save</button></div>
     </div></div>`;
 }
 
@@ -986,10 +1069,9 @@ function openAddDealModal() {
                 <option value="Pro">Pro ($2,000)</option>
                 <option value="Enterprise">Enterprise ($4,200)</option>
             </select>
-            <small>Selecting a tier auto-fills the deal value</small>
         </div>
         <div class="form-group"><label>Deal Value *</label><input type="number" id="dealValue" readonly style="background: var(--bg-light);"></div>
-        <div class="form-group"><label>Stage *</label>
+        <div class="form-group"><label>Stage</label>
             <select id="dealStage">
                 <option value="Qualified">Qualified</option>
                 <option value="Proposal Sent">Proposal Sent</option>
@@ -998,7 +1080,7 @@ function openAddDealModal() {
             </select>
         </div>
         <div class="form-group"><label>Event Name</label><input type="text" id="dealEventName" placeholder="Name of the event"></div>
-        <div class="form-group"><label>Expected Close Date</label><input type="date" id="dealCloseDate"></div>
+        <div class="form-group"><label>Close Date</label><input type="date" id="dealCloseDate"></div>
         <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveDeal()">Create Deal</button></div>
     </div></div>`;
 }
@@ -1036,7 +1118,6 @@ function openAddContactModal() {
             </select>
         </div>
         <div class="form-group"><label>Title / Role</label><input type="text" id="contactRole" placeholder="Event Coordinator"></div>
-        <small style="display: block; margin-top: 16px; color: var(--text-gray);">Owner: <strong>${state.currentUser.name}</strong> (auto-assigned)</small>
         <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveContact()">Create Contact</button></div>
     </div></div>`;
 }
@@ -1062,7 +1143,6 @@ function openAddAccountModal() {
         <div class="form-group"><label>Website</label><input type="url" id="accountWebsite" placeholder="https://company.com"></div>
         <div class="form-group"><label>Phone</label><input type="tel" id="accountPhone" placeholder="(555) 123-4567"></div>
         <div class="form-group"><label>Address</label><input type="text" id="accountAddress" placeholder="123 Main St, City, State"></div>
-        <small style="display: block; margin-top: 16px; color: var(--text-gray);">Owner: <strong>${state.currentUser.name}</strong> (auto-assigned)</small>
         <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveAccount()">Create Account</button></div>
     </div></div>`;
 }
@@ -1091,8 +1171,7 @@ function openLogActivityModal() {
                 <option value="Demo">🎥 Demo</option>
                 <option value="Proposal">📄 Proposal Sent</option>
                 <option value="Follow-up">🔄 Follow-up</option>
-                <option value="Meeting Booked">📅 Meeting Booked</option>
-                <option value="Meeting Held">✅ Meeting Held</option>
+                <option value="Meeting">📅 Meeting</option>
             </select>
         </div>
         <div class="form-group"><label>Account *</label>
@@ -1101,14 +1180,8 @@ function openLogActivityModal() {
                 ${state.data.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('')}
             </select>
         </div>
-        <div class="form-group"><label>Contact</label>
-            <select id="activityContact">
-                <option value="">Select a contact (optional)...</option>
-                ${state.data.contacts.map(c => `<option value="${c.id}">${c.name}${c.company ? ` - ${c.company}` : ''}</option>`).join('')}
-            </select>
-        </div>
-        <div class="form-group"><label>Result / Outcome *</label><textarea id="activityResult" placeholder="What happened? What was discussed?"></textarea></div>
-        <div class="form-group"><label>Next Steps</label><textarea id="activityNextSteps" placeholder="What needs to happen next?" style="min-height: 80px;"></textarea></div>
+        <div class="form-group"><label>Result / Outcome *</label><textarea id="activityResult" placeholder="What happened?"></textarea></div>
+        <div class="form-group"><label>Next Steps</label><textarea id="activityNextSteps" placeholder="What's next?" style="min-height: 80px;"></textarea></div>
         <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveActivity()">Log Activity</button></div>
     </div></div>`;
 }
@@ -1138,9 +1211,7 @@ function saveActivity() {
         'Account': accountName, 'Owner': state.currentUser.name, 'Result': result
     };
     
-    const contactId = document.getElementById('activityContact').value;
     const nextSteps = document.getElementById('activityNextSteps').value;
-    if (contactId) activityData['Contact'] = [contactId];
     if (nextSteps) activityData['Next Steps'] = nextSteps;
     logActivity(activityData);
 }
@@ -1149,11 +1220,23 @@ function openDealDetailsModal(dealId) {
     const deal = state.data.deals.find(d => d.id === dealId);
     if (!deal) return;
     const isLeadership = state.currentUser.role === 'Leadership';
+    
+    // Calculate touchpoint week
+    const dealAge = getDaysSince(deal.createdTime);
+    const currentWeek = Math.min(Math.ceil(dealAge / 7) || 1, 9);
+    const cadenceItem = TOUCHPOINT_CADENCE[currentWeek - 1];
+    
     document.getElementById('modalContainer').innerHTML = `<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>📊 ${deal.name}</h2></div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-            <div style="background: var(--bg-light); padding: 16px; border-radius: 12px; text-align: center;"><div style="font-size: 28px; font-weight: 700; color: var(--primary);">$${deal.value.toLocaleString()}</div><div style="font-size: 13px; color: var(--text-gray);">Deal Value</div></div>
-            <div style="background: var(--bg-light); padding: 16px; border-radius: 12px; text-align: center;"><span class="badge badge-${deal.tier.toLowerCase()}" style="font-size: 14px;">${deal.tier}</span><div style="font-size: 13px; color: var(--text-gray); margin-top: 8px;">Tier</div></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+            <div style="background: var(--bg-light); padding: 14px; border-radius: 10px; text-align: center;"><div style="font-size: 26px; font-weight: 700; color: var(--primary);">$${deal.value.toLocaleString()}</div><div style="font-size: 12px; color: var(--text-gray);">Deal Value</div></div>
+            <div style="background: var(--bg-light); padding: 14px; border-radius: 10px; text-align: center;"><span class="badge badge-${deal.tier.toLowerCase()}" style="font-size: 13px;">${deal.tier}</span><div style="font-size: 12px; color: var(--text-gray); margin-top: 6px;">Tier</div></div>
         </div>
+        
+        <div style="background: #dbeafe; padding: 16px; border-radius: 10px; margin-bottom: 20px;">
+            <div style="font-weight: 700; font-size: 14px; margin-bottom: 8px;">📅 Week ${currentWeek} - ${cadenceItem.action}</div>
+            <div style="font-size: 13px; color: var(--text-gray);">${cadenceItem.goal}</div>
+        </div>
+        
         <div class="form-group"><label>Event Name</label><input type="text" value="${deal.eventName || 'Not set'}" disabled></div>
         <div class="form-group"><label>Owner</label><input type="text" value="${deal.owner}" disabled></div>
         <div class="form-group"><label>Current Stage</label>
@@ -1165,20 +1248,28 @@ function openDealDetailsModal(dealId) {
                 <option value="Closed Lost" ${deal.stage==='Closed Lost'?'selected':''}>Closed Lost</option>
             </select>
         </div>
+        <div class="form-group"><label>Prospect Status</label>
+            <select id="dealStatusEdit">
+                <option value="Active" ${deal.status==='Active'?'selected':''}>Active - Pursuing</option>
+                <option value="Interested" ${deal.status==='Interested'?'selected':''}>Interested - Hot Lead</option>
+                <option value="Uninterested" ${deal.status==='Uninterested'?'selected':''}>Uninterested - Stop Cadence</option>
+            </select>
+        </div>
         <div class="modal-actions">
             ${isLeadership ? `<button class="btn btn-danger" onclick="deleteDeal('${dealId}')">🗑️ Delete</button>` : ''}
             <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-primary" onclick="updateDealStage('${dealId}')">Update Stage</button>
+            <button class="btn btn-primary" onclick="updateDealStage('${dealId}')">Update</button>
         </div>
     </div></div>`;
 }
 
 async function updateDealStage(dealId, newStage) {
     if (!newStage) newStage = document.getElementById('dealStageEdit').value;
+    const newStatus = document.getElementById('dealStatusEdit')?.value || 'Active';
     try {
         await fetch(`https://api.airtable.com/v0/${state.baseId}/Deals/${dealId}`, {
             method: 'PATCH', headers: { 'Authorization': `Bearer ${state.apiKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fields: { 'Stage': newStage } })
+            body: JSON.stringify({ fields: { 'Stage': newStage, 'Status': newStatus } })
         });
         await loadDeals(); closeModal(); renderView('pipeline');
     } catch (error) { alert(`Error: ${error.message}`); }
@@ -1192,11 +1283,13 @@ function renderView(viewName) {
     state.filterMonth = null;
     document.getElementById('pageTitle').textContent = {
         'dashboard': 'Dashboard', 'pipeline': 'Pipeline', 'contacts': 'Contacts',
-        'accounts': 'Accounts', 'activity': 'Activities', 'tasks': 'Tasks',
-        'leadership': 'Analytics', 'team': 'Team Overview'
+        'accounts': 'Accounts', 'events': 'Events', 'activity': 'Activities', 
+        'reports': 'Reports', 'leadership': 'Analytics', 'team': 'Team Overview'
     }[viewName] || viewName;
     
-    const views = { 'dashboard': renderDashboard, 'pipeline': renderPipeline, 'tasks': renderTasks, 'contacts': renderContacts, 'accounts': renderAccounts, 'activity': renderActivityView, 'leadership': renderLeadershipAnalytics, 'team': renderTeamOverview };
+    const views = { 'dashboard': renderDashboard, 'pipeline': renderPipeline, 'contacts': renderContacts, 
+        'accounts': renderAccounts, 'events': renderEvents, 'activity': renderActivityView, 
+        'reports': renderReports, 'leadership': renderLeadershipAnalytics, 'team': renderTeamOverview };
     if (views[viewName]) { views[viewName](); buildNavigation(); }
 }
 
@@ -1216,7 +1309,15 @@ function renderRepDashboard() {
     const todayActivities = userActivities.filter(a => a.date && a.date.split('T')[0] === todayISO);
     const todayTouchpoints = todayActivities.length;
     const todayNewLeads = state.data.contacts.filter(c => c.owner === state.currentUser.name && c.createdTime && c.createdTime.split('T')[0] === todayISO).length;
-    const todayDiscoveryCalls = todayActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+    const todayCalls = todayActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+    
+    // Activity breakdown - All time
+    const calls = userActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+    const emails = userActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+    const linkedin = userActivities.filter(a => a.type && a.type.toLowerCase().includes('linkedin')).length;
+    const demos = userActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
+    const proposals = userActivities.filter(a => a.type && a.type.toLowerCase().includes('proposal')).length;
+    const meetings = userActivities.filter(a => a.type && a.type.toLowerCase().includes('meeting')).length;
     
     const monthClosedDeals = deals.filter(d => {
         if (!d.stage.toLowerCase().includes('won')) return false;
@@ -1232,13 +1333,13 @@ function renderRepDashboard() {
     const qualityScore = monthClosedDeals.length > 0 ? (growthPlusCount / monthClosedDeals.length) * 100 : 0;
     
     const pipelineDeals = deals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'));
-    
-    // Stale deals
     const staleDeals = pipelineDeals.filter(d => {
         const lastActivity = userActivities.filter(a => a.account && d.name.toLowerCase().includes(a.account.toLowerCase())).sort((x,y) => new Date(y.date) - new Date(x.date))[0];
         if (!lastActivity) return true;
         return getDaysSince(lastActivity.date) >= 5;
     });
+    
+    const allClosedDeals = deals.filter(d => d.stage.toLowerCase().includes('won')).sort((a, b) => new Date(b.closeDate || b.createdTime) - new Date(a.closeDate || a.createdTime));
     
     const getStatusColor = (value, target) => value >= target ? 'var(--success)' : value >= target * 0.5 ? 'var(--warning)' : 'var(--danger)';
     const getStatusIcon = (value, target) => value >= target ? '✅' : value >= target * 0.5 ? '⚠️' : '❌';
@@ -1248,93 +1349,112 @@ function renderRepDashboard() {
         <div class="quick-actions">
             <button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ New Deal</button>
             <button class="btn btn-secondary btn-small" onclick="openLogActivityModal()">📝 Log Activity</button>
-            <button class="btn btn-secondary btn-small" onclick="openAddContactModal()">👤 Add Contact</button>
-            <button class="btn btn-secondary btn-small" onclick="openAddAccountModal()">🏢 Add Account</button>
+            <button class="btn btn-secondary btn-small" onclick="openAddContactModal()">👤 Contact</button>
+            <button class="btn btn-secondary btn-small" onclick="openAddAccountModal()">🏢 Account</button>
         </div>
         
         <div class="card">
-            <div class="card-header"><h2 class="card-title">📅 Daily Scorecard - ${today.toLocaleDateString('en-US', {weekday:'long',month:'short',day:'numeric'})}</h2></div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;">
-                <div class="kpi-card" style="border-left:5px solid ${getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin)};">
-                    <div style="display:flex;justify-content:space-between;"><span class="kpi-label">Touchpoints Today</span><span style="font-size:24px;">${getStatusIcon(todayTouchpoints,targets.dailyTouchpointsMin)}</span></div>
+            <div class="card-header"><h2 class="card-title">📅 Daily Scorecard</h2><span style="font-size:13px;color:var(--text-gray);">${today.toLocaleDateString('en-US', {weekday:'long',month:'short',day:'numeric'})}</span></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+                <div class="kpi-card" style="border-left:4px solid ${getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin)};">
+                    <div style="display:flex;justify-content:space-between;"><span class="kpi-label">Touchpoints</span><span>${getStatusIcon(todayTouchpoints,targets.dailyTouchpointsMin)}</span></div>
                     <div class="kpi-value" style="color:${getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin)};">${todayTouchpoints}</div>
-                    <div style="font-size:13px;color:var(--text-gray);">Target: ${targets.dailyTouchpointsMin}-${targets.dailyTouchpointsMax}</div>
+                    <div style="font-size:12px;color:var(--text-gray);">Target: ${targets.dailyTouchpointsMin}-${targets.dailyTouchpointsMax}</div>
                     <div class="progress-bar"><div class="progress-fill" style="width:${Math.min((todayTouchpoints/targets.dailyTouchpointsMax)*100,100)}%;background:${getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin)};"></div></div>
                 </div>
-                <div class="kpi-card" style="border-left:5px solid ${getStatusColor(todayNewLeads,3)};">
-                    <div style="display:flex;justify-content:space-between;"><span class="kpi-label">New Leads Today</span><span style="font-size:24px;">${getStatusIcon(todayNewLeads,3)}</span></div>
+                <div class="kpi-card" style="border-left:4px solid ${getStatusColor(todayCalls,targets.dailyCalls)};">
+                    <div style="display:flex;justify-content:space-between;"><span class="kpi-label">Calls Made</span><span>${getStatusIcon(todayCalls,targets.dailyCalls)}</span></div>
+                    <div class="kpi-value" style="color:${getStatusColor(todayCalls,targets.dailyCalls)};">${todayCalls}</div>
+                    <div style="font-size:12px;color:var(--text-gray);">Target: ${targets.dailyCalls}+</div>
+                </div>
+                <div class="kpi-card" style="border-left:4px solid ${getStatusColor(todayNewLeads,3)};">
+                    <div style="display:flex;justify-content:space-between;"><span class="kpi-label">New Leads</span><span>${getStatusIcon(todayNewLeads,3)}</span></div>
                     <div class="kpi-value" style="color:${getStatusColor(todayNewLeads,3)};">${todayNewLeads}</div>
-                    <div style="font-size:13px;color:var(--text-gray);">Target: 3-5</div>
-                    <div class="progress-bar"><div class="progress-fill" style="width:${Math.min((todayNewLeads/5)*100,100)}%;background:${getStatusColor(todayNewLeads,3)};"></div></div>
+                    <div style="font-size:12px;color:var(--text-gray);">Target: 3-5</div>
                 </div>
-                <div class="kpi-card" style="border-left:5px solid ${getStatusColor(todayDiscoveryCalls,targets.dailyDiscovery)};">
-                    <div style="display:flex;justify-content:space-between;"><span class="kpi-label">Discovery Calls</span><span style="font-size:24px;">${getStatusIcon(todayDiscoveryCalls,targets.dailyDiscovery)}</span></div>
-                    <div class="kpi-value" style="color:${getStatusColor(todayDiscoveryCalls,targets.dailyDiscovery)};">${todayDiscoveryCalls}</div>
-                    <div style="font-size:13px;color:var(--text-gray);">Target: ${targets.dailyDiscovery}+</div>
-                </div>
-                <div class="kpi-card" style="border-left:5px solid ${staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)'};">
-                    <div style="display:flex;justify-content:space-between;"><span class="kpi-label">Deals Need Attention</span><span style="font-size:24px;">${staleDeals.length > 0 ? '⚠️' : '✅'}</span></div>
+                <div class="kpi-card" style="border-left:4px solid ${staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)'};">
+                    <div style="display:flex;justify-content:space-between;"><span class="kpi-label">Needs Attention</span><span>${staleDeals.length > 0 ? '⚠️' : '✅'}</span></div>
                     <div class="kpi-value" style="color:${staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)'};">${staleDeals.length}</div>
-                    <div style="font-size:13px;color:var(--text-gray);">No activity in 5+ days</div>
+                    <div style="font-size:12px;color:var(--text-gray);">Stale 5+ days</div>
                 </div>
             </div>
         </div>
 
         <div class="kpi-grid">
             <div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:16px;opacity:0.9;">💰 MONTHLY REVENUE</div>
-                <div style="font-size:44px;font-weight:800;margin-bottom:8px;">$${(monthRevenue/1000).toFixed(1)}K</div>
-                <div style="font-size:14px;opacity:0.9;margin-bottom:16px;">Target: $${(targets.monthlyRevenueMin/1000).toFixed(1)}K - $${(targets.monthlyRevenueMax/1000).toFixed(1)}K</div>
-                <div style="background:rgba(255,255,255,0.2);height:10px;border-radius:5px;"><div style="width:${Math.min(revenuePercentOfMax,100)}%;height:100%;background:white;border-radius:5px;"></div></div>
-                <div style="font-size:14px;font-weight:600;margin-top:10px;">${revenuePercentOfMax.toFixed(0)}% of Max Target</div>
+                <div style="font-size:12px;font-weight:600;margin-bottom:12px;opacity:0.9;">💰 MONTHLY REVENUE</div>
+                <div style="font-size:40px;font-weight:800;margin-bottom:6px;">$${(monthRevenue/1000).toFixed(1)}K</div>
+                <div style="font-size:13px;opacity:0.9;margin-bottom:12px;">Target: $${(targets.monthlyRevenueMin/1000).toFixed(1)}K - $${(targets.monthlyRevenueMax/1000).toFixed(1)}K</div>
+                <div style="background:rgba(255,255,255,0.2);height:8px;border-radius:4px;"><div style="width:${Math.min(revenuePercentOfMax,100)}%;height:100%;background:white;border-radius:4px;"></div></div>
+                <div style="font-size:13px;font-weight:600;margin-top:8px;">${revenuePercentOfMax.toFixed(0)}% of Max</div>
             </div>
             <div class="kpi-card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:16px;opacity:0.9;">🎉 EVENTS CLOSED</div>
-                <div style="font-size:44px;font-weight:800;margin-bottom:8px;">${monthClosedDeals.length}</div>
-                <div style="font-size:14px;opacity:0.9;margin-bottom:16px;">Target: ${targets.monthlyEventsMin}-${targets.monthlyEventsMax} events</div>
-                <div style="background:rgba(255,255,255,0.2);height:10px;border-radius:5px;"><div style="width:${Math.min(eventsPercentOfMax,100)}%;height:100%;background:white;border-radius:5px;"></div></div>
-                <div style="font-size:14px;font-weight:600;margin-top:10px;">${eventsPercentOfMax.toFixed(0)}% of Max Target</div>
+                <div style="font-size:12px;font-weight:600;margin-bottom:12px;opacity:0.9;">🎉 EVENTS CLOSED</div>
+                <div style="font-size:40px;font-weight:800;margin-bottom:6px;">${monthClosedDeals.length}</div>
+                <div style="font-size:13px;opacity:0.9;margin-bottom:12px;">Target: ${targets.monthlyEventsMin}-${targets.monthlyEventsMax}</div>
+                <div style="background:rgba(255,255,255,0.2);height:8px;border-radius:4px;"><div style="width:${Math.min(eventsPercentOfMax,100)}%;height:100%;background:white;border-radius:4px;"></div></div>
+                <div style="font-size:13px;font-weight:600;margin-top:8px;">${eventsPercentOfMax.toFixed(0)}% of Max</div>
             </div>
             <div class="kpi-card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:16px;opacity:0.9;">📊 QUALITY SCORE</div>
-                <div style="font-size:44px;font-weight:800;margin-bottom:8px;">${qualityScore.toFixed(0)}%</div>
-                <div style="font-size:14px;opacity:0.9;margin-bottom:16px;">${qualityScore >= 70 ? '✅' : '⚠️'} 70%+ Growth+ Required</div>
-                <div style="background:rgba(255,255,255,0.2);height:10px;border-radius:5px;"><div style="width:${Math.min(qualityScore,100)}%;height:100%;background:white;border-radius:5px;"></div></div>
+                <div style="font-size:12px;font-weight:600;margin-bottom:12px;opacity:0.9;">📊 QUALITY SCORE</div>
+                <div style="font-size:40px;font-weight:800;margin-bottom:6px;">${qualityScore.toFixed(0)}%</div>
+                <div style="font-size:13px;opacity:0.9;">${qualityScore >= 70 ? '✅' : '⚠️'} 70%+ Growth+ Required</div>
             </div>
             <div class="kpi-card" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 100%);color:white;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:16px;opacity:0.9;">💵 AVG DEAL SIZE</div>
-                <div style="font-size:44px;font-weight:800;margin-bottom:8px;">${monthClosedDeals.length > 0 ? '$' + Math.round(monthRevenue/monthClosedDeals.length).toLocaleString() : '$0'}</div>
-                <div style="font-size:14px;opacity:0.9;">This month</div>
+                <div style="font-size:12px;font-weight:600;margin-bottom:12px;opacity:0.9;">💵 AVG DEAL SIZE</div>
+                <div style="font-size:40px;font-weight:800;margin-bottom:6px;">${monthClosedDeals.length > 0 ? '$' + Math.round(monthRevenue/monthClosedDeals.length).toLocaleString() : '$0'}</div>
+                <div style="font-size:13px;opacity:0.9;">This month</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">📊 Activity Breakdown (All Time)</h2></div>
+            <div class="activity-stats">
+                <div class="stat-card"><div class="stat-icon">📞</div><div class="stat-value">${calls}</div><div class="stat-label">Calls Made</div></div>
+                <div class="stat-card"><div class="stat-icon">📧</div><div class="stat-value">${emails}</div><div class="stat-label">Emails Sent</div></div>
+                <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-value">${linkedin}</div><div class="stat-label">LinkedIn</div></div>
+                <div class="stat-card"><div class="stat-icon">🎥</div><div class="stat-value">${demos}</div><div class="stat-label">Demos</div></div>
+                <div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value">${proposals}</div><div class="stat-label">Proposals</div></div>
+                <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value">${meetings}</div><div class="stat-label">Meetings</div></div>
+                <div class="stat-card"><div class="stat-icon">🎉</div><div class="stat-value">${allClosedDeals.length}</div><div class="stat-label">Total Wins</div></div>
             </div>
         </div>
 
         <div class="charts-grid">
             <div class="chart-card"><h3>📈 Revenue Trend (6 Months)</h3><div class="chart-container"><canvas id="repRevenueTrendChart"></canvas></div></div>
             <div class="chart-card"><h3>🥧 Revenue by Tier</h3><div class="chart-container"><canvas id="repRevenueByTierChart"></canvas></div></div>
-            <div class="chart-card"><h3>📊 Events by Tier</h3><div class="chart-container"><canvas id="repEventsByTierChart"></canvas></div></div>
-            <div class="chart-card"><h3>💰 Revenue by Pricing Type</h3><div class="chart-container"><canvas id="repRevenueByPricingChart"></canvas></div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">🏆 Recent Wins</h2></div>
+            ${allClosedDeals.length === 0 ? '<p style="text-align:center;color:var(--text-gray);padding:30px;">No wins yet. Keep closing!</p>' : `
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                ${allClosedDeals.slice(0,5).map(deal => {
+                    const daysAgo = getDaysSince(deal.closeDate);
+                    return `<div style="background:var(--bg-light);padding:14px 18px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
+                        <div><div style="font-weight:600;font-size:15px;margin-bottom:4px;">${deal.name}</div><div style="font-size:12px;color:var(--text-gray);"><span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span> ${daysAgo !== null ? `• ${daysAgo === 0 ? 'Today' : daysAgo + ' days ago'}` : ''}</div></div>
+                        <div style="font-size:20px;font-weight:700;color:var(--primary);">$${deal.value.toLocaleString()}</div>
+                    </div>`;
+                }).join('')}
+            </div>`}
         </div>
     `;
     
     setTimeout(() => {
         renderRevenueTrendChart('repRevenueTrendChart', deals);
         renderRevenueByTierChart('repRevenueByTierChart', deals);
-        renderEventsByTierChart('repEventsByTierChart', deals);
-        renderRevenueByPricingChart('repRevenueByPricingChart', deals);
     }, 100);
 }
 
-// Leadership Dashboard - Team KPIs, Alerts, Sales Cards
+// Leadership Dashboard
 function renderLeadershipDashboard() {
     const allDeals = state.data.deals;
     const allActivities = state.data.activities;
     const today = new Date();
     const todayISO = today.toISOString().split('T')[0];
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const weekStart = new Date(today); weekStart.setDate(today.getDate() - today.getDay());
     
     const todayActivities = allActivities.filter(a => a.date && a.date.split('T')[0] === todayISO);
-    const weekActivities = allActivities.filter(a => a.date && new Date(a.date) >= weekStart);
     
     const monthClosedDeals = allDeals.filter(d => {
         if (!d.stage.toLowerCase().includes('won')) return false;
@@ -1365,7 +1485,7 @@ function renderLeadershipDashboard() {
         if (attainment < 70) { statusClass = 'rep-card-red'; statusEmoji = '🔴'; }
         else if (attainment < 100) { statusClass = 'rep-card-yellow'; statusEmoji = '🟡'; }
         
-        return { id: member.id, name: member.name, role: member.role, quota: targets.monthlyRevenueMax, revenue: memberRevenue, attainment, deals: memberMonthWon.length, touchpoints: memberTouchpoints, statusClass, statusEmoji, activePipeline: memberDeals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost')).length };
+        return { id: member.id, name: member.name, role: member.role, quota: targets.monthlyRevenueMax, revenue: memberRevenue, attainment, deals: memberMonthWon.length, touchpoints: memberTouchpoints, statusClass, statusEmoji };
     });
     
     const needsAttention = repCards.filter(r => r.attainment < 70);
@@ -1373,37 +1493,35 @@ function renderLeadershipDashboard() {
 
     document.getElementById('contentArea').innerHTML = `
         <div class="quick-actions">
-            <button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ New Deal</button>
-            <button class="btn btn-secondary btn-small" onclick="openLogActivityModal()">📝 Log Activity</button>
-            <button class="btn btn-secondary btn-small" onclick="openAddContactModal()">👤 Add Contact</button>
-            <button class="btn btn-secondary btn-small" onclick="openAddAccountModal()">🏢 Add Account</button>
+            <button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ Deal</button>
+            <button class="btn btn-secondary btn-small" onclick="openLogActivityModal()">📝 Activity</button>
+            <button class="btn btn-secondary btn-small" onclick="openAddContactModal()">👤 Contact</button>
+            <button class="btn btn-secondary btn-small" onclick="openAddAccountModal()">🏢 Account</button>
         </div>
         
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:24px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:20px;">
             <div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:12px;opacity:0.9;">💰 TEAM MONTHLY REVENUE</div>
-                <div style="font-size:44px;font-weight:800;margin-bottom:8px;">$${(monthRevenue/1000).toFixed(1)}K</div>
-                <div style="font-size:14px;opacity:0.9;margin-bottom:16px;">Target: $${KPI_TARGETS.Team.monthlyRevenueMin/1000}K - $${KPI_TARGETS.Team.monthlyRevenueMax/1000}K</div>
-                <div style="background:rgba(255,255,255,0.2);height:10px;border-radius:5px;"><div style="width:${Math.min(revenuePercentOfMax,100)}%;height:100%;background:white;border-radius:5px;"></div></div>
-                <div style="font-size:14px;font-weight:600;margin-top:10px;">${revenuePercentOfMax.toFixed(0)}% of Max Target</div>
+                <div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">💰 TEAM REVENUE</div>
+                <div style="font-size:36px;font-weight:800;margin-bottom:6px;">$${(monthRevenue/1000).toFixed(1)}K</div>
+                <div style="font-size:12px;opacity:0.9;">Target: $${KPI_TARGETS.Team.monthlyRevenueMin/1000}K-$${KPI_TARGETS.Team.monthlyRevenueMax/1000}K</div>
+                <div style="background:rgba(255,255,255,0.2);height:6px;border-radius:3px;margin-top:10px;"><div style="width:${Math.min(revenuePercentOfMax,100)}%;height:100%;background:white;border-radius:3px;"></div></div>
+                <div style="font-size:12px;font-weight:600;margin-top:6px;">${revenuePercentOfMax.toFixed(0)}% of Max</div>
             </div>
             <div class="kpi-card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:12px;opacity:0.9;">🎉 TEAM EVENTS CLOSED</div>
-                <div style="font-size:44px;font-weight:800;margin-bottom:8px;">${monthClosedDeals.length}</div>
-                <div style="font-size:14px;opacity:0.9;margin-bottom:16px;">Target: ${KPI_TARGETS.Team.monthlyEventsMin}-${KPI_TARGETS.Team.monthlyEventsMax}</div>
-                <div style="background:rgba(255,255,255,0.2);height:10px;border-radius:5px;"><div style="width:${Math.min(eventsPercentOfMax,100)}%;height:100%;background:white;border-radius:5px;"></div></div>
-                <div style="font-size:14px;font-weight:600;margin-top:10px;">${eventsPercentOfMax.toFixed(0)}% of Max Target</div>
+                <div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">🎉 TEAM EVENTS</div>
+                <div style="font-size:36px;font-weight:800;margin-bottom:6px;">${monthClosedDeals.length}</div>
+                <div style="font-size:12px;opacity:0.9;">Target: ${KPI_TARGETS.Team.monthlyEventsMin}-${KPI_TARGETS.Team.monthlyEventsMax}</div>
+                <div style="background:rgba(255,255,255,0.2);height:6px;border-radius:3px;margin-top:10px;"><div style="width:${Math.min(eventsPercentOfMax,100)}%;height:100%;background:white;border-radius:3px;"></div></div>
             </div>
             <div class="kpi-card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:12px;opacity:0.9;">📊 QUALITY SCORE</div>
-                <div style="font-size:44px;font-weight:800;margin-bottom:8px;">${qualityScore.toFixed(0)}%</div>
-                <div style="font-size:14px;opacity:0.9;">Growth+ Tier (70% Target)</div>
+                <div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">📊 QUALITY</div>
+                <div style="font-size:36px;font-weight:800;margin-bottom:6px;">${qualityScore.toFixed(0)}%</div>
+                <div style="font-size:12px;opacity:0.9;">Growth+ (70% Target)</div>
             </div>
             <div class="kpi-card" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 100%);color:white;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:12px;opacity:0.9;">🔥 TEAM ACTIVITY TODAY</div>
-                <div style="font-size:44px;font-weight:800;margin-bottom:8px;">${todayActivities.length}</div>
-                <div style="font-size:14px;opacity:0.9;">Touchpoints</div>
-                <div style="font-size:13px;opacity:0.8;margin-top:8px;">Week: ${weekActivities.length}</div>
+                <div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">🔥 TODAY</div>
+                <div style="font-size:36px;font-weight:800;margin-bottom:6px;">${todayActivities.length}</div>
+                <div style="font-size:12px;opacity:0.9;">Touchpoints</div>
             </div>
         </div>
         
@@ -1418,75 +1536,24 @@ function renderLeadershipDashboard() {
         ` : ''}
 
         <div class="card">
-            <div class="card-header"><h2 class="card-title">👥 Sales Team Performance</h2><span style="font-size:13px;color:var(--text-gray);">Click for details</span></div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+            <div class="card-header"><h2 class="card-title">👥 Sales Team</h2></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
                 ${repCards.map(rep => `
                     <div class="kpi-card ${rep.statusClass}" onclick="openRepDetailsModal('${rep.id}')" style="cursor:pointer;">
-                        <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
-                            <div><div style="font-size:18px;font-weight:700;">${rep.statusEmoji} ${rep.name}</div><div style="font-size:13px;color:var(--text-gray);">${rep.role}</div></div>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                            <div><div style="font-size:16px;font-weight:700;">${rep.statusEmoji} ${rep.name}</div><div style="font-size:12px;color:var(--text-gray);">${rep.role}</div></div>
                         </div>
-                        <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
-                            <div><div style="font-size:13px;color:var(--text-gray);">This Month</div><div style="font-size:30px;font-weight:700;color:var(--primary);">$${(rep.revenue/1000).toFixed(1)}K</div></div>
-                            <div style="text-align:right;"><div style="font-size:13px;color:var(--text-gray);">Today</div><div style="font-size:26px;font-weight:700;color:var(--primary);">${rep.touchpoints}</div><div style="font-size:11px;color:var(--text-gray);">touchpoints</div></div>
+                        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                            <div><div style="font-size:12px;color:var(--text-gray);">Month</div><div style="font-size:26px;font-weight:700;color:var(--primary);">$${(rep.revenue/1000).toFixed(1)}K</div></div>
+                            <div style="text-align:right;"><div style="font-size:12px;color:var(--text-gray);">Today</div><div style="font-size:22px;font-weight:700;color:var(--primary);">${rep.touchpoints}</div></div>
                         </div>
-                        <div style="font-size:13px;color:var(--text-gray);margin-bottom:14px;">${rep.deals} deals • ${rep.activePipeline} in pipeline</div>
                         <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(rep.attainment,100)}%;background:${rep.attainment >= 100 ? 'var(--success)' : rep.attainment >= 70 ? 'var(--warning)' : 'var(--danger)'};"></div></div>
-                        <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:8px;"><span>Max: $${(rep.quota/1000).toFixed(0)}K</span><span style="font-weight:700;color:${rep.attainment >= 100 ? 'var(--success)' : rep.attainment >= 70 ? 'var(--warning)' : 'var(--danger)'};">${rep.attainment.toFixed(0)}%</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:6px;"><span>Max: $${(rep.quota/1000).toFixed(0)}K</span><span style="font-weight:700;">${rep.attainment.toFixed(0)}%</span></div>
                     </div>
                 `).join('')}
             </div>
         </div>
     `;
-}
-
-// Leadership Analytics Tab - Charts, Floor Capacity
-function renderLeadershipAnalytics() {
-    const allDeals = state.data.deals;
-    const today = new Date();
-    const yearStart = new Date(today.getFullYear(), 0, 1);
-    
-    const yearDeals = allDeals.filter(d => { const dt = d.createdTime ? new Date(d.createdTime) : null; return dt && dt >= yearStart; });
-    const floorDeals = yearDeals.filter(d => d.pricingType === 'Floor Price');
-    const floorStarter = floorDeals.filter(d => d.tier === 'Starter').length;
-    const floorGrowth = floorDeals.filter(d => d.tier === 'Growth').length;
-    const floorPro = floorDeals.filter(d => d.tier === 'Pro').length;
-    const floorEnterprise = floorDeals.filter(d => d.tier === 'Enterprise').length;
-    const totalFloorUsed = floorStarter + floorGrowth + floorPro + floorEnterprise;
-    const floorCapacity = { total: 10 };
-
-    document.getElementById('contentArea').innerHTML = `
-        <div class="charts-grid">
-            <div class="chart-card"><h3>📈 Team Revenue Trend (6 Months)</h3><div class="chart-container"><canvas id="teamRevenueTrendChart"></canvas></div></div>
-            <div class="chart-card"><h3>🥧 Team Revenue by Tier</h3><div class="chart-container"><canvas id="teamRevenueByTierChart"></canvas></div></div>
-            <div class="chart-card"><h3>📊 Team Events by Tier</h3><div class="chart-container"><canvas id="teamEventsByTierChart"></canvas></div></div>
-            <div class="chart-card"><h3>💰 Team Revenue by Pricing</h3><div class="chart-container"><canvas id="teamRevenueByPricingChart"></canvas></div></div>
-        </div>
-
-        <div class="card">
-            <div class="card-header"><h2 class="card-title">🚨 Floor-Price Capacity (${today.getFullYear()})</h2></div>
-            <div class="floor-tracker">
-                <div class="capacity-circle"><div class="capacity-number">${totalFloorUsed}/${floorCapacity.total}</div><div class="capacity-label">events used</div></div>
-                <div style="font-size:20px;font-weight:700;color:var(--primary);margin-bottom:20px;">${((totalFloorUsed/floorCapacity.total)*100).toFixed(0)}% Utilized</div>
-                <p style="color:var(--text-gray);margin-bottom:24px;">Remaining: <strong>${floorCapacity.total - totalFloorUsed}</strong> floor-price events</p>
-                <table>
-                    <thead><tr><th>Tier</th><th>Max</th><th>Used</th><th>Left</th></tr></thead>
-                    <tbody>
-                        <tr style="${floorStarter >= 2 ? 'background:#fee2e2;' : ''}"><td><span class="badge badge-starter">Starter</span></td><td>2</td><td>${floorStarter}</td><td>${2 - floorStarter} ${floorStarter >= 2 ? '⚠️' : ''}</td></tr>
-                        <tr style="${floorGrowth >= 2 ? 'background:#fee2e2;' : ''}"><td><span class="badge badge-growth">Growth</span></td><td>2</td><td>${floorGrowth}</td><td>${2 - floorGrowth} ${floorGrowth >= 2 ? '⚠️' : ''}</td></tr>
-                        <tr style="${floorPro >= 3 ? 'background:#fee2e2;' : ''}"><td><span class="badge badge-pro">Pro</span></td><td>3</td><td>${floorPro}</td><td>${3 - floorPro} ${floorPro >= 3 ? '⚠️' : ''}</td></tr>
-                        <tr style="${floorEnterprise >= 3 ? 'background:#fee2e2;' : ''}"><td><span class="badge badge-enterprise">Enterprise</span></td><td>3</td><td>${floorEnterprise}</td><td>${3 - floorEnterprise} ${floorEnterprise >= 3 ? '⚠️' : ''}</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-    
-    setTimeout(() => {
-        renderRevenueTrendChart('teamRevenueTrendChart', allDeals, 'Team Revenue');
-        renderRevenueByTierChart('teamRevenueByTierChart', allDeals);
-        renderEventsByTierChart('teamEventsByTierChart', allDeals);
-        renderRevenueByPricingChart('teamRevenueByPricingChart', allDeals);
-    }, 100);
 }
 
 function openRepDetailsModal(memberId) {
@@ -1507,46 +1574,74 @@ function openRepDetailsModal(memberId) {
     
     const memberActivities = state.data.activities.filter(a => a.owner === member.name);
     const memberTodayActivities = memberActivities.filter(a => a.date && a.date.split('T')[0] === todayISO);
-    const memberMonthActivities = memberActivities.filter(a => { const dt = a.date ? new Date(a.date) : null; return dt && dt >= monthStart; });
+    
+    // Activity breakdown
+    const calls = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('call')).length;
+    const emails = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('email')).length;
+    const demos = memberActivities.filter(a => a.type && a.type.toLowerCase().includes('demo')).length;
     
     const memberRevenue = memberMonthWon.reduce((sum, d) => sum + d.value, 0);
     const revenuePercentOfMax = (memberRevenue / targets.monthlyRevenueMax) * 100;
     
-    const getStatusColor = (value, target) => value >= target ? 'var(--success)' : value >= target * 0.5 ? 'var(--warning)' : 'var(--danger)';
-    const getStatusIcon = (value, target) => value >= target ? '✅' : value >= target * 0.5 ? '⚠️' : '❌';
-    
     document.getElementById('modalContainer').innerHTML = `
         <div class="modal active"><div class="modal-content wide">
             <div class="modal-header"><h2>${member.name} - Performance</h2></div>
-            <div style="padding:10px 0;">
-                <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">📅 Today's KPIs</h3>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:28px;">
-                    <div class="stat-card clickable-stat" onclick="state.filterRep='${member.name}';closeModal();renderView('activity');">
-                        <div style="font-size:12px;color:var(--text-gray);margin-bottom:8px;">Touchpoints</div>
-                        <div style="font-size:34px;font-weight:700;color:${getStatusColor(memberTodayActivities.length,targets.dailyTouchpointsMin)};">${memberTodayActivities.length}</div>
-                        <div style="font-size:11px;color:var(--text-gray);">Target: ${targets.dailyTouchpointsMin}-${targets.dailyTouchpointsMax} ${getStatusIcon(memberTodayActivities.length,targets.dailyTouchpointsMin)}</div>
-                        <div style="font-size:11px;color:var(--primary);margin-top:6px;">Click to view →</div>
-                    </div>
-                    <div class="stat-card clickable-stat" onclick="state.filterRep='${member.name}';state.filterMonth=true;closeModal();renderView('activity');">
-                        <div style="font-size:12px;color:var(--text-gray);margin-bottom:8px;">Month Activities</div>
-                        <div style="font-size:34px;font-weight:700;color:var(--primary);">${memberMonthActivities.length}</div>
-                        <div style="font-size:11px;color:var(--primary);margin-top:6px;">Click to view →</div>
-                    </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:24px;">
+                <div class="stat-card clickable-stat" onclick="state.filterRep='${member.name}';closeModal();renderView('activity');">
+                    <div style="font-size:11px;color:var(--text-gray);">Today</div>
+                    <div style="font-size:28px;font-weight:700;color:var(--primary);">${memberTodayActivities.length}</div>
+                    <div style="font-size:10px;color:var(--primary);">Click to view →</div>
                 </div>
-                
-                <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">💰 Monthly Revenue</h3>
-                <div style="background:var(--bg-light);padding:24px;border-radius:14px;margin-bottom:28px;">
-                    <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:16px;">
-                        <div><div style="font-size:13px;color:var(--text-gray);margin-bottom:4px;">Revenue</div><div style="font-size:40px;font-weight:800;color:var(--primary);">$${(memberRevenue/1000).toFixed(1)}K</div></div>
-                        <div style="text-align:right;"><div style="font-size:13px;color:var(--text-gray);">Target</div><div style="font-size:18px;font-weight:600;color:var(--text-gray);">$${(targets.monthlyRevenueMin/1000).toFixed(1)}K - $${(targets.monthlyRevenueMax/1000).toFixed(1)}K</div></div>
-                    </div>
-                    <div class="progress-bar" style="height:14px;"><div class="progress-fill" style="width:${Math.min(revenuePercentOfMax,100)}%;background:var(--success);"></div></div>
-                    <div style="display:flex;justify-content:space-between;margin-top:12px;"><span style="font-size:14px;color:var(--text-gray);">${memberMonthWon.length} events</span><span style="font-size:16px;font-weight:700;color:var(--success);">${revenuePercentOfMax.toFixed(0)}% of Max</span></div>
+                <div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">Calls</div><div style="font-size:28px;font-weight:700;">${calls}</div></div>
+                <div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">Emails</div><div style="font-size:28px;font-weight:700;">${emails}</div></div>
+                <div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">Demos</div><div style="font-size:28px;font-weight:700;">${demos}</div></div>
+            </div>
+            
+            <div style="background:var(--bg-light);padding:20px;border-radius:12px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                    <div><div style="font-size:12px;color:var(--text-gray);">Monthly Revenue</div><div style="font-size:36px;font-weight:800;color:var(--primary);">$${(memberRevenue/1000).toFixed(1)}K</div></div>
+                    <div style="text-align:right;"><div style="font-size:12px;color:var(--text-gray);">Target</div><div style="font-size:16px;font-weight:600;">$${(targets.monthlyRevenueMin/1000).toFixed(1)}K-$${(targets.monthlyRevenueMax/1000).toFixed(1)}K</div></div>
                 </div>
+                <div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:${Math.min(revenuePercentOfMax,100)}%;background:var(--success);"></div></div>
+                <div style="text-align:right;margin-top:8px;font-size:14px;font-weight:700;color:var(--success);">${revenuePercentOfMax.toFixed(0)}% of Max</div>
             </div>
             <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>
         </div></div>
     `;
+}
+
+function renderLeadershipAnalytics() {
+    const allDeals = state.data.deals;
+    const today = new Date();
+    const yearStart = new Date(today.getFullYear(), 0, 1);
+    
+    const yearDeals = allDeals.filter(d => { const dt = d.createdTime ? new Date(d.createdTime) : null; return dt && dt >= yearStart; });
+    const floorDeals = yearDeals.filter(d => d.pricingType === 'Floor Price');
+    const totalFloorUsed = floorDeals.length;
+
+    document.getElementById('contentArea').innerHTML = `
+        <div class="charts-grid">
+            <div class="chart-card"><h3>📈 Team Revenue (6 Months)</h3><div class="chart-container"><canvas id="teamRevenueTrendChart"></canvas></div></div>
+            <div class="chart-card"><h3>🥧 Revenue by Tier</h3><div class="chart-container"><canvas id="teamRevenueByTierChart"></canvas></div></div>
+            <div class="chart-card"><h3>📊 Events by Tier</h3><div class="chart-container"><canvas id="teamEventsByTierChart"></canvas></div></div>
+            <div class="chart-card"><h3>💰 Pricing Type</h3><div class="chart-container"><canvas id="teamRevenueByPricingChart"></canvas></div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">🚨 Floor-Price Capacity (${today.getFullYear()})</h2></div>
+            <div class="floor-tracker">
+                <div class="capacity-circle"><div class="capacity-number">${totalFloorUsed}/10</div><div class="capacity-label">used</div></div>
+                <p style="color:var(--text-gray);margin-top:16px;">Remaining: <strong>${10 - totalFloorUsed}</strong> floor-price events</p>
+            </div>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        renderRevenueTrendChart('teamRevenueTrendChart', allDeals, 'Team Revenue');
+        renderRevenueByTierChart('teamRevenueByTierChart', allDeals);
+        renderEventsByTierChart('teamEventsByTierChart', allDeals);
+        renderRevenueByPricingChart('teamRevenueByPricingChart', allDeals);
+    }, 100);
 }
 
 function renderTeamOverview() {
@@ -1568,7 +1663,7 @@ function renderTeamOverview() {
         <div class="card">
             <div class="card-header"><h2 class="card-title">👨‍👩‍👧‍👦 Team Performance</h2></div>
             <table>
-                <thead><tr><th>Name</th><th>Role</th><th>Max Target</th><th>Revenue</th><th>% of Max</th><th>Wins</th></tr></thead>
+                <thead><tr><th>Name</th><th>Role</th><th>Target</th><th>Revenue</th><th>% of Max</th><th>Wins</th></tr></thead>
                 <tbody>
                     ${teamPerformance.map(m => `
                         <tr>
@@ -1583,34 +1678,64 @@ function renderTeamOverview() {
     `;
 }
 
+// Pipeline with filters
 function renderPipeline() {
-    const deals = getUserDeals();
+    const allDeals = getUserDeals();
     const stages = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won'];
     const isLeadership = state.currentUser.role === 'Leadership';
     const userActivities = state.data.activities.filter(a => isLeadership || a.owner === state.currentUser.name);
     
+    // Apply filters
+    let deals = allDeals;
+    if (state.filters.pipeline.tier) deals = deals.filter(d => d.tier === state.filters.pipeline.tier);
+    if (state.filters.pipeline.owner) deals = deals.filter(d => d.owner === state.filters.pipeline.owner);
+    
+    const owners = [...new Set(allDeals.map(d => d.owner))].filter(Boolean);
+    
     document.getElementById('contentArea').innerHTML = `
-        <div class="quick-actions" style="margin-bottom:20px;">
+        <div class="quick-actions" style="margin-bottom:16px;">
             <button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ Add New Deal</button>
         </div>
+        
+        <div class="filters-bar">
+            <span style="font-weight:600;font-size:14px;">Filters:</span>
+            <select class="filter-select" onchange="state.filters.pipeline.tier=this.value;renderPipeline();">
+                <option value="">All Tiers</option>
+                <option value="Starter" ${state.filters.pipeline.tier==='Starter'?'selected':''}>Starter</option>
+                <option value="Growth" ${state.filters.pipeline.tier==='Growth'?'selected':''}>Growth</option>
+                <option value="Pro" ${state.filters.pipeline.tier==='Pro'?'selected':''}>Pro</option>
+                <option value="Enterprise" ${state.filters.pipeline.tier==='Enterprise'?'selected':''}>Enterprise</option>
+            </select>
+            ${isLeadership ? `<select class="filter-select" onchange="state.filters.pipeline.owner=this.value;renderPipeline();">
+                <option value="">All Owners</option>
+                ${owners.map(o => `<option value="${o}" ${state.filters.pipeline.owner===o?'selected':''}>${o}</option>`).join('')}
+            </select>` : ''}
+            ${state.filters.pipeline.tier || state.filters.pipeline.owner ? `<button class="btn btn-secondary btn-small" onclick="state.filters.pipeline={tier:'',owner:''};renderPipeline();">Clear</button>` : ''}
+        </div>
+        
         <div class="kanban-board">
             ${stages.map(stage => {
                 const stageDeals = deals.filter(d => d.stage === stage);
                 return `
                     <div class="kanban-column" data-stage="${stage}" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
                         <div class="kanban-header"><span>${stage}</span><span class="kanban-count">${stageDeals.length}</span></div>
-                        ${stageDeals.length === 0 ? '<p style="color:var(--text-gray);text-align:center;padding:30px;font-size:14px;">No deals</p>' : stageDeals.map(deal => {
+                        ${stageDeals.length === 0 ? '<p style="color:var(--text-gray);text-align:center;padding:24px;font-size:13px;">No deals</p>' : stageDeals.map(deal => {
                             const lastActivity = userActivities.filter(a => a.account && deal.name.toLowerCase().includes(a.account.toLowerCase())).sort((x,y) => new Date(y.date) - new Date(x.date))[0];
                             const daysSinceActivity = lastActivity ? getDaysSince(lastActivity.date) : 999;
                             const isStale = daysSinceActivity >= 5 && !stage.toLowerCase().includes('won');
+                            const dealAge = getDaysSince(deal.createdTime);
+                            const currentWeek = Math.min(Math.ceil(dealAge / 7) || 1, 9);
                             
                             return `<div class="kanban-card ${isStale ? 'stale' : ''}" draggable="true" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" onclick="openDealDetailsModal('${deal.id}')" data-deal-id="${deal.id}">
                                 <div style="display:flex;justify-content:space-between;">
                                     <div class="kanban-card-title">${deal.name}</div>
-                                    ${isLeadership ? `<button class="btn btn-icon btn-danger" onclick="event.stopPropagation();deleteDeal('${deal.id}')" style="padding:4px 8px;font-size:12px;">🗑️</button>` : ''}
+                                    ${isLeadership ? `<button class="btn btn-icon btn-danger" onclick="event.stopPropagation();deleteDeal('${deal.id}')" style="padding:3px 6px;font-size:11px;">🗑️</button>` : ''}
                                 </div>
                                 <div class="kanban-card-value">$${deal.value.toLocaleString()}</div>
-                                <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                <div style="display:flex;gap:6px;align-items:center;">
+                                    <span class="badge badge-${deal.tier.toLowerCase()}">${deal.tier}</span>
+                                    <span class="badge badge-info">Week ${currentWeek}</span>
+                                </div>
                                 <div class="kanban-card-meta">Owner: ${deal.owner}</div>
                                 ${isStale ? `<div class="stale-indicator">⚠️ ${daysSinceActivity}+ days idle</div>` : ''}
                             </div>`;
@@ -1634,66 +1759,203 @@ function handleDrop(event) {
     draggedDealId = null;
 }
 
-function renderTasks() {
-    document.getElementById('contentArea').innerHTML = `<div class="card"><div class="card-header"><h2 class="card-title">✅ Tasks</h2></div><p style="text-align:center;padding:60px;color:var(--text-gray);font-size:16px;">Task management coming in Milestone 4!</p></div>`;
-}
-
+// Contacts as TABLE with card popup on click
 function renderContacts() {
-    const contacts = state.data.contacts;
+    let contacts = state.data.contacts;
+    const isLeadership = state.currentUser.role === 'Leadership';
+    
+    // Apply filters
+    if (state.filters.contacts.search) {
+        const q = state.filters.contacts.search.toLowerCase();
+        contacts = contacts.filter(c => c.name.toLowerCase().includes(q) || (c.email && c.email.toLowerCase().includes(q)) || (c.company && c.company.toLowerCase().includes(q)));
+    }
+    if (state.filters.contacts.owner) {
+        contacts = contacts.filter(c => c.owner === state.filters.contacts.owner);
+    }
+    
+    const owners = [...new Set(state.data.contacts.map(c => c.owner))].filter(Boolean);
+    
     document.getElementById('contentArea').innerHTML = `
-        <div class="quick-actions" style="margin-bottom:20px;">
+        <div class="quick-actions" style="margin-bottom:16px;">
             <button class="btn btn-primary btn-small" onclick="openAddContactModal()">➕ Add New Contact</button>
         </div>
-        <div class="cards-grid">
-            ${contacts.length === 0 ? '<div class="card"><p style="text-align:center;padding:60px;color:var(--text-gray);">No contacts yet.</p></div>' : contacts.map(c => `
-                <div class="profile-card" onclick="openContactDetailModal('${c.id}')">
-                    <div class="profile-card-header" style="padding:20px;">
-                        <div style="display:flex;align-items:center;gap:16px;">
-                            <div class="profile-card-avatar" style="width:50px;height:50px;font-size:22px;margin-bottom:0;">👤</div>
-                            <div><div class="profile-card-name" style="font-size:17px;">${c.name}</div><div class="profile-card-subtitle" style="font-size:13px;">${c.role || 'No role'}${c.company ? ` at ${c.company}` : ''}</div></div>
-                        </div>
-                    </div>
-                    <div class="profile-card-body" style="padding:16px;">
-                        <div style="font-size:14px;color:var(--text-gray);margin-bottom:8px;">📧 ${c.email || 'No email'}</div>
-                        <div style="font-size:14px;color:var(--text-gray);">📞 ${c.phone || 'No phone'}</div>
-                    </div>
-                </div>
-            `).join('')}
+        
+        <div class="filters-bar">
+            <input type="text" class="filter-input" placeholder="Search contacts..." value="${state.filters.contacts.search}" oninput="state.filters.contacts.search=this.value;renderContacts();">
+            ${isLeadership ? `<select class="filter-select" onchange="state.filters.contacts.owner=this.value;renderContacts();">
+                <option value="">All Owners</option>
+                ${owners.map(o => `<option value="${o}" ${state.filters.contacts.owner===o?'selected':''}>${o}</option>`).join('')}
+            </select>` : ''}
+            ${state.filters.contacts.search || state.filters.contacts.owner ? `<button class="btn btn-secondary btn-small" onclick="state.filters.contacts={search:'',owner:''};renderContacts();">Clear</button>` : ''}
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">👥 Contacts</h2><span style="font-size:13px;color:var(--text-gray);">${contacts.length} contacts</span></div>
+            <table>
+                <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Owner</th>${isLeadership ? '<th>Actions</th>' : ''}</tr></thead>
+                <tbody>
+                    ${contacts.length === 0 ? `<tr><td colspan="${isLeadership ? 6 : 5}" style="text-align:center;padding:40px;color:var(--text-gray);">No contacts found</td></tr>` : contacts.map(c => `
+                        <tr class="clickable" onclick="openContactDetailModal('${c.id}')">
+                            <td><strong>${c.name}</strong>${c.role ? `<br><span style="font-size:12px;color:var(--text-gray);">${c.role}</span>` : ''}</td>
+                            <td>${c.email || '-'}</td>
+                            <td>${c.phone || '-'}</td>
+                            <td>${c.company || '-'}</td>
+                            <td>${c.owner || '-'}</td>
+                            ${isLeadership ? `<td class="action-buttons" onclick="event.stopPropagation();">
+                                <button class="btn btn-icon btn-secondary" onclick="openEditContactModal('${c.id}')">✏️</button>
+                                <button class="btn btn-icon btn-danger" onclick="deleteContact('${c.id}')">🗑️</button>
+                            </td>` : ''}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
         </div>
     `;
 }
 
+// Accounts as TABLE with card popup on click
 function renderAccounts() {
-    const accounts = state.data.accounts;
+    let accounts = state.data.accounts;
+    const isLeadership = state.currentUser.role === 'Leadership';
+    
+    // Apply filters
+    if (state.filters.accounts.search) {
+        const q = state.filters.accounts.search.toLowerCase();
+        accounts = accounts.filter(a => a.name.toLowerCase().includes(q));
+    }
+    if (state.filters.accounts.industry) {
+        accounts = accounts.filter(a => a.industry === state.filters.accounts.industry);
+    }
+    if (state.filters.accounts.owner) {
+        accounts = accounts.filter(a => a.owner === state.filters.accounts.owner);
+    }
+    
+    const industries = [...new Set(state.data.accounts.map(a => a.industry))].filter(Boolean);
+    const owners = [...new Set(state.data.accounts.map(a => a.owner))].filter(Boolean);
+    
     document.getElementById('contentArea').innerHTML = `
-        <div class="quick-actions" style="margin-bottom:20px;">
+        <div class="quick-actions" style="margin-bottom:16px;">
             <button class="btn btn-primary btn-small" onclick="openAddAccountModal()">➕ Add New Account</button>
         </div>
-        <div class="cards-grid">
-            ${accounts.length === 0 ? '<div class="card"><p style="text-align:center;padding:60px;color:var(--text-gray);">No accounts yet.</p></div>' : accounts.map(a => {
-                const contactCount = state.data.contacts.filter(c => c.accountId === a.id || c.company === a.name).length;
-                const dealCount = state.data.deals.filter(d => d.name.toLowerCase().includes(a.name.toLowerCase())).length;
-                return `
-                <div class="profile-card" onclick="openAccountDetailModal('${a.id}')">
-                    <div class="profile-card-header" style="padding:20px;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);">
-                        <div style="display:flex;align-items:center;gap:16px;">
-                            <div class="profile-card-avatar" style="width:50px;height:50px;font-size:22px;margin-bottom:0;">🏢</div>
-                            <div><div class="profile-card-name" style="font-size:17px;">${a.name}</div><div class="profile-card-subtitle" style="font-size:13px;">${a.industry || 'No industry'}</div></div>
-                        </div>
-                    </div>
-                    <div class="profile-card-body" style="padding:16px;">
-                        <div style="display:flex;justify-content:space-around;text-align:center;">
-                            <div><div style="font-size:22px;font-weight:700;color:var(--primary);">${contactCount}</div><div style="font-size:12px;color:var(--text-gray);">Contacts</div></div>
-                            <div><div style="font-size:22px;font-weight:700;color:var(--primary);">${dealCount}</div><div style="font-size:12px;color:var(--text-gray);">Deals</div></div>
-                        </div>
-                        <div style="margin-top:12px;font-size:13px;color:var(--text-gray);">Owner: ${a.owner || 'Unassigned'}</div>
-                    </div>
-                </div>
-            `}).join('')}
+        
+        <div class="filters-bar">
+            <input type="text" class="filter-input" placeholder="Search accounts..." value="${state.filters.accounts.search}" oninput="state.filters.accounts.search=this.value;renderAccounts();">
+            <select class="filter-select" onchange="state.filters.accounts.industry=this.value;renderAccounts();">
+                <option value="">All Industries</option>
+                ${industries.map(i => `<option value="${i}" ${state.filters.accounts.industry===i?'selected':''}>${i}</option>`).join('')}
+            </select>
+            ${isLeadership ? `<select class="filter-select" onchange="state.filters.accounts.owner=this.value;renderAccounts();">
+                <option value="">All Owners</option>
+                ${owners.map(o => `<option value="${o}" ${state.filters.accounts.owner===o?'selected':''}>${o}</option>`).join('')}
+            </select>` : ''}
+            ${state.filters.accounts.search || state.filters.accounts.industry || state.filters.accounts.owner ? `<button class="btn btn-secondary btn-small" onclick="state.filters.accounts={search:'',industry:'',owner:''};renderAccounts();">Clear</button>` : ''}
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">🏢 Accounts</h2><span style="font-size:13px;color:var(--text-gray);">${accounts.length} accounts</span></div>
+            <table>
+                <thead><tr><th>Account Name</th><th>Industry</th><th>Contacts</th><th>Deals</th><th>Owner</th>${isLeadership ? '<th>Actions</th>' : ''}</tr></thead>
+                <tbody>
+                    ${accounts.length === 0 ? `<tr><td colspan="${isLeadership ? 6 : 5}" style="text-align:center;padding:40px;color:var(--text-gray);">No accounts found</td></tr>` : accounts.map(a => {
+                        const contactCount = state.data.contacts.filter(c => c.accountId === a.id || c.company === a.name).length;
+                        const dealCount = state.data.deals.filter(d => d.name.toLowerCase().includes(a.name.toLowerCase())).length;
+                        return `
+                        <tr class="clickable" onclick="openAccountDetailModal('${a.id}')">
+                            <td><strong>${a.name}</strong></td>
+                            <td>${a.industry ? `<span class="badge badge-info">${a.industry}</span>` : '-'}</td>
+                            <td>${contactCount}</td>
+                            <td>${dealCount}</td>
+                            <td>${a.owner || '-'}</td>
+                            ${isLeadership ? `<td class="action-buttons" onclick="event.stopPropagation();">
+                                <button class="btn btn-icon btn-secondary" onclick="openEditAccountModal('${a.id}')">✏️</button>
+                                <button class="btn btn-icon btn-danger" onclick="deleteAccount('${a.id}')">🗑️</button>
+                            </td>` : ''}
+                        </tr>
+                    `}).join('')}
+                </tbody>
+            </table>
         </div>
     `;
 }
 
+// Events Tab
+function renderEvents() {
+    const wonDeals = state.data.deals.filter(d => d.stage.toLowerCase().includes('won'));
+    const today = new Date();
+    const next30 = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    const upcomingEvents = wonDeals.filter(d => {
+        const closeDate = d.closeDate ? new Date(d.closeDate) : null;
+        return closeDate && closeDate >= today && closeDate <= next30;
+    });
+    
+    const monthEvents = wonDeals.filter(d => {
+        const closeDate = d.closeDate ? new Date(d.closeDate) : null;
+        return closeDate && closeDate >= monthStart && closeDate <= monthEnd;
+    });
+    
+    document.getElementById('contentArea').innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+            <div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">📅 UPCOMING (30 DAYS)</div>
+                <div style="font-size:40px;font-weight:800;margin:10px 0;">${upcomingEvents.length}</div>
+                <div style="font-size:12px;opacity:0.9;">Events scheduled</div>
+            </div>
+            <div class="kpi-card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">📆 THIS MONTH</div>
+                <div style="font-size:40px;font-weight:800;margin:10px 0;">${monthEvents.length}</div>
+                <div style="font-size:12px;opacity:0.9;">Events</div>
+            </div>
+            <div class="kpi-card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">🎉 TOTAL WON</div>
+                <div style="font-size:40px;font-weight:800;margin:10px 0;">${wonDeals.length}</div>
+                <div style="font-size:12px;opacity:0.9;">All time</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">📅 Upcoming Events (Next 30 Days)</h2></div>
+            ${upcomingEvents.length === 0 ? '<p style="text-align:center;color:var(--text-gray);padding:30px;">No upcoming events</p>' : `
+            <table>
+                <thead><tr><th>Event Name</th><th>Deal</th><th>Tier</th><th>Value</th><th>Date</th><th>Owner</th></tr></thead>
+                <tbody>
+                    ${upcomingEvents.map(e => `
+                        <tr class="clickable" onclick="openDealDetailsModal('${e.id}')">
+                            <td><strong>${e.eventName || e.name}</strong></td>
+                            <td>${e.name}</td>
+                            <td><span class="badge badge-${e.tier.toLowerCase()}">${e.tier}</span></td>
+                            <td>$${e.value.toLocaleString()}</td>
+                            <td>${formatDateShort(e.closeDate)}</td>
+                            <td>${e.owner}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>`}
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">🏆 All Won Events</h2></div>
+            <table>
+                <thead><tr><th>Event</th><th>Tier</th><th>Value</th><th>Date</th><th>Owner</th></tr></thead>
+                <tbody>
+                    ${wonDeals.slice(0, 20).map(e => `
+                        <tr class="clickable" onclick="openDealDetailsModal('${e.id}')">
+                            <td><strong>${e.eventName || e.name}</strong></td>
+                            <td><span class="badge badge-${e.tier.toLowerCase()}">${e.tier}</span></td>
+                            <td>$${e.value.toLocaleString()}</td>
+                            <td>${formatDateShort(e.closeDate)}</td>
+                            <td>${e.owner}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// Activities View
 function renderActivityView() {
     let activities = state.data.activities;
     const isLeadership = state.currentUser.role === 'Leadership';
@@ -1712,40 +1974,311 @@ function renderActivityView() {
     activities = activities.sort((a, b) => new Date(b.date || b.createdTime) - new Date(a.date || a.createdTime));
     
     const filterInfo = state.filterRep ? `
-        <div style="background:var(--bg-light);padding:16px 20px;border-radius:12px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="background:var(--bg-light);padding:14px 18px;border-radius:10px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
             <span style="font-weight:600;color:var(--primary);">📊 Showing: ${state.filterRep} ${state.filterMonth ? '(This Month)' : '(All Time)'}</span>
-            <button class="btn btn-secondary btn-small" onclick="state.filterRep=null;state.filterMonth=null;renderView('activity');">✕ Clear Filter</button>
+            <button class="btn btn-secondary btn-small" onclick="state.filterRep=null;state.filterMonth=null;renderView('activity');">✕ Clear</button>
         </div>
     ` : '';
     
     document.getElementById('contentArea').innerHTML = `
-        <div class="quick-actions" style="margin-bottom:20px;">
+        <div class="quick-actions" style="margin-bottom:16px;">
             <button class="btn btn-primary btn-small" onclick="openLogActivityModal()">📝 Log New Activity</button>
         </div>
         ${filterInfo}
         <div class="card">
-            <div class="card-header"><h2 class="card-title">📝 Activity Log</h2><span style="font-size:14px;color:var(--text-gray);">${activities.length} activities</span></div>
+            <div class="card-header"><h2 class="card-title">📝 Activity Log</h2><span style="font-size:13px;color:var(--text-gray);">${activities.length} activities</span></div>
             <table>
                 <thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Owner</th><th>Result</th>${isLeadership ? '<th>Actions</th>' : ''}</tr></thead>
                 <tbody>
-                    ${activities.length === 0 ? `<tr><td colspan="${isLeadership ? 6 : 5}" style="text-align:center;padding:60px;color:var(--text-gray);">No activities.</td></tr>` : activities.slice(0, 50).map(a => `
+                    ${activities.length === 0 ? `<tr><td colspan="${isLeadership ? 6 : 5}" style="text-align:center;padding:40px;color:var(--text-gray);">No activities</td></tr>` : activities.slice(0, 50).map(a => `
                         <tr>
                             <td style="white-space:nowrap;">${formatDateShort(a.date)}</td>
                             <td><span class="badge" style="background:var(--primary);color:white;">${a.type}</span></td>
                             <td><strong>${a.account || '-'}</strong></td>
                             <td>${a.owner}</td>
-                            <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.result || '-'}</td>
-                            ${isLeadership ? `<td><button class="btn btn-icon btn-danger" onclick="deleteActivity('${a.id}')" style="padding:4px 8px;font-size:12px;">🗑️</button></td>` : ''}
+                            <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.result || '-'}</td>
+                            ${isLeadership ? `<td><button class="btn btn-icon btn-danger" onclick="deleteActivity('${a.id}')" style="padding:4px 8px;">🗑️</button></td>` : ''}
                         </tr>
                     `).join('')}
                 </tbody>
             </table>
-            ${activities.length > 50 ? `<p style="text-align:center;padding:20px;color:var(--text-gray);">Showing first 50 of ${activities.length}</p>` : ''}
+            ${activities.length > 50 ? `<p style="text-align:center;padding:16px;color:var(--text-gray);font-size:13px;">Showing first 50 of ${activities.length}</p>` : ''}
+        </div>
+    `;
+}
+
+// Reports View - Milestone 6
+function renderReports() {
+    const allDeals = state.data.deals;
+    const allActivities = state.data.activities;
+    const isLeadership = state.currentUser.role === 'Leadership';
+    
+    const wonDeals = allDeals.filter(d => d.stage.toLowerCase().includes('won'));
+    const lostDeals = allDeals.filter(d => d.stage.toLowerCase().includes('lost'));
+    
+    // Revenue by tier
+    const tierRevenue = { 'Starter': 0, 'Growth': 0, 'Pro': 0, 'Enterprise': 0 };
+    wonDeals.forEach(d => { if (tierRevenue.hasOwnProperty(d.tier)) tierRevenue[d.tier] += d.value; });
+    
+    // Revenue by rep
+    const repRevenue = {};
+    wonDeals.forEach(d => { repRevenue[d.owner] = (repRevenue[d.owner] || 0) + d.value; });
+    
+    // Activity counts by rep
+    const repActivities = {};
+    allActivities.forEach(a => { 
+        if (!repActivities[a.owner]) repActivities[a.owner] = { calls: 0, emails: 0, demos: 0, meetings: 0, total: 0 };
+        repActivities[a.owner].total++;
+        if (a.type && a.type.toLowerCase().includes('call')) repActivities[a.owner].calls++;
+        if (a.type && a.type.toLowerCase().includes('email')) repActivities[a.owner].emails++;
+        if (a.type && a.type.toLowerCase().includes('demo')) repActivities[a.owner].demos++;
+        if (a.type && a.type.toLowerCase().includes('meeting')) repActivities[a.owner].meetings++;
+    });
+    
+    // Deal cycle time (average days from creation to close)
+    const wonWithDates = wonDeals.filter(d => d.createdTime && d.closeDate);
+    const avgCycleTime = wonWithDates.length > 0 
+        ? Math.round(wonWithDates.reduce((sum, d) => sum + getDaysSince(d.createdTime) - getDaysSince(d.closeDate), 0) / wonWithDates.length)
+        : 0;
+    
+    // Win rate
+    const totalClosed = wonDeals.length + lostDeals.length;
+    const winRate = totalClosed > 0 ? ((wonDeals.length / totalClosed) * 100).toFixed(0) : 0;
+    
+    // Pipeline by stage
+    const stageCount = { 'Qualified': 0, 'Proposal Sent': 0, 'Negotiation': 0 };
+    allDeals.forEach(d => { if (stageCount.hasOwnProperty(d.stage)) stageCount[d.stage]++; });
+    
+    // Leaderboard
+    const leaderboard = Object.entries(repRevenue).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    
+    document.getElementById('contentArea').innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;">
+            <div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">💰 TOTAL REVENUE</div>
+                <div style="font-size:32px;font-weight:800;margin:8px 0;">$${(wonDeals.reduce((s,d)=>s+d.value,0)/1000).toFixed(1)}K</div>
+            </div>
+            <div class="kpi-card" style="background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">✅ WIN RATE</div>
+                <div style="font-size:32px;font-weight:800;margin:8px 0;">${winRate}%</div>
+            </div>
+            <div class="kpi-card" style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">⏱️ AVG CYCLE</div>
+                <div style="font-size:32px;font-weight:800;margin:8px 0;">${avgCycleTime}d</div>
+            </div>
+            <div class="kpi-card" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">❌ LOST</div>
+                <div style="font-size:32px;font-weight:800;margin:8px 0;">${lostDeals.length}</div>
+            </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:20px;margin-bottom:24px;">
+            <div class="card">
+                <div class="card-header"><h2 class="card-title">🏆 Rep Leaderboard</h2></div>
+                ${leaderboard.length === 0 ? '<p style="text-align:center;color:var(--text-gray);padding:20px;">No data yet</p>' : leaderboard.map((r, i) => `
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">${r[0]}</div>
+                            <div class="leaderboard-stats">${wonDeals.filter(d => d.owner === r[0]).length} deals</div>
+                        </div>
+                        <div class="leaderboard-value">$${(r[1]/1000).toFixed(1)}K</div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="card">
+                <div class="card-header"><h2 class="card-title">💵 Revenue by Tier</h2></div>
+                ${Object.entries(tierRevenue).map(([tier, rev]) => `
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+                        <span class="badge badge-${tier.toLowerCase()}" style="min-width:80px;text-align:center;">${tier}</span>
+                        <div style="flex:1;">
+                            <div class="progress-bar"><div class="progress-fill" style="width:${rev > 0 ? Math.min((rev / Math.max(...Object.values(tierRevenue))) * 100, 100) : 0}%;background:${tierColors[tier]};"></div></div>
+                        </div>
+                        <div style="font-weight:700;min-width:80px;text-align:right;">$${(rev/1000).toFixed(1)}K</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">📊 Activity Report by Rep</h2></div>
+            <table>
+                <thead><tr><th>Rep</th><th>📞 Calls</th><th>📧 Emails</th><th>🎥 Demos</th><th>📅 Meetings</th><th>Total</th></tr></thead>
+                <tbody>
+                    ${Object.entries(repActivities).map(([rep, data]) => `
+                        <tr>
+                            <td><strong>${rep}</strong></td>
+                            <td>${data.calls}</td>
+                            <td>${data.emails}</td>
+                            <td>${data.demos}</td>
+                            <td>${data.meetings}</td>
+                            <td><span class="badge badge-info">${data.total}</span></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">📈 Pipeline by Stage</h2></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;">
+                ${Object.entries(stageCount).map(([stage, count]) => `
+                    <div style="text-align:center;padding:20px;background:var(--bg-light);border-radius:10px;">
+                        <div style="font-size:28px;font-weight:700;color:var(--primary);">${count}</div>
+                        <div style="font-size:13px;color:var(--text-gray);margin-top:4px;">${stage}</div>
+                    </div>
+                `).join('')}
+            </div>
         </div>
     `;
 }
 
 window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+eps</option>
+                ${owners.map(o => `<option value="${o}" ${state.filterRep===o?'selected':''}>${o}</option>`).join('')}
+            </select>` : ''}
+            ${state.filterRep ? `<button class="btn btn-secondary btn-small" onclick="state.filterRep=null;renderActivityView();">Clear Filter</button>` : ''}
+        </div>
+        
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">📝 Activities</h2><span style="font-size:13px;color:var(--text-gray);">${activities.length} activities${state.filterRep ? ` for ${state.filterRep}` : ''}</span></div>
+            <table>
+                <thead><tr><th>Type</th><th>Account</th><th>Result</th><th>Date</th><th>Owner</th>${isLeadership ? '<th></th>' : ''}</tr></thead>
+                <tbody>
+                    ${activities.length === 0 ? `<tr><td colspan="${isLeadership ? 6 : 5}" style="text-align:center;padding:40px;color:var(--text-gray);">No activities</td></tr>` : activities.slice(0, 50).map(a => `
+                        <tr>
+                            <td><span class="badge badge-info">${a.type || 'Other'}</span></td>
+                            <td><strong>${a.account || '-'}</strong></td>
+                            <td style="max-width:300px;">${a.result || '-'}</td>
+                            <td>${formatDateShort(a.date)}</td>
+                            <td>${a.owner || '-'}</td>
+                            ${isLeadership ? `<td><button class="btn btn-icon btn-danger" onclick="deleteActivity('${a.id}')">🗑️</button></td>` : ''}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// Reports Tab
+function renderReports() {
+    const allDeals = state.data.deals;
+    const allActivities = state.data.activities;
+    const wonDeals = allDeals.filter(d => d.stage.toLowerCase().includes('won'));
+    const lostDeals = allDeals.filter(d => d.stage.toLowerCase().includes('lost'));
+    
+    // Revenue by tier
+    const revenueByTier = { Starter: 0, Growth: 0, Pro: 0, Enterprise: 0 };
+    wonDeals.forEach(d => { if (revenueByTier.hasOwnProperty(d.tier)) revenueByTier[d.tier] += d.value; });
+    
+    // Revenue by rep
+    const revenueByRep = {};
+    wonDeals.forEach(d => { revenueByRep[d.owner] = (revenueByRep[d.owner] || 0) + d.value; });
+    const repLeaderboard = Object.entries(revenueByRep).sort((a, b) => b[1] - a[1]);
+    
+    // Activity by rep
+    const activityByRep = {};
+    allActivities.forEach(a => { activityByRep[a.owner] = (activityByRep[a.owner] || 0) + 1; });
+    
+    // Activity by type
+    const activityByType = {};
+    allActivities.forEach(a => { activityByType[a.type || 'Other'] = (activityByType[a.type || 'Other'] || 0) + 1; });
+    
+    // Win/Loss
+    const winRate = wonDeals.length + lostDeals.length > 0 ? (wonDeals.length / (wonDeals.length + lostDeals.length) * 100) : 0;
+    
+    // Pipeline velocity (avg days in stage)
+    const pipelineDeals = allDeals.filter(d => !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'));
+    const avgDaysInPipeline = pipelineDeals.length > 0 ? pipelineDeals.reduce((sum, d) => sum + (getDaysSince(d.createdTime) || 0), 0) / pipelineDeals.length : 0;
+    
+    document.getElementById('contentArea').innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+            <div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">💰 TOTAL REVENUE</div>
+                <div style="font-size:36px;font-weight:800;margin:10px 0;">$${(wonDeals.reduce((s,d)=>s+d.value,0)/1000).toFixed(1)}K</div>
+            </div>
+            <div class="kpi-card" style="background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">✅ WIN RATE</div>
+                <div style="font-size:36px;font-weight:800;margin:10px 0;">${winRate.toFixed(0)}%</div>
+            </div>
+            <div class="kpi-card" style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">⏱️ AVG CYCLE</div>
+                <div style="font-size:36px;font-weight:800;margin:10px 0;">${avgDaysInPipeline.toFixed(0)}</div>
+                <div style="font-size:12px;opacity:0.9;">days</div>
+            </div>
+            <div class="kpi-card" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:white;">
+                <div style="font-size:11px;font-weight:600;opacity:0.9;">❌ LOST</div>
+                <div style="font-size:36px;font-weight:800;margin:10px 0;">${lostDeals.length}</div>
+            </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:20px;">
+            <div class="card">
+                <div class="card-header"><h2 class="card-title">🏆 Rep Leaderboard (Revenue)</h2></div>
+                ${repLeaderboard.length === 0 ? '<p style="text-align:center;color:var(--text-gray);padding:20px;">No data yet</p>' : repLeaderboard.map((r, i) => `
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">#${i + 1}</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-name">${r[0]}</div>
+                            <div class="leaderboard-stats">${activityByRep[r[0]] || 0} activities</div>
+                        </div>
+                        <div class="leaderboard-value">$${(r[1]/1000).toFixed(1)}K</div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="card">
+                <div class="card-header"><h2 class="card-title">💰 Revenue by Tier</h2></div>
+                <table>
+                    <thead><tr><th>Tier</th><th>Revenue</th><th>Deals</th></tr></thead>
+                    <tbody>
+                        ${Object.entries(revenueByTier).map(([tier, rev]) => `
+                            <tr>
+                                <td><span class="badge badge-${tier.toLowerCase()}">${tier}</span></td>
+                                <td><strong>$${rev.toLocaleString()}</strong></td>
+                                <td>${wonDeals.filter(d => d.tier === tier).length}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="card">
+                <div class="card-header"><h2 class="card-title">📊 Activity Breakdown</h2></div>
+                <div class="activity-stats">
+                    ${Object.entries(activityByType).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([type, count]) => `
+                        <div class="stat-card">
+                            <div class="stat-value">${count}</div>
+                            <div class="stat-label">${type}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header"><h2 class="card-title">📈 Conversion by Stage</h2></div>
+                <table>
+                    <thead><tr><th>Stage</th><th>Count</th><th>Value</th></tr></thead>
+                    <tbody>
+                        ${['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won', 'Closed Lost'].map(stage => {
+                            const stageDeals = allDeals.filter(d => d.stage === stage);
+                            const stageValue = stageDeals.reduce((s, d) => s + d.value, 0);
+                            return `<tr><td>${stage}</td><td>${stageDeals.length}</td><td>$${stageValue.toLocaleString()}</td></tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
