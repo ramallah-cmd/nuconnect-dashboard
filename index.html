@@ -62,6 +62,11 @@
         .top-bar h1 { font-size: 24px; font-weight: 800; }
         .top-bar-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         
+        .time-display { display: flex; gap: 16px; font-size: 13px; color: var(--text-gray); background: var(--bg-light); padding: 8px 14px; border-radius: 8px; }
+        .time-display .time-item { display: flex; flex-direction: column; align-items: center; }
+        .time-display .time-value { font-weight: 700; color: var(--text-dark); font-size: 14px; }
+        .time-display .time-label { font-size: 10px; text-transform: uppercase; }
+        
         .profile-dropdown { position: relative; }
         .profile-btn { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--bg-light); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; }
         .profile-btn:hover { background: var(--border); }
@@ -89,7 +94,7 @@
         .filter-select { min-width: 150px; }
         
         .greeting-banner { background: var(--gradient); color: white; padding: 20px 24px; border-radius: 16px; margin-bottom: 24px; }
-        .greeting-text { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .greeting-text { font-size: 24px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
         .greeting-sub { font-size: 14px; opacity: 0.9; }
         
         .nudge-container { margin-bottom: 24px; }
@@ -208,12 +213,14 @@
         .celebration-text { font-size: 16px; color: var(--text-gray); margin-bottom: 24px; }
         
         .checklist-section { background: var(--bg-light); padding: 16px; border-radius: 12px; margin-bottom: 16px; }
-        .checklist-title { font-weight: 700; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .checklist-title { font-weight: 700; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
         .checklist-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; font-size: 13px; }
         .checklist-item input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; cursor: pointer; }
-        .checklist-item.completed { text-decoration: line-through; opacity: 0.6; }
+        .checklist-item.completed label { text-decoration: line-through; opacity: 0.6; }
         .checklist-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
         .checklist-progress-text { font-size: 14px; font-weight: 600; }
+        .checklist-actions { display: flex; gap: 8px; }
+        .checklist-actions button { padding: 4px 10px; font-size: 11px; }
         
         .quick-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .clickable-link { color: var(--primary); cursor: pointer; text-decoration: underline; }
@@ -263,6 +270,7 @@
             <div class="top-bar">
                 <div><h1 id="pageTitle">Dashboard</h1></div>
                 <div class="top-bar-actions">
+                    <div class="time-display" id="timeDisplay"></div>
                     <div class="search-container">
                         <span class="search-icon">🔍</span>
                         <input type="text" class="search-input" id="globalSearch" placeholder="Search..." oninput="handleSearch(this.value)">
@@ -299,7 +307,6 @@ var state = {
     filterRep: null,
     dismissedNudges: JSON.parse(localStorage.getItem('dismissedNudges') || '[]'),
     celebratedToday: JSON.parse(localStorage.getItem('celebratedToday_' + new Date().toDateString()) || '[]'),
-    dailyChecklist: JSON.parse(localStorage.getItem('dailyChecklist_' + new Date().toDateString()) || '{}'),
     data: { deals: [], activities: [], tasks: [], contacts: [], accounts: [], teamMembers: [], pricingRules: [] },
     teamMemberMap: {},
     filters: { contacts: { search: '', owner: '' }, accounts: { search: '', industry: '', owner: '' }, pipeline: { tier: '', owner: '' } },
@@ -322,51 +329,33 @@ var tierColors = { 'Starter': '#9e9e9e', 'Growth': '#22c55e', 'Pro': '#f59e0b', 
 
 var industryOptions = ['Technology', 'Finance & Banking', 'Healthcare', 'Education', 'Retail & E-commerce', 'Real Estate', 'Manufacturing', 'Entertainment & Media', 'Non-Profit', 'Government', 'Legal Services', 'Hospitality & Events', 'Sports & Fitness', 'Food & Beverage', 'Transportation & Logistics', 'Energy & Utilities', 'Construction', 'Agriculture', 'Telecommunications', 'Marketing & Advertising', 'Professional Services', 'Insurance', 'Automotive', 'Aerospace', 'Pharmaceuticals', 'Biotechnology', 'Fashion & Apparel', 'Beauty & Cosmetics', 'Travel & Tourism', 'Gaming & Esports', 'Music & Arts', 'Consulting', 'Human Resources', 'Security Services', 'Environmental Services', 'Other'];
 
-var TOUCHPOINT_CADENCE = [
-    { week: 1, action: 'Intro Email + Pitch Deck', goal: 'Position NuConnect as a strategic partner' },
-    { week: 2, action: 'Value Add, Demo Invite, Case Study', goal: 'Build trust with proof of impact' },
-    { week: 3, action: 'Follow-up Email, Pricing & Legal', goal: 'Drive engagement, show polish' },
-    { week: 4, action: 'Objection Handling', goal: 'Address concerns, clarify value' },
-    { week: 5, action: 'LinkedIn Touchpoint', goal: 'Reinforce brand presence' },
-    { week: 6, action: 'Call or Meeting', goal: 'Close the deal, align on scope' },
-    { week: 7, action: 'Review Contract', goal: 'Finalize terms' },
-    { week: 8, action: 'Secure Payment', goal: 'Complete the sale' },
-    { week: 9, action: 'Onboarding Kickoff', goal: 'Begin setup & collaboration' }
-];
-
 var DAILY_CHECKLIST = [
     { id: 'morning', title: '🌅 Morning Login & Hygiene', items: [
         'Logged in by 9:00am local time', 'Checked inbox (responded to all new replies)', 'Reviewed calendar for today', 'Cleared all overdue tasks', 'Reviewed pipeline for follow-ups'
     ]},
-    { id: 'pipeline-review', title: '📋 Pipeline Review (Start of Day)', items: [
+    { id: 'pipeline-review', title: '📋 Pipeline Review', items: [
         'Review pipeline (What deals can move today)', 'Identify 3 priority deals to push forward', 'Pull follow-ups due today', 'Add 3-5 new leads to CRM'
     ]},
-    { id: 'leads', title: '🎯 New Lead Generation (Top of Funnel)', items: [
-        'Added 20-25 new qualified leads', 'All leads logged in CRM', 'All new leads enrolled into email cadence same day', 'Lead source noted (event, list, referral, LinkedIn, etc.)'
+    { id: 'leads', title: '🎯 New Lead Generation', items: [
+        'Added 20-25 new qualified leads', 'All leads logged in CRM', 'All new leads enrolled into email cadence same day', 'Lead source noted'
     ]},
     { id: 'outbound', title: '📤 Outbound Outreach', items: [
-        'Sent 20-25 new outbound emails', 'Sent 5-10 LinkedIn touches', 'First-touch messages personalized', 'CTAs clearly stated (discovery call or reply)'
+        'Sent 20-25 new outbound emails', 'Sent 5-10 LinkedIn touches', 'First-touch messages personalized', 'CTAs clearly stated'
     ]},
     { id: 'followups', title: '🔄 Follow-Ups & Replies', items: [
-        'Completed 10-15 follow-ups', 'Responded to all warm replies same day (when possible)', 'Nudged leads toward next step (call, proposal, close)'
+        'Completed 10-15 follow-ups', 'Responded to all warm replies same day', 'Nudged leads toward next step'
     ]},
     { id: 'daily-activity', title: '🔁 DAILY ACTIVITY (NON-NEGOTIABLE)', items: [
-        'Complete 20-25 total touchpoints (email, LinkedIn, calls, follow-ups)', '10 follow-ups minimum', '5-10 outbound messages minimum', '2-5 call attempts minimum', 'Log every touchpoint in CRM (no exceptions)'
+        'Complete 20-25 total touchpoints', '10 follow-ups minimum', '5-10 outbound messages minimum', '2-5 call attempts minimum', 'Log every touchpoint in CRM'
     ]},
-    { id: 'discovery', title: '📞 DISCOVERY & PIPELINE MOVEMENT', items: [
-        'Book at least 1 discovery call OR complete a scheduled discovery OR send a proposal', 'At least ONE deal moved to next stage today'
+    { id: 'discovery', title: '📞 DISCOVERY & PIPELINE', items: [
+        'Book/complete 1 discovery call OR send proposal', 'At least ONE deal moved to next stage'
     ]},
-    { id: 'qualification', title: '🎯 QUALIFICATION CHECK (PROTECT PRICING)', items: [
-        'Confirm attendee count for discoveries', 'Confirm event date', 'Confirm budget range', 'Assign correct tier (Starter/Growth/Pro/Enterprise)', 'Max 1 Starter deal per month - Push Growth or Pro by default'
+    { id: 'qualification', title: '🎯 QUALIFICATION CHECK', items: [
+        'Confirm attendee count', 'Confirm event date', 'Confirm budget range', 'Assign correct tier'
     ]},
-    { id: 'deal-progression', title: '💼 DEAL PROGRESSION TASKS', items: [
-        'Proposal sent within 48 hours of discovery', 'Follow-up task scheduled', 'Decision maker identified', 'Next step scheduled on calendar'
-    ]},
-    { id: 'pipeline', title: '📈 Pipeline Movement', items: [
-        'Moved 1-2 leads forward in pipeline stage', 'Updated deal stage accurately', 'Notes added for any meaningful conversation'
-    ]},
-    { id: 'eod', title: '🕔 END OF DAY CHECK (5 MIN)', items: [
-        'Did I complete 20-25 touchpoints?', 'Did I add new leads?', 'Did I move at least one deal forward?', 'Did I log everything in CRM?', 'Tomorrow\'s follow-ups scheduled', 'Pipeline reviewed for momentum gaps', 'Calendar prepped for next business day'
+    { id: 'eod', title: '🕔 END OF DAY CHECK', items: [
+        'Did I complete 20-25 touchpoints?', 'Did I add new leads?', 'Did I move at least one deal forward?', 'Did I log everything in CRM?', 'Tomorrow\'s follow-ups scheduled'
     ]}
 ];
 
@@ -385,21 +374,39 @@ var allNavItems = [
     { id: 'contacts', icon: '👥', label: 'Contacts' },
     { id: 'accounts', icon: '🏢', label: 'Accounts' },
     { id: 'events', icon: '🎉', label: 'Events' },
-    { id: 'activity', icon: '📝', label: 'Activities' },
-    { id: 'reports', icon: '📑', label: 'Reports' }
+    { id: 'activity', icon: '📝', label: 'Activities' }
 ];
 var leadershipNavItems = [
     { id: 'leadership', icon: '👔', label: 'Analytics' },
-    { id: 'team', icon: '👨‍👩‍👧‍👦', label: 'Team Overview' }
+    { id: 'team', icon: '👨‍👩‍👧‍👦', label: 'Team Overview' },
+    { id: 'reports', icon: '📑', label: 'Reports' },
+    { id: 'team-checklists', icon: '📋', label: 'Team Checklists' }
 ];
+
+// ============ TIME DISPLAY ============
+function updateTimeDisplay() {
+    var container = document.getElementById('timeDisplay');
+    if (!container) return;
+    
+    var userTz = userTimezones[state.currentUser ? state.currentUser.name : ''] || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var now = new Date();
+    
+    var userTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: userTz });
+    var cstTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Chicago' });
+    
+    container.innerHTML = '<div class="time-item"><div class="time-value">' + userTime + '</div><div class="time-label">Your Time</div></div>' +
+        '<div class="time-item"><div class="time-value">' + cstTime + '</div><div class="time-label">CST</div></div>';
+}
+
+setInterval(updateTimeDisplay, 60000);
 
 // ============ GREETING & TIME ============
 function getGreeting() {
     var tz = userTimezones[state.currentUser ? state.currentUser.name : ''] || Intl.DateTimeFormat().resolvedOptions().timeZone;
     var hour = parseInt(new Date().toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: tz }));
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return { text: 'Good morning', icon: '☀️' };
+    if (hour < 17) return { text: 'Good afternoon', icon: '🌤️' };
+    return { text: 'Good evening', icon: '🌙' };
 }
 
 // ============ PROFILE MENU ============
@@ -439,14 +446,14 @@ function openProfileSettings() {
         '<hr style="margin:20px 0;border:none;border-top:1px solid var(--border);">' +
         '<h3 style="margin-bottom:16px;">🔐 Change Password</h3>' +
         '<div class="form-group"><label>Current Password</label><input type="password" id="currentPassword" placeholder="Enter current password"></div>' +
-        '<div class="form-group"><label>New Password</label><input type="password" id="newPassword" placeholder="Enter new password (min 6 chars)"></div>' +
-        '<div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPassword" placeholder="Confirm new password"></div>';
+        '<div class="form-group"><label>New Password</label><input type="password" id="newPassword" placeholder="Min 6 characters"></div>' +
+        '<div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPassword" placeholder="Confirm"></div>';
     
     if (isLeadership) {
         html += '<hr style="margin:20px 0;border:none;border-top:1px solid var(--border);">' +
             '<h3 style="margin-bottom:16px;">🔑 Reset Rep Password</h3>' +
             '<div class="form-group"><label>Select Rep</label><select id="resetRepSelect"><option value="">Choose rep...</option>' + repOptions + '</select></div>' +
-            '<div class="form-group"><label>New Password for Rep</label><input type="password" id="resetRepPassword" placeholder="New password for rep"></div>' +
+            '<div class="form-group"><label>New Password for Rep</label><input type="password" id="resetRepPassword" placeholder="New password"></div>' +
             '<button class="btn btn-warning btn-small" onclick="resetRepPassword()">Reset Rep Password</button>';
     }
     
@@ -476,6 +483,7 @@ function saveProfileSettings() {
     }
     
     closeModal();
+    updateTimeDisplay();
     renderView(state.currentView);
 }
 
@@ -501,8 +509,8 @@ function showCelebration(type, message) {
     state.celebratedToday.push(type);
     localStorage.setItem('celebratedToday_' + new Date().toDateString(), JSON.stringify(state.celebratedToday));
     
-    var icons = { 'deal-moved': '🚀', 'kpi-hit': '🏆', 'revenue-goal': '💰', 'close-to-goal': '🔥', 'deal-won': '🎉' };
-    var titles = { 'deal-moved': 'Deal Advanced!', 'kpi-hit': 'KPI Achieved!', 'revenue-goal': 'Revenue Goal Hit!', 'close-to-goal': 'Almost There!', 'deal-won': 'Deal Won!' };
+    var icons = { 'deal-moved': '🚀', 'kpi-hit': '🏆', 'revenue-goal': '💰', 'close-to-goal': '🔥', 'deal-won': '🎉', 'checklist-complete': '✅' };
+    var titles = { 'deal-moved': 'Deal Advanced!', 'kpi-hit': 'KPI Achieved!', 'revenue-goal': 'Revenue Goal Hit!', 'close-to-goal': 'Almost There!', 'deal-won': 'Deal Won!', 'checklist-complete': 'Checklist Complete!' };
     
     document.getElementById('celebrationContainer').innerHTML = 
         '<div class="celebration-overlay" onclick="closeCelebration()">' +
@@ -522,19 +530,87 @@ function closeCelebration() {
     document.getElementById('celebrationContainer').innerHTML = '';
 }
 
-function checkAchievements() {
-    if (!state.currentUser || state.currentUser.role === 'Leadership') return;
-    
+// ============ CHECKLIST FUNCTIONS ============
+function getChecklistKey(userName) {
+    return 'checklist_' + userName + '_' + new Date().toDateString();
+}
+
+function getChecklist(userName) {
+    var key = getChecklistKey(userName);
+    return JSON.parse(localStorage.getItem(key) || '{}');
+}
+
+function saveChecklist(userName, checklist) {
+    var key = getChecklistKey(userName);
+    localStorage.setItem(key, JSON.stringify(checklist));
+}
+
+function autoCheckFromActivities(userName) {
+    var checklist = getChecklist(userName);
     var today = new Date().toISOString().split('T')[0];
-    var targets = getKPITargets(state.currentUser.role);
-    var userActivities = state.data.activities.filter(function(a) { return a.owner === state.currentUser.name; });
-    var todayActivities = userActivities.filter(function(a) { return a.date && a.date.split('T')[0] === today; });
+    var userActivities = state.data.activities.filter(function(a) { 
+        return a.owner === userName && a.date && a.date.split('T')[0] === today; 
+    });
     
-    if (todayActivities.length >= targets.dailyTouchpointsMin) {
-        showCelebration('kpi-hit', 'You hit your daily touchpoint goal of ' + targets.dailyTouchpointsMin + '+ activities!');
-    } else if (todayActivities.length >= targets.dailyTouchpointsMin - 3 && todayActivities.length < targets.dailyTouchpointsMin) {
-        showCelebration('close-to-goal', 'Only ' + (targets.dailyTouchpointsMin - todayActivities.length) + ' more touchpoints to hit your daily goal!');
+    var stats = getActivityStats(userActivities);
+    
+    // Auto-check based on activity counts
+    if (stats.calls >= 2) checklist['daily-activity-3'] = true; // 2-5 call attempts
+    if (stats.emails >= 5) checklist['daily-activity-2'] = true; // 5-10 outbound
+    if (stats.followups >= 10) checklist['daily-activity-1'] = true; // 10 follow-ups
+    if (userActivities.length >= 20) {
+        checklist['daily-activity-0'] = true; // 20-25 touchpoints
+        checklist['daily-activity-4'] = true; // Log every touchpoint
+        checklist['eod-0'] = true; // Did I complete 20-25?
+        checklist['eod-3'] = true; // Did I log everything?
     }
+    
+    saveChecklist(userName, checklist);
+    return checklist;
+}
+
+function checkAllSection(sectionId) {
+    var checklist = getChecklist(state.currentUser.name);
+    for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
+        if (DAILY_CHECKLIST[i].id === sectionId) {
+            for (var j = 0; j < DAILY_CHECKLIST[i].items.length; j++) {
+                checklist[sectionId + '-' + j] = true;
+            }
+            break;
+        }
+    }
+    saveChecklist(state.currentUser.name, checklist);
+    renderChecklist();
+}
+
+function clearSection(sectionId) {
+    var checklist = getChecklist(state.currentUser.name);
+    for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
+        if (DAILY_CHECKLIST[i].id === sectionId) {
+            for (var j = 0; j < DAILY_CHECKLIST[i].items.length; j++) {
+                delete checklist[sectionId + '-' + j];
+            }
+            break;
+        }
+    }
+    saveChecklist(state.currentUser.name, checklist);
+    renderChecklist();
+}
+
+function checkAllChecklist() {
+    var checklist = {};
+    for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
+        for (var j = 0; j < DAILY_CHECKLIST[i].items.length; j++) {
+            checklist[DAILY_CHECKLIST[i].id + '-' + j] = true;
+        }
+    }
+    saveChecklist(state.currentUser.name, checklist);
+    renderChecklist();
+}
+
+function clearAllChecklist() {
+    saveChecklist(state.currentUser.name, {});
+    renderChecklist();
 }
 
 // ============ SEARCH ============
@@ -555,7 +631,7 @@ function performSearch(query) {
     for (var i = 0; i < state.data.deals.length; i++) {
         var deal = state.data.deals[i];
         if (deal.name.toLowerCase().indexOf(q) !== -1) {
-            results.push({ type: 'Deal', title: deal.name, meta: deal.tier + ' • $' + deal.value.toLocaleString(), action: function() { closeSearch(); renderView('pipeline'); }});
+            results.push({ type: 'Deal', title: deal.name, meta: deal.tier + ' - $' + deal.value.toLocaleString(), action: function() { closeSearch(); renderView('pipeline'); }});
         }
     }
     for (var i = 0; i < state.data.contacts.length; i++) {
@@ -628,35 +704,16 @@ function generateNudges() {
     var revenuePercent = (monthRevenue / targets.monthlyRevenueMin) * 100;
     
     if (revenuePercent < 50 && state.dismissedNudges.indexOf('revenue-low') === -1) {
-        nudges.push({ id: 'revenue-low', type: 'danger', icon: '🚨', text: 'You\'re at ' + revenuePercent.toFixed(0) + '% of target. Let\'s pick up the pace!' });
+        nudges.push({ id: 'revenue-low', type: 'danger', icon: '🚨', text: 'At ' + revenuePercent.toFixed(0) + '% of target. Pick up the pace!' });
     } else if (revenuePercent >= 100 && state.dismissedNudges.indexOf('revenue-hit-' + today) === -1) {
-        nudges.push({ id: 'revenue-hit-' + today, type: 'success', icon: '🎉', text: 'Amazing! You\'ve hit ' + revenuePercent.toFixed(0) + '% of your target!' });
+        nudges.push({ id: 'revenue-hit-' + today, type: 'success', icon: '🎉', text: 'You hit ' + revenuePercent.toFixed(0) + '% of target!' });
     }
     
     if (now.getHours() >= 15 && todayTouchpoints < 15 && state.dismissedNudges.indexOf('touchpoints-' + today) === -1) {
-        nudges.push({ id: 'touchpoints-' + today, type: 'warning', icon: '⏰', text: 'Only ' + todayTouchpoints + '/' + targets.dailyTouchpointsMax + ' touchpoints today. Time to hustle!' });
+        nudges.push({ id: 'touchpoints-' + today, type: 'warning', icon: '⏰', text: 'Only ' + todayTouchpoints + '/' + targets.dailyTouchpointsMax + ' touchpoints today!' });
     }
     
-    var pipelineDeals = userDeals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') === -1 && d.stage.toLowerCase().indexOf('lost') === -1; });
-    var staleCount = 0;
-    for (var i = 0; i < pipelineDeals.length; i++) {
-        var deal = pipelineDeals[i];
-        var lastActivity = null;
-        for (var j = 0; j < userActivities.length; j++) {
-            if (userActivities[j].account && deal.name.toLowerCase().indexOf(userActivities[j].account.toLowerCase()) !== -1) {
-                if (!lastActivity || new Date(userActivities[j].date) > new Date(lastActivity.date)) {
-                    lastActivity = userActivities[j];
-                }
-            }
-        }
-        if (!lastActivity || getDaysSince(lastActivity.date) >= 5) staleCount++;
-    }
-    
-    if (staleCount > 0 && state.dismissedNudges.indexOf('stale-' + today) === -1) {
-        nudges.push({ id: 'stale-' + today, type: 'info', icon: '📌', text: staleCount + ' deal' + (staleCount > 1 ? 's need' : ' needs') + ' attention! Move to next touchpoint.' });
-    }
-    
-    return nudges.slice(0, 4);
+    return nudges.slice(0, 3);
 }
 
 function renderNudges() {
@@ -779,7 +836,7 @@ function getActivityStats(activities) {
 
 // ============ INITIALIZATION ============
 function init() {
-    console.log('%c🚀 NuConnect CRM v6.0', 'background: #667eea; color: white; font-size: 16px; padding: 10px;');
+    console.log('%c🚀 NuConnect CRM v7.0', 'background: #667eea; color: white; font-size: 16px; padding: 10px;');
     
     if (state.baseId && state.apiKey) {
         loadTeamMembers().then(function() {
@@ -791,7 +848,6 @@ function init() {
                 populateLoginSelect();
             }
         }).catch(function() {
-            // If everything fails, still populate with fallback
             setFallbackTeamMembers();
             populateLoginSelect();
         });
@@ -883,7 +939,12 @@ function initApp() {
     document.getElementById('currentUserName').textContent = state.currentUser.name + ' • ' + state.currentUser.role;
     document.getElementById('profileName').textContent = state.currentUser.name;
     buildNavigation();
+    updateTimeDisplay();
     loadAllData().then(function() {
+        // Auto-check activities for rep
+        if (state.currentUser.role !== 'Leadership') {
+            autoCheckFromActivities(state.currentUser.name);
+        }
         renderView('dashboard');
     });
     setInterval(function() { loadAllData(); }, 5 * 60 * 1000);
@@ -1059,9 +1120,12 @@ function logActivity(activityData) {
         if (response && response.id) { 
             loadActivities().then(function() { 
                 closeModal(); 
+                // Auto-check activities on checklist
+                if (state.currentUser.role !== 'Leadership') {
+                    autoCheckFromActivities(state.currentUser.name);
+                }
                 renderView(state.currentView); 
                 alert('Activity logged!'); 
-                checkAchievements();
             }); 
         }
     }).catch(function(error) { alert('Error: ' + error.message); });
@@ -1112,20 +1176,22 @@ function openAccountDetailModal(accountId) {
     for (var i = 0; i < Math.min(contacts.length, 5); i++) {
         contactsList += '<div class="clickable-link" onclick="closeModal();openContactDetailModal(\'' + contacts[i].id + '\')">' + contacts[i].name + '</div>';
     }
-    if (contacts.length === 0) contactsList = '<div style="color:var(--text-gray);">No contacts</div>';
+    if (contacts.length === 0) contactsList = '<div style="color:var(--text-gray);font-size:12px;">No contacts</div>';
+    if (contacts.length > 5) contactsList += '<div class="clickable-link" onclick="closeModal();filterContactsByAccount(\'' + account.name.replace(/'/g, "\\'") + '\')">View all ' + contacts.length + '...</div>';
     
     var dealsList = '';
     for (var i = 0; i < Math.min(deals.length, 5); i++) {
         dealsList += '<div class="clickable-link" onclick="closeModal();openDealDetailsModal(\'' + deals[i].id + '\')">' + deals[i].name + ' ($' + deals[i].value.toLocaleString() + ')</div>';
     }
-    if (deals.length === 0) dealsList = '<div style="color:var(--text-gray);">No deals</div>';
+    if (deals.length === 0) dealsList = '<div style="color:var(--text-gray);font-size:12px;">No deals</div>';
     
     var activitiesList = '';
     var sortedActivities = activities.sort(function(a,b) { return new Date(b.date) - new Date(a.date); });
     for (var i = 0; i < Math.min(sortedActivities.length, 5); i++) {
         activitiesList += '<div style="font-size:12px;padding:4px 0;">' + sortedActivities[i].type + ' - ' + formatDateShort(sortedActivities[i].date) + '</div>';
     }
-    if (activities.length === 0) activitiesList = '<div style="color:var(--text-gray);">No activities</div>';
+    if (activities.length === 0) activitiesList = '<div style="color:var(--text-gray);font-size:12px;">No activities</div>';
+    if (activities.length > 5) activitiesList += '<div class="clickable-link" onclick="closeModal();filterActivitiesByAccount(\'' + account.name.replace(/'/g, "\\'") + '\')">View all ' + activities.length + '...</div>';
     
     var html = '<div class="modal active"><div class="modal-content profile">' +
         '<div class="profile-card-header" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);">' +
@@ -1138,7 +1204,7 @@ function openAccountDetailModal(accountId) {
         '<div class="profile-card-row"><span class="profile-card-label">Phone</span><span class="profile-card-value">' + (account.phone || '-') + '</span></div>' +
         '<div style="margin-top:16px;"><div style="font-weight:600;font-size:13px;margin-bottom:8px;">👥 Contacts (' + contacts.length + ')</div>' + contactsList + '</div>' +
         '<div style="margin-top:12px;"><div style="font-weight:600;font-size:13px;margin-bottom:8px;">💰 Deals (' + deals.length + ')</div>' + dealsList + '</div>' +
-        '<div style="margin-top:12px;"><div style="font-weight:600;font-size:13px;margin-bottom:8px;">📝 Recent Activities (' + activities.length + ')</div>' + activitiesList + '</div>' +
+        '<div style="margin-top:12px;"><div style="font-weight:600;font-size:13px;margin-bottom:8px;">📝 Activities (' + activities.length + ')</div>' + activitiesList + '</div>' +
         '</div>' +
         '<div class="profile-card-actions">' +
         '<button class="btn btn-secondary btn-small" onclick="closeModal()">Close</button>';
@@ -1146,7 +1212,7 @@ function openAccountDetailModal(accountId) {
         html += '<button class="btn btn-secondary btn-small" onclick="closeModal();openEditAccountModal(\'' + accountId + '\')">✏️ Edit</button>';
         html += '<button class="btn btn-danger btn-small" onclick="deleteAccount(\'' + accountId + '\')">🗑️</button>';
     }
-    html += '<button class="btn btn-primary btn-small" onclick="closeModal();openLogActivityModalForAccount(\'' + account.name + '\')">📝 Activity</button>' +
+    html += '<button class="btn btn-primary btn-small" onclick="closeModal();openLogActivityModalForAccount(\'' + account.name.replace(/'/g, "\\'") + '\')">📝 Activity</button>' +
         '</div></div></div>';
     document.getElementById('modalContainer').innerHTML = html;
 }
@@ -1158,7 +1224,8 @@ function openContactDetailModal(contactId) {
     }
     if (!contact) return;
     
-    var activities = state.data.activities.filter(function(a) { return a.contact === contactId; });
+    var activities = state.data.activities.filter(function(a) { return a.contact === contactId || (contact.company && a.account === contact.company); });
+    var deals = contact.company ? state.data.deals.filter(function(d) { return d.name.toLowerCase().indexOf(contact.company.toLowerCase()) !== -1; }) : [];
     var isLeadership = state.currentUser.role === 'Leadership';
     
     var accountLink = '';
@@ -1178,6 +1245,19 @@ function openContactDetailModal(contactId) {
         accountLink = '-';
     }
     
+    var dealsList = '';
+    for (var i = 0; i < Math.min(deals.length, 3); i++) {
+        dealsList += '<div class="clickable-link" style="font-size:12px;padding:2px 0;" onclick="closeModal();openDealDetailsModal(\'' + deals[i].id + '\')">' + deals[i].name + '</div>';
+    }
+    if (deals.length === 0) dealsList = '<span style="color:var(--text-gray);font-size:12px;">No deals</span>';
+    
+    var activitiesList = '';
+    var sortedAct = activities.sort(function(a,b) { return new Date(b.date) - new Date(a.date); });
+    for (var i = 0; i < Math.min(sortedAct.length, 3); i++) {
+        activitiesList += '<div style="font-size:12px;padding:2px 0;">' + sortedAct[i].type + ' - ' + formatDateShort(sortedAct[i].date) + '</div>';
+    }
+    if (activities.length === 0) activitiesList = '<span style="color:var(--text-gray);font-size:12px;">No activities</span>';
+    
     var html = '<div class="modal active"><div class="modal-content profile">' +
         '<div class="profile-card-header">' +
         '<div class="profile-card-avatar">👤</div>' +
@@ -1188,9 +1268,9 @@ function openContactDetailModal(contactId) {
         '<div class="profile-card-row"><span class="profile-card-label">Phone</span><span class="profile-card-value">' + (contact.phone || '-') + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Company</span><span class="profile-card-value">' + accountLink + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Owner</span><span class="profile-card-value">' + (contact.owner || 'Unassigned') + '</span></div>' +
-        '<div style="margin-top:16px;background:var(--bg-light);padding:14px;border-radius:8px;text-align:center;">' +
-        '<div style="font-size:24px;font-weight:700;color:var(--primary);">' + activities.length + '</div>' +
-        '<div style="font-size:12px;color:var(--text-gray);">Total Activities</div></div></div>' +
+        '<div style="margin-top:12px;"><div style="font-weight:600;font-size:13px;margin-bottom:6px;">💰 Deals (' + deals.length + ')</div>' + dealsList + '</div>' +
+        '<div style="margin-top:12px;"><div style="font-weight:600;font-size:13px;margin-bottom:6px;">📝 Activities (' + activities.length + ')</div>' + activitiesList + '</div>' +
+        '</div>' +
         '<div class="profile-card-actions">' +
         '<button class="btn btn-secondary btn-small" onclick="closeModal()">Close</button>';
     if (isLeadership) {
@@ -1200,6 +1280,11 @@ function openContactDetailModal(contactId) {
     html += '<button class="btn btn-primary btn-small" onclick="closeModal();openLogActivityModal()">📝 Activity</button>' +
         '</div></div></div>';
     document.getElementById('modalContainer').innerHTML = html;
+}
+
+function filterActivitiesByAccount(accountName) {
+    state.filterAccount = accountName;
+    renderView('activity');
 }
 
 function openEditContactModal(contactId) {
@@ -1389,9 +1474,6 @@ function openDealDetailsModal(dealId) {
     }
     if (!deal) return;
     var isLeadership = state.currentUser.role === 'Leadership';
-    var dealAge = getDaysSince(deal.createdTime);
-    var currentWeek = Math.min(Math.ceil(dealAge / 7) || 1, 9);
-    var cadenceItem = TOUCHPOINT_CADENCE[currentWeek - 1];
     
     var stageOptions = '<option value="Qualified"' + (deal.stage === 'Qualified' ? ' selected' : '') + '>Qualified</option>' +
         '<option value="Proposal Sent"' + (deal.stage === 'Proposal Sent' ? ' selected' : '') + '>Proposal Sent</option>' +
@@ -1402,10 +1484,7 @@ function openDealDetailsModal(dealId) {
     var html = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>📊 ' + deal.name + '</h2></div>' +
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">' +
         '<div style="background:var(--bg-light);padding:14px;border-radius:10px;text-align:center;"><div style="font-size:26px;font-weight:700;color:var(--primary);">$' + deal.value.toLocaleString() + '</div><div style="font-size:12px;color:var(--text-gray);">Deal Value</div></div>' +
-        '<div style="background:var(--bg-light);padding:14px;border-radius:10px;text-align:center;"><span class="badge badge-' + deal.tier.toLowerCase() + '" style="font-size:13px;">' + deal.tier + '</span><div style="font-size:12px;color:var(--text-gray);margin-top:6px;">Tier</div></div></div>' +
-        '<div style="background:#dbeafe;padding:16px;border-radius:10px;margin-bottom:20px;">' +
-        '<div style="font-weight:700;font-size:14px;margin-bottom:8px;">📅 Week ' + currentWeek + ' - ' + cadenceItem.action + '</div>' +
-        '<div style="font-size:13px;color:var(--text-gray);">' + cadenceItem.goal + '</div></div>' +
+        '<div style="background:var(--bg-light);padding:14px;border-radius:10px;text-align:center;"><span class="badge badge-' + (deal.tier || 'starter').toLowerCase() + '" style="font-size:13px;">' + (deal.tier || 'N/A') + '</span><div style="font-size:12px;color:var(--text-gray);margin-top:6px;">Tier</div></div></div>' +
         '<div class="form-group"><label>Event Name</label><input type="text" value="' + (deal.eventName || 'Not set') + '" disabled></div>' +
         '<div class="form-group"><label>Owner</label><input type="text" value="' + deal.owner + '" disabled></div>' +
         '<div class="form-group"><label>Current Stage</label><select id="dealStageEdit">' + stageOptions + '</select></div>' +
@@ -1448,8 +1527,9 @@ function updateDealStage(dealId, newStage) {
 function renderView(viewName) {
     destroyCharts();
     state.currentView = viewName;
-    state.filterRep = null;
-    var titles = { 'dashboard': 'Dashboard', 'checklist': 'Daily Checklist', 'pipeline': 'Pipeline', 'contacts': 'Contacts', 'accounts': 'Accounts', 'events': 'Events', 'activity': 'Activities', 'reports': 'Reports', 'leadership': 'Analytics', 'team': 'Team Overview' };
+    if (viewName !== 'activity') state.filterRep = null;
+    if (viewName !== 'activity') state.filterAccount = null;
+    var titles = { 'dashboard': 'Dashboard', 'checklist': 'Daily Checklist', 'pipeline': 'Pipeline', 'contacts': 'Contacts', 'accounts': 'Accounts', 'events': 'Events', 'activity': 'Activities', 'reports': 'Reports', 'leadership': 'Analytics', 'team': 'Team Overview', 'team-checklists': 'Team Checklists' };
     document.getElementById('pageTitle').textContent = titles[viewName] || viewName;
     
     if (viewName === 'dashboard') renderDashboard();
@@ -1462,6 +1542,7 @@ function renderView(viewName) {
     else if (viewName === 'reports') renderReports();
     else if (viewName === 'leadership') renderLeadershipAnalytics();
     else if (viewName === 'team') renderTeamOverview();
+    else if (viewName === 'team-checklists') renderTeamChecklists();
     
     buildNavigation();
 }
@@ -1480,9 +1561,6 @@ function renderRepDashboard() {
     
     var userActivities = state.data.activities.filter(function(a) { return a.owner === state.currentUser.name; });
     var todayActivities = userActivities.filter(function(a) { return a.date && a.date.split('T')[0] === todayISO; });
-    var todayTouchpoints = todayActivities.length;
-    var todayNewLeads = state.data.contacts.filter(function(c) { return c.owner === state.currentUser.name && c.createdTime && c.createdTime.split('T')[0] === todayISO; }).length;
-    
     var todayStats = getActivityStats(todayActivities);
     var allTimeStats = getActivityStats(userActivities);
     
@@ -1495,7 +1573,6 @@ function renderRepDashboard() {
     var monthRevenue = 0;
     for (var i = 0; i < monthClosedDeals.length; i++) monthRevenue += monthClosedDeals[i].value;
     var revenuePercentOfMax = (monthRevenue / targets.monthlyRevenueMax) * 100;
-    var eventsPercentOfMax = (monthClosedDeals.length / targets.monthlyEventsMax) * 100;
     
     var growthPlusCount = monthClosedDeals.filter(function(d) { return d.tier !== 'Starter'; }).length;
     var qualityScore = monthClosedDeals.length > 0 ? (growthPlusCount / monthClosedDeals.length) * 100 : 0;
@@ -1518,10 +1595,10 @@ function renderRepDashboard() {
     function getStatusColor(value, target) { return value >= target ? 'var(--success)' : value >= target * 0.5 ? 'var(--warning)' : 'var(--danger)'; }
     function getStatusIcon(value, target) { return value >= target ? '✅' : value >= target * 0.5 ? '⚠️' : '❌'; }
     
-    var greeting = getGreeting() + ', ' + state.currentUser.name + '!';
+    var greeting = getGreeting();
     var dateStr = today.toLocaleDateString('en-US', {weekday:'long',month:'short',day:'numeric'});
 
-    var html = '<div class="greeting-banner"><div class="greeting-text">' + greeting + '</div><div class="greeting-sub">"Talk to people. Move deals. Protect pricing."</div></div>' +
+    var html = '<div class="greeting-banner"><div class="greeting-text">' + greeting.icon + ' ' + greeting.text + ', ' + state.currentUser.name + '!</div><div class="greeting-sub">"Talk to people. Move deals. Protect pricing."</div></div>' +
         renderNudges() +
         '<div class="quick-actions">' +
         '<button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ New Deal</button>' +
@@ -1531,32 +1608,50 @@ function renderRepDashboard() {
         '<button class="btn btn-success btn-small" onclick="renderView(\'checklist\')">✅ Daily Checklist</button></div>' +
         
         '<div class="card"><div class="card-header"><h2 class="card-title">📅 Daily Scorecard</h2><span style="font-size:13px;color:var(--text-gray);">' + dateStr + '</span></div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;">' +
-        '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Touchpoints</span><span>' + getStatusIcon(todayTouchpoints,targets.dailyTouchpointsMin) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin) + ';">' + todayTouchpoints + '</div><div style="font-size:12px;color:var(--text-gray);">Target: ' + targets.dailyTouchpointsMin + '-' + targets.dailyTouchpointsMax + '</div><div class="progress-bar"><div class="progress-fill" style="width:' + Math.min((todayTouchpoints/targets.dailyTouchpointsMax)*100,100) + '%;background:' + getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin) + ';"></div></div></div>' +
-        '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayStats.calls,targets.dailyCalls) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Calls Made</span><span>' + getStatusIcon(todayStats.calls,targets.dailyCalls) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayStats.calls,targets.dailyCalls) + ';">' + todayStats.calls + '</div><div style="font-size:12px;color:var(--text-gray);">Target: ' + targets.dailyCalls + '+</div></div>' +
-        '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayStats.emails,targets.dailyEmails) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Emails Sent</span><span>' + getStatusIcon(todayStats.emails,targets.dailyEmails) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayStats.emails,targets.dailyEmails) + ';">' + todayStats.emails + '</div><div style="font-size:12px;color:var(--text-gray);">Target: ' + targets.dailyEmails + '+</div></div>' +
-        '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayStats.linkedin,targets.dailyLinkedIn) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">LinkedIn</span><span>' + getStatusIcon(todayStats.linkedin,targets.dailyLinkedIn) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayStats.linkedin,targets.dailyLinkedIn) + ';">' + todayStats.linkedin + '</div><div style="font-size:12px;color:var(--text-gray);">Target: ' + targets.dailyLinkedIn + '+</div></div>' +
-        '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayStats.followups,10) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Follow-ups</span><span>' + getStatusIcon(todayStats.followups,10) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayStats.followups,10) + ';">' + todayStats.followups + '</div><div style="font-size:12px;color:var(--text-gray);">Target: 10-15</div></div>' +
-        '<div class="kpi-card" style="border-left:4px solid ' + (staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)') + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Needs Attention</span><span>' + (staleDeals.length > 0 ? '⚠️' : '✅') + '</span></div><div class="kpi-value" style="color:' + (staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)') + ';">' + staleDeals.length + '</div><div style="font-size:12px;color:var(--text-gray);">Stale 5+ days</div></div>' +
-        '</div></div>' +
-        
-        '<div class="kpi-grid">' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;"><div style="font-size:12px;font-weight:600;margin-bottom:12px;opacity:0.9;">💰 MONTHLY REVENUE</div><div style="font-size:40px;font-weight:800;margin-bottom:6px;">$' + (monthRevenue/1000).toFixed(1) + 'K</div><div style="font-size:13px;opacity:0.9;margin-bottom:12px;">Target: $' + (targets.monthlyRevenueMin/1000).toFixed(1) + 'K - $' + (targets.monthlyRevenueMax/1000).toFixed(1) + 'K</div><div style="background:rgba(255,255,255,0.2);height:8px;border-radius:4px;"><div style="width:' + Math.min(revenuePercentOfMax,100) + '%;height:100%;background:white;border-radius:4px;"></div></div><div style="font-size:13px;font-weight:600;margin-top:8px;">' + revenuePercentOfMax.toFixed(0) + '% of Max</div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;"><div style="font-size:12px;font-weight:600;margin-bottom:12px;opacity:0.9;">🎉 EVENTS CLOSED</div><div style="font-size:40px;font-weight:800;margin-bottom:6px;">' + monthClosedDeals.length + '</div><div style="font-size:13px;opacity:0.9;margin-bottom:12px;">Target: ' + targets.monthlyEventsMin + '-' + targets.monthlyEventsMax + '</div><div style="background:rgba(255,255,255,0.2);height:8px;border-radius:4px;"><div style="width:' + Math.min(eventsPercentOfMax,100) + '%;height:100%;background:white;border-radius:4px;"></div></div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;"><div style="font-size:12px;font-weight:600;margin-bottom:12px;opacity:0.9;">📊 QUALITY SCORE</div><div style="font-size:40px;font-weight:800;margin-bottom:6px;">' + qualityScore.toFixed(0) + '%</div><div style="font-size:13px;opacity:0.9;">' + (qualityScore >= 70 ? '✅' : '⚠️') + ' 70%+ Growth+ Required</div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 100%);color:white;"><div style="font-size:12px;font-weight:600;margin-bottom:12px;opacity:0.9;">💵 AVG DEAL SIZE</div><div style="font-size:40px;font-weight:800;margin-bottom:6px;">' + (monthClosedDeals.length > 0 ? '$' + Math.round(monthRevenue/monthClosedDeals.length).toLocaleString() : '$0') + '</div><div style="font-size:13px;opacity:0.9;">This month</div></div>' +
-        '</div>' +
-        
-        '<div class="card"><div class="card-header"><h2 class="card-title">📊 Activity Breakdown (All Time)</h2></div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;">';
+    
+    // Activity KPIs
+    var kpis = [
+        { label: 'Touchpoints', value: todayActivities.length, target: targets.dailyTouchpointsMin },
+        { label: 'Calls Made', value: todayStats.calls, target: targets.dailyCalls },
+        { label: 'Emails Sent', value: todayStats.emails, target: targets.dailyEmails },
+        { label: 'LinkedIn', value: todayStats.linkedin, target: targets.dailyLinkedIn },
+        { label: 'Follow-ups', value: todayStats.followups, target: 10 }
+    ];
+    
+    for (var i = 0; i < kpis.length; i++) {
+        var kpi = kpis[i];
+        html += '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(kpi.value, kpi.target) + ';">' +
+            '<div style="display:flex;justify-content:space-between;"><span class="kpi-label">' + kpi.label + '</span><span>' + getStatusIcon(kpi.value, kpi.target) + '</span></div>' +
+            '<div class="kpi-value" style="color:' + getStatusColor(kpi.value, kpi.target) + ';">' + kpi.value + '</div>' +
+            '<div style="font-size:11px;color:var(--text-gray);">Target: ' + kpi.target + '+</div></div>';
+    }
+    
+    // Needs attention
+    html += '<div class="kpi-card" style="border-left:4px solid ' + (staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)') + ';">' +
+        '<div style="display:flex;justify-content:space-between;"><span class="kpi-label">Needs Attention</span><span>' + (staleDeals.length > 0 ? '⚠️' : '✅') + '</span></div>' +
+        '<div class="kpi-value" style="color:' + (staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)') + ';">' + staleDeals.length + '</div>' +
+        '<div style="font-size:11px;color:var(--text-gray);">Stale 5+ days</div></div>';
+    
+    html += '</div></div>';
+    
+    // Monthly KPIs
+    html += '<div class="kpi-grid">' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;"><div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">💰 MONTHLY REVENUE</div><div style="font-size:36px;font-weight:800;margin-bottom:6px;">$' + (monthRevenue/1000).toFixed(1) + 'K</div><div style="font-size:12px;opacity:0.9;">Target: $' + (targets.monthlyRevenueMin/1000).toFixed(1) + 'K - $' + (targets.monthlyRevenueMax/1000).toFixed(1) + 'K</div><div style="background:rgba(255,255,255,0.2);height:8px;border-radius:4px;margin-top:10px;"><div style="width:' + Math.min(revenuePercentOfMax,100) + '%;height:100%;background:white;border-radius:4px;"></div></div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;"><div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">🎉 EVENTS CLOSED</div><div style="font-size:36px;font-weight:800;margin-bottom:6px;">' + monthClosedDeals.length + '</div><div style="font-size:12px;opacity:0.9;">Target: ' + targets.monthlyEventsMin + '-' + targets.monthlyEventsMax + '</div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;"><div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">📊 QUALITY SCORE</div><div style="font-size:36px;font-weight:800;margin-bottom:6px;">' + qualityScore.toFixed(0) + '%</div><div style="font-size:12px;opacity:0.9;">' + (qualityScore >= 70 ? '✅' : '⚠️') + ' 70%+ Growth+ Required</div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 100%);color:white;"><div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">💵 AVG DEAL SIZE</div><div style="font-size:36px;font-weight:800;margin-bottom:6px;">' + (monthClosedDeals.length > 0 ? '$' + Math.round(monthRevenue/monthClosedDeals.length).toLocaleString() : '$0') + '</div><div style="font-size:12px;opacity:0.9;">This month</div></div></div>';
+    
+    // Activity Breakdown
+    html += '<div class="card"><div class="card-header"><h2 class="card-title">📊 Activity Breakdown (All Time)</h2></div>' +
         '<div class="activity-stats">' +
-        '<div class="stat-card"><div class="stat-icon">📞</div><div class="stat-value">' + allTimeStats.calls + '</div><div class="stat-label">Calls Made</div></div>' +
-        '<div class="stat-card"><div class="stat-icon">📧</div><div class="stat-value">' + allTimeStats.emails + '</div><div class="stat-label">Emails Sent</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">📞</div><div class="stat-value">' + allTimeStats.calls + '</div><div class="stat-label">Calls</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">📧</div><div class="stat-value">' + allTimeStats.emails + '</div><div class="stat-label">Emails</div></div>' +
         '<div class="stat-card"><div class="stat-icon">💼</div><div class="stat-value">' + allTimeStats.linkedin + '</div><div class="stat-label">LinkedIn</div></div>' +
         '<div class="stat-card"><div class="stat-icon">🔄</div><div class="stat-value">' + allTimeStats.followups + '</div><div class="stat-label">Follow-ups</div></div>' +
         '<div class="stat-card"><div class="stat-icon">🎥</div><div class="stat-value">' + allTimeStats.demos + '</div><div class="stat-label">Demos</div></div>' +
         '<div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value">' + allTimeStats.proposals + '</div><div class="stat-label">Proposals</div></div>' +
-        '<div class="stat-card"><div class="stat-icon">🎉</div><div class="stat-value">' + allClosedDeals.length + '</div><div class="stat-label">Total Wins</div></div>' +
-        '</div></div>';
+        '<div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value">' + allClosedDeals.length + '</div><div class="stat-label">Total Wins</div></div></div></div>';
     
     // Recent wins
     if (allClosedDeals.length > 0) {
@@ -1565,7 +1660,7 @@ function renderRepDashboard() {
             var deal = allClosedDeals[i];
             var daysAgo = getDaysSince(deal.closeDate);
             html += '<div style="background:var(--bg-light);padding:14px 18px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="openDealDetailsModal(\'' + deal.id + '\')">' +
-                '<div><div style="font-weight:600;font-size:15px;margin-bottom:4px;">' + deal.name + '</div><div style="font-size:12px;color:var(--text-gray);"><span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span> ' + (daysAgo !== null ? (daysAgo === 0 ? '• Today' : '• ' + daysAgo + ' days ago') : '') + '</div></div>' +
+                '<div><div style="font-weight:600;font-size:15px;margin-bottom:4px;">' + deal.name + '</div><div style="font-size:12px;color:var(--text-gray);"><span class="badge badge-' + (deal.tier || 'starter').toLowerCase() + '">' + (deal.tier || 'N/A') + '</span> ' + (daysAgo !== null ? (daysAgo === 0 ? '• Today' : '• ' + daysAgo + ' days ago') : '') + '</div></div>' +
                 '<div style="font-size:20px;font-weight:700;color:var(--primary);">$' + deal.value.toLocaleString() + '</div></div>';
         }
         html += '</div></div>';
@@ -1583,14 +1678,19 @@ function renderRepDashboard() {
     }, 100);
 }
 
-// Daily Checklist
+// ============ CHECKLIST VIEW ============
 function renderChecklist() {
+    var checklist = getChecklist(state.currentUser.name);
+    
+    // Auto-check from activities
+    checklist = autoCheckFromActivities(state.currentUser.name);
+    
     var totalItems = 0, completedItems = 0;
     for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
         totalItems += DAILY_CHECKLIST[i].items.length;
         for (var j = 0; j < DAILY_CHECKLIST[i].items.length; j++) {
             var key = DAILY_CHECKLIST[i].id + '-' + j;
-            if (state.dailyChecklist[key]) completedItems++;
+            if (checklist[key]) completedItems++;
         }
     }
     var progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
@@ -1598,25 +1698,27 @@ function renderChecklist() {
     var today = new Date().toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric',year:'numeric'});
     
     var html = '<div class="greeting-banner"><div class="greeting-text">✅ Daily Checklist</div><div class="greeting-sub">' + today + '</div></div>' +
-        '<div class="card"><div class="card-header"><h2 class="card-title">📌 Daily Mantra</h2></div>' +
-        '<div style="text-align:center;padding:20px;font-size:24px;font-weight:700;color:var(--primary);">"Talk to people. Move deals. Protect pricing."</div></div>' +
+        '<div class="card"><div style="text-align:center;padding:16px;font-size:22px;font-weight:700;color:var(--primary);">"Talk to people. Move deals. Protect pricing."</div></div>' +
         
         '<div class="card"><div class="checklist-progress"><div class="checklist-progress-text">' + completedItems + '/' + totalItems + ' completed</div>' +
         '<div style="flex:1;"><div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:' + progress + '%;background:var(--success);"></div></div></div>' +
-        '<div style="font-weight:700;color:' + (progress >= 100 ? 'var(--success)' : 'var(--primary)') + ';">' + progress.toFixed(0) + '%</div></div>';
+        '<div style="font-weight:700;color:' + (progress >= 100 ? 'var(--success)' : 'var(--primary)') + ';">' + progress.toFixed(0) + '%</div></div>' +
+        '<div style="display:flex;gap:8px;margin-bottom:16px;"><button class="btn btn-success btn-small" onclick="checkAllChecklist()">✅ Check All</button><button class="btn btn-secondary btn-small" onclick="clearAllChecklist()">🔄 Clear All</button></div>';
     
     for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
         var section = DAILY_CHECKLIST[i];
         var sectionCompleted = 0;
         for (var j = 0; j < section.items.length; j++) {
-            if (state.dailyChecklist[section.id + '-' + j]) sectionCompleted++;
+            if (checklist[section.id + '-' + j]) sectionCompleted++;
         }
         
-        html += '<div class="checklist-section"><div class="checklist-title">' + section.title + ' <span style="font-weight:400;color:var(--text-gray);">(' + sectionCompleted + '/' + section.items.length + ')</span></div>';
+        html += '<div class="checklist-section"><div class="checklist-title"><span>' + section.title + ' (' + sectionCompleted + '/' + section.items.length + ')</span>' +
+            '<div class="checklist-actions"><button class="btn btn-secondary" onclick="checkAllSection(\'' + section.id + '\')">✓</button><button class="btn btn-secondary" onclick="clearSection(\'' + section.id + '\')">✕</button></div></div>';
+        
         for (var j = 0; j < section.items.length; j++) {
             var key = section.id + '-' + j;
-            var checked = state.dailyChecklist[key] ? ' checked' : '';
-            var completedClass = state.dailyChecklist[key] ? ' completed' : '';
+            var checked = checklist[key] ? ' checked' : '';
+            var completedClass = checklist[key] ? ' completed' : '';
             html += '<div class="checklist-item' + completedClass + '">' +
                 '<input type="checkbox" id="' + key + '"' + checked + ' onchange="toggleChecklistItem(\'' + key + '\')">' +
                 '<label for="' + key + '">' + section.items[j] + '</label></div>';
@@ -1636,25 +1738,72 @@ function renderChecklist() {
 }
 
 function toggleChecklistItem(key) {
-    state.dailyChecklist[key] = !state.dailyChecklist[key];
-    localStorage.setItem('dailyChecklist_' + new Date().toDateString(), JSON.stringify(state.dailyChecklist));
+    var checklist = getChecklist(state.currentUser.name);
+    checklist[key] = !checklist[key];
+    saveChecklist(state.currentUser.name, checklist);
     
     var totalItems = 0, completedItems = 0;
     for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
         totalItems += DAILY_CHECKLIST[i].items.length;
         for (var j = 0; j < DAILY_CHECKLIST[i].items.length; j++) {
-            if (state.dailyChecklist[DAILY_CHECKLIST[i].id + '-' + j]) completedItems++;
+            if (checklist[DAILY_CHECKLIST[i].id + '-' + j]) completedItems++;
         }
     }
     
     if (completedItems === totalItems) {
-        showCelebration('kpi-hit', 'You completed your entire daily checklist! Amazing work!');
+        showCelebration('checklist-complete', 'You completed your entire daily checklist! Amazing work!');
     }
     
     renderChecklist();
 }
 
-// Leadership Dashboard
+// ============ TEAM CHECKLISTS (Leadership) ============
+function renderTeamChecklists() {
+    var reps = state.data.teamMembers.filter(function(m) { return m.role !== 'Leadership'; });
+    var today = new Date().toDateString();
+    
+    var html = '<div class="card"><div class="card-header"><h2 class="card-title">📋 Team Daily Checklists</h2><span style="font-size:13px;color:var(--text-gray);">' + today + '</span></div>';
+    
+    for (var r = 0; r < reps.length; r++) {
+        var rep = reps[r];
+        var checklist = getChecklist(rep.name);
+        
+        var totalItems = 0, completedItems = 0;
+        for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
+            totalItems += DAILY_CHECKLIST[i].items.length;
+            for (var j = 0; j < DAILY_CHECKLIST[i].items.length; j++) {
+                if (checklist[DAILY_CHECKLIST[i].id + '-' + j]) completedItems++;
+            }
+        }
+        var progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+        var color = progress >= 100 ? 'var(--success)' : progress >= 50 ? 'var(--warning)' : 'var(--danger)';
+        
+        html += '<div style="background:var(--bg-light);padding:16px;border-radius:10px;margin-bottom:12px;border-left:4px solid ' + color + ';">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+            '<div><div style="font-weight:700;font-size:16px;">' + rep.name + '</div><div style="font-size:12px;color:var(--text-gray);">' + rep.role + '</div></div>' +
+            '<div style="text-align:right;"><div style="font-size:24px;font-weight:700;color:' + color + ';">' + progress.toFixed(0) + '%</div><div style="font-size:11px;color:var(--text-gray);">' + completedItems + '/' + totalItems + '</div></div></div>' +
+            '<div class="progress-bar" style="height:8px;"><div class="progress-fill" style="width:' + progress + '%;background:' + color + ';"></div></div>';
+        
+        // Show section breakdown
+        html += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">';
+        for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
+            var section = DAILY_CHECKLIST[i];
+            var sectionDone = 0;
+            for (var j = 0; j < section.items.length; j++) {
+                if (checklist[section.id + '-' + j]) sectionDone++;
+            }
+            var sectionPct = section.items.length > 0 ? (sectionDone / section.items.length) * 100 : 0;
+            var sectionColor = sectionPct >= 100 ? '#22c55e' : sectionPct > 0 ? '#f59e0b' : '#ef4444';
+            html += '<span style="font-size:10px;padding:3px 8px;border-radius:4px;background:' + sectionColor + ';color:white;">' + section.id.split('-')[0] + ' ' + sectionPct.toFixed(0) + '%</span>';
+        }
+        html += '</div></div>';
+    }
+    
+    html += '</div>';
+    document.getElementById('contentArea').innerHTML = html;
+}
+
+// ============ LEADERSHIP DASHBOARD ============
 function renderLeadershipDashboard() {
     var allDeals = state.data.deals;
     var allActivities = state.data.activities;
@@ -1676,7 +1825,7 @@ function renderLeadershipDashboard() {
     var growthPlusDeals = monthClosedDeals.filter(function(d) { return d.tier !== 'Starter'; }).length;
     var qualityScore = monthClosedDeals.length > 0 ? (growthPlusDeals / monthClosedDeals.length) * 100 : 0;
     
-    var greeting = getGreeting() + ', ' + state.currentUser.name + '!';
+    var greeting = getGreeting();
     
     // Build rep cards
     var repCardsHtml = '';
@@ -1685,7 +1834,6 @@ function renderLeadershipDashboard() {
     for (var i = 0; i < reps.length; i++) {
         var member = reps[i];
         var memberDeals = allDeals.filter(function(d) { return d.owner === member.name; });
-        var memberActivities = allActivities.filter(function(a) { return a.owner === member.name; });
         var memberTodayActivities = todayActivities.filter(function(a) { return a.owner === member.name; });
         var memberStats = getActivityStats(memberTodayActivities);
         
@@ -1711,8 +1859,8 @@ function renderLeadershipDashboard() {
             '<div><div style="font-size:18px;font-weight:700;color:var(--primary);">' + memberStats.linkedin + '</div><div style="font-size:10px;color:var(--text-gray);">LinkedIn</div></div>' +
             '<div><div style="font-size:18px;font-weight:700;color:var(--primary);">' + memberTodayActivities.length + '</div><div style="font-size:10px;color:var(--text-gray);">Total</div></div></div>' +
             '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">' +
-            '<div><div style="font-size:12px;color:var(--text-gray);">Month Revenue</div><div style="font-size:22px;font-weight:700;color:var(--primary);">$' + (memberRevenue/1000).toFixed(1) + 'K</div></div>' +
-            '<div style="text-align:right;"><div style="font-size:12px;color:var(--text-gray);">% of Max</div><div style="font-size:22px;font-weight:700;color:var(--primary);">' + attainment.toFixed(0) + '%</div></div></div>' +
+            '<div><div style="font-size:11px;color:var(--text-gray);">Month Revenue</div><div style="font-size:20px;font-weight:700;color:var(--primary);">$' + (memberRevenue/1000).toFixed(1) + 'K</div></div>' +
+            '<div style="text-align:right;"><div style="font-size:11px;color:var(--text-gray);">% of Max</div><div style="font-size:20px;font-weight:700;color:var(--primary);">' + attainment.toFixed(0) + '%</div></div></div>' +
             '<div class="progress-bar"><div class="progress-fill" style="width:' + Math.min(attainment,100) + '%;background:' + (attainment >= 100 ? 'var(--success)' : attainment >= 70 ? 'var(--warning)' : 'var(--danger)') + ';"></div></div></div>';
     }
 
@@ -1725,22 +1873,22 @@ function renderLeadershipDashboard() {
         var deal = allWonDeals[i];
         var daysAgo = getDaysSince(deal.closeDate);
         recentWinsHtml += '<div style="background:var(--bg-light);padding:14px 18px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:10px;" onclick="openDealDetailsModal(\'' + deal.id + '\')">' +
-            '<div><div style="font-weight:600;font-size:15px;margin-bottom:4px;">' + deal.name + '</div><div style="font-size:12px;color:var(--text-gray);">' + deal.owner + ' • <span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span> ' + (daysAgo !== null ? (daysAgo === 0 ? '• Today' : '• ' + daysAgo + ' days ago') : '') + '</div></div>' +
+            '<div><div style="font-weight:600;font-size:15px;margin-bottom:4px;">' + deal.name + '</div><div style="font-size:12px;color:var(--text-gray);">' + deal.owner + ' • <span class="badge badge-' + (deal.tier || 'starter').toLowerCase() + '">' + (deal.tier || 'N/A') + '</span> ' + (daysAgo !== null ? (daysAgo === 0 ? '• Today' : '• ' + daysAgo + ' days ago') : '') + '</div></div>' +
             '<div style="font-size:20px;font-weight:700;color:var(--primary);">$' + deal.value.toLocaleString() + '</div></div>';
     }
 
-    var html = '<div class="greeting-banner"><div class="greeting-text">' + greeting + '</div><div class="greeting-sub">Here\'s how the team is performing.</div></div>' +
+    var html = '<div class="greeting-banner"><div class="greeting-text">' + greeting.icon + ' ' + greeting.text + ', ' + state.currentUser.name + '!</div><div class="greeting-sub">Here\'s how the team is performing.</div></div>' +
         '<div class="quick-actions">' +
         '<button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ Deal</button>' +
         '<button class="btn btn-secondary btn-small" onclick="openLogActivityModal()">📝 Activity</button>' +
         '<button class="btn btn-secondary btn-small" onclick="openAddContactModal()">👤 Contact</button>' +
         '<button class="btn btn-secondary btn-small" onclick="openAddAccountModal()">🏢 Account</button></div>' +
         
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px;">' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;"><div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">💰 TEAM REVENUE</div><div style="font-size:36px;font-weight:800;margin-bottom:6px;">$' + (monthRevenue/1000).toFixed(1) + 'K</div><div style="font-size:12px;opacity:0.9;">Target: $' + KPI_TARGETS.Team.monthlyRevenueMin/1000 + 'K-$' + KPI_TARGETS.Team.monthlyRevenueMax/1000 + 'K</div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;"><div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">🎉 TEAM EVENTS</div><div style="font-size:36px;font-weight:800;margin-bottom:6px;">' + monthClosedDeals.length + '</div><div style="font-size:12px;opacity:0.9;">Target: ' + KPI_TARGETS.Team.monthlyEventsMin + '-' + KPI_TARGETS.Team.monthlyEventsMax + '</div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;"><div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">📊 QUALITY</div><div style="font-size:36px;font-weight:800;margin-bottom:6px;">' + qualityScore.toFixed(0) + '%</div><div style="font-size:12px;opacity:0.9;">Growth+ (70% Target)</div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 100%);color:white;"><div style="font-size:11px;font-weight:600;margin-bottom:10px;opacity:0.9;">🔥 TODAY</div><div style="font-size:36px;font-weight:800;margin-bottom:6px;">' + todayActivities.length + '</div><div style="font-size:12px;opacity:0.9;">Touchpoints</div></div></div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:20px;">' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;"><div style="font-size:10px;font-weight:600;margin-bottom:8px;opacity:0.9;">💰 TEAM REVENUE</div><div style="font-size:32px;font-weight:800;margin-bottom:4px;">$' + (monthRevenue/1000).toFixed(1) + 'K</div><div style="font-size:11px;opacity:0.9;">Target: $' + KPI_TARGETS.Team.monthlyRevenueMin/1000 + 'K-$' + KPI_TARGETS.Team.monthlyRevenueMax/1000 + 'K</div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white;"><div style="font-size:10px;font-weight:600;margin-bottom:8px;opacity:0.9;">🎉 TEAM EVENTS</div><div style="font-size:32px;font-weight:800;margin-bottom:4px;">' + monthClosedDeals.length + '</div><div style="font-size:11px;opacity:0.9;">Target: ' + KPI_TARGETS.Team.monthlyEventsMin + '-' + KPI_TARGETS.Team.monthlyEventsMax + '</div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);color:white;"><div style="font-size:10px;font-weight:600;margin-bottom:8px;opacity:0.9;">📊 QUALITY</div><div style="font-size:32px;font-weight:800;margin-bottom:4px;">' + qualityScore.toFixed(0) + '%</div><div style="font-size:11px;opacity:0.9;">Growth+ (70% Target)</div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#fa709a 0%,#fee140 100%);color:white;"><div style="font-size:10px;font-weight:600;margin-bottom:8px;opacity:0.9;">🔥 TODAY</div><div style="font-size:32px;font-weight:800;margin-bottom:4px;">' + todayActivities.length + '</div><div style="font-size:11px;opacity:0.9;">Touchpoints</div></div></div>' +
         
         '<div class="card"><div class="card-header"><h2 class="card-title">📊 Team Activity Today</h2></div>' +
         '<div class="activity-stats">' +
@@ -1752,7 +1900,7 @@ function renderLeadershipDashboard() {
         '<div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value">' + teamStats.proposals + '</div><div class="stat-label">Proposals</div></div></div></div>' +
         
         '<div class="card"><div class="card-header"><h2 class="card-title">👥 Sales Team</h2></div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;">' + repCardsHtml + '</div></div>';
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">' + repCardsHtml + '</div></div>';
     
     if (allWonDeals.length > 0) {
         html += '<div class="card"><div class="card-header"><h2 class="card-title">🏆 Recent Wins</h2></div>' + recentWinsHtml + '</div>';
@@ -1805,27 +1953,26 @@ function openRepDetailsModal(memberId) {
     
     var html = '<div class="modal active"><div class="modal-content wide"><div class="modal-header"><h2>' + member.name + ' - Performance</h2></div>' +
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-bottom:20px;">' +
-        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Calls</div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + todayStats.calls + '</div></div>' +
-        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Emails</div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + todayStats.emails + '</div></div>' +
-        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today LinkedIn</div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + todayStats.linkedin + '</div></div>' +
-        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Follow-ups</div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + todayStats.followups + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All Calls</div><div style="font-size:24px;font-weight:700;">' + allStats.calls + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All Emails</div><div style="font-size:24px;font-weight:700;">' + allStats.emails + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All LinkedIn</div><div style="font-size:24px;font-weight:700;">' + allStats.linkedin + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">Total Activities</div><div style="font-size:24px;font-weight:700;">' + memberActivities.length + '</div></div></div>' +
+        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Calls</div><div style="font-size:22px;font-weight:700;color:var(--primary);">' + todayStats.calls + '</div></div>' +
+        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Emails</div><div style="font-size:22px;font-weight:700;color:var(--primary);">' + todayStats.emails + '</div></div>' +
+        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today LinkedIn</div><div style="font-size:22px;font-weight:700;color:var(--primary);">' + todayStats.linkedin + '</div></div>' +
+        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Follow-ups</div><div style="font-size:22px;font-weight:700;color:var(--primary);">' + todayStats.followups + '</div></div>' +
+        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All Calls</div><div style="font-size:22px;font-weight:700;">' + allStats.calls + '</div></div>' +
+        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All Emails</div><div style="font-size:22px;font-weight:700;">' + allStats.emails + '</div></div>' +
+        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All LinkedIn</div><div style="font-size:22px;font-weight:700;">' + allStats.linkedin + '</div></div>' +
+        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">Total Activities</div><div style="font-size:22px;font-weight:700;">' + memberActivities.length + '</div></div></div>' +
         
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">' +
         '<div style="background:var(--bg-light);padding:20px;border-radius:12px;">' +
         '<div style="font-size:12px;color:var(--text-gray);margin-bottom:8px;">Monthly Revenue</div>' +
-        '<div style="font-size:32px;font-weight:800;color:var(--primary);">$' + (memberRevenue/1000).toFixed(1) + 'K</div>' +
-        '<div style="font-size:12px;color:var(--text-gray);">Target: $' + (targets.monthlyRevenueMin/1000).toFixed(1) + 'K-$' + (targets.monthlyRevenueMax/1000).toFixed(1) + 'K</div>' +
-        '<div class="progress-bar" style="height:10px;margin-top:10px;"><div class="progress-fill" style="width:' + Math.min(revenuePercentOfMax,100) + '%;background:var(--success);"></div></div>' +
-        '<div style="text-align:right;font-size:13px;font-weight:700;margin-top:4px;">' + revenuePercentOfMax.toFixed(0) + '%</div></div>' +
+        '<div style="font-size:28px;font-weight:800;color:var(--primary);">$' + (memberRevenue/1000).toFixed(1) + 'K</div>' +
+        '<div style="font-size:11px;color:var(--text-gray);">Target: $' + (targets.monthlyRevenueMin/1000).toFixed(1) + 'K-$' + (targets.monthlyRevenueMax/1000).toFixed(1) + 'K</div>' +
+        '<div class="progress-bar" style="height:10px;margin-top:10px;"><div class="progress-fill" style="width:' + Math.min(revenuePercentOfMax,100) + '%;background:var(--success);"></div></div></div>' +
         
         '<div style="background:var(--bg-light);padding:20px;border-radius:12px;">' +
         '<div style="font-size:12px;color:var(--text-gray);margin-bottom:8px;">All-Time Stats</div>' +
-        '<div style="font-size:32px;font-weight:800;color:var(--success);">$' + (allTimeRevenue/1000).toFixed(1) + 'K</div>' +
-        '<div style="font-size:12px;color:var(--text-gray);">' + allWon.length + ' deals won all time</div></div></div>' +
+        '<div style="font-size:28px;font-weight:800;color:var(--success);">$' + (allTimeRevenue/1000).toFixed(1) + 'K</div>' +
+        '<div style="font-size:11px;color:var(--text-gray);">' + allWon.length + ' deals won all time</div></div></div>' +
         
         '<div style="margin-bottom:20px;"><div style="font-weight:600;margin-bottom:10px;">📝 Recent Activities (Click to view all)</div>' + activitiesHtml + '</div>' +
         
@@ -1834,6 +1981,7 @@ function openRepDetailsModal(memberId) {
     document.getElementById('modalContainer').innerHTML = html;
 }
 
+// ============ LEADERSHIP ANALYTICS & REPORTS ============
 function renderLeadershipAnalytics() {
     var allDeals = state.data.deals;
     var allActivities = state.data.activities;
@@ -1879,8 +2027,8 @@ function renderLeadershipAnalytics() {
         '<div class="card"><div class="card-header"><h2 class="card-title">📊 All-Time Rep Performance</h2></div>' + repStatsHtml + '</div>' +
         
         '<div class="card"><div class="card-header"><h2 class="card-title">🚨 Floor-Price Capacity (' + today.getFullYear() + ')</h2></div>' +
-        '<div style="text-align:center;padding:30px;"><div style="width:160px;height:160px;margin:0 auto 16px;border-radius:50%;background:var(--gradient);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;box-shadow:0 8px 24px rgba(102,126,234,0.3);">' +
-        '<div style="font-size:42px;font-weight:800;">' + totalFloorUsed + '/10</div><div style="font-size:13px;opacity:0.9;">used</div></div>' +
+        '<div style="text-align:center;padding:30px;"><div style="width:140px;height:140px;margin:0 auto 16px;border-radius:50%;background:var(--gradient);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;box-shadow:0 8px 24px rgba(102,126,234,0.3);">' +
+        '<div style="font-size:36px;font-weight:800;">' + totalFloorUsed + '/10</div><div style="font-size:12px;opacity:0.9;">used</div></div>' +
         '<p style="color:var(--text-gray);">Remaining: <strong>' + (10 - totalFloorUsed) + '</strong> floor-price events</p></div></div>';
     
     document.getElementById('contentArea').innerHTML = html;
@@ -1919,6 +2067,124 @@ function renderTeamOverview() {
     }
     html += '</tbody></table></div>';
     document.getElementById('contentArea').innerHTML = html;
+}
+
+function renderReports() {
+    var deals = state.data.deals;
+    var activities = state.data.activities;
+    var today = new Date();
+    var monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    var lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    var lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+    
+    var wonDeals = deals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') !== -1; });
+    var lostDeals = deals.filter(function(d) { return d.stage.toLowerCase().indexOf('lost') !== -1; });
+    
+    var thisMonthWon = wonDeals.filter(function(d) {
+        var dt = d.closeDate ? new Date(d.closeDate) : null;
+        return dt && dt >= monthStart;
+    });
+    var lastMonthWon = wonDeals.filter(function(d) {
+        var dt = d.closeDate ? new Date(d.closeDate) : null;
+        return dt && dt >= lastMonthStart && dt <= lastMonthEnd;
+    });
+    
+    var thisMonthRevenue = 0, lastMonthRevenue = 0, totalRevenue = 0;
+    for (var i = 0; i < thisMonthWon.length; i++) thisMonthRevenue += thisMonthWon[i].value;
+    for (var i = 0; i < lastMonthWon.length; i++) lastMonthRevenue += lastMonthWon[i].value;
+    for (var i = 0; i < wonDeals.length; i++) totalRevenue += wonDeals[i].value;
+    
+    var revenueChange = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100) : 0;
+    var winRate = (wonDeals.length + lostDeals.length) > 0 ? (wonDeals.length / (wonDeals.length + lostDeals.length) * 100) : 0;
+    
+    var pipelineDeals = deals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') === -1 && d.stage.toLowerCase().indexOf('lost') === -1; });
+    var pipelineValue = 0;
+    for (var i = 0; i < pipelineDeals.length; i++) pipelineValue += pipelineDeals[i].value;
+    
+    var avgDaysInPipeline = 0;
+    if (pipelineDeals.length > 0) {
+        var totalDays = 0;
+        for (var i = 0; i < pipelineDeals.length; i++) {
+            totalDays += getDaysSince(pipelineDeals[i].createdTime) || 0;
+        }
+        avgDaysInPipeline = totalDays / pipelineDeals.length;
+    }
+    
+    // Tier breakdown
+    var tierBreakdown = { 'Starter': 0, 'Growth': 0, 'Pro': 0, 'Enterprise': 0 };
+    var tierRevenue = { 'Starter': 0, 'Growth': 0, 'Pro': 0, 'Enterprise': 0 };
+    for (var i = 0; i < wonDeals.length; i++) {
+        var tier = wonDeals[i].tier;
+        if (tierBreakdown.hasOwnProperty(tier)) {
+            tierBreakdown[tier]++;
+            tierRevenue[tier] += wonDeals[i].value;
+        }
+    }
+    
+    // Activity breakdown
+    var activityStats = getActivityStats(activities);
+    
+    // Rep leaderboard
+    var repRevenue = {};
+    for (var i = 0; i < wonDeals.length; i++) {
+        var owner = wonDeals[i].owner;
+        if (!repRevenue[owner]) repRevenue[owner] = 0;
+        repRevenue[owner] += wonDeals[i].value;
+    }
+    var repLeaderboard = [];
+    for (var name in repRevenue) {
+        repLeaderboard.push({ name: name, revenue: repRevenue[name] });
+    }
+    repLeaderboard.sort(function(a, b) { return b.revenue - a.revenue; });
+    
+    var html = '<div class="kpi-grid">' +
+        '<div class="kpi-card"><div class="kpi-label">This Month Revenue</div><div class="kpi-value" style="color:var(--primary);">$' + thisMonthRevenue.toLocaleString() + '</div>' +
+        '<div style="font-size:13px;color:' + (revenueChange >= 0 ? 'var(--success)' : 'var(--danger)') + ';">' + (revenueChange >= 0 ? '↑' : '↓') + ' ' + Math.abs(revenueChange).toFixed(1) + '% vs last month</div></div>' +
+        '<div class="kpi-card"><div class="kpi-label">Total Revenue (All Time)</div><div class="kpi-value" style="color:var(--success);">$' + totalRevenue.toLocaleString() + '</div><div style="font-size:13px;color:var(--text-gray);">' + wonDeals.length + ' deals won</div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);color:white;"><div style="font-size:11px;font-weight:600;opacity:0.9;">✓ WIN RATE</div><div style="font-size:36px;font-weight:800;">' + winRate.toFixed(0) + '%</div><div style="font-size:12px;opacity:0.9;">' + wonDeals.length + ' won / ' + lostDeals.length + ' lost</div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:white;"><div style="font-size:11px;font-weight:600;opacity:0.9;">⏱ AVG CYCLE</div><div style="font-size:36px;font-weight:800;">' + avgDaysInPipeline.toFixed(0) + '</div><div style="font-size:12px;opacity:0.9;">days in pipeline</div></div>' +
+        '<div class="kpi-card" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:white;"><div style="font-size:11px;font-weight:600;opacity:0.9;">✕ LOST</div><div style="font-size:36px;font-weight:800;">' + lostDeals.length + '</div><div style="font-size:12px;opacity:0.9;">deals</div></div>' +
+        '<div class="kpi-card"><div class="kpi-label">Pipeline Value</div><div class="kpi-value">$' + pipelineValue.toLocaleString() + '</div><div style="font-size:13px;color:var(--text-gray);">' + pipelineDeals.length + ' active deals</div></div></div>';
+    
+    // Revenue by Tier table
+    html += '<div class="card"><div class="card-header"><h2 class="card-title">🥧 Revenue by Tier</h2></div>' +
+        '<table><thead><tr><th>Tier</th><th>Revenue</th><th>Deals</th></tr></thead><tbody>';
+    for (var tier in tierBreakdown) {
+        html += '<tr><td><span class="badge badge-' + tier.toLowerCase() + '">' + tier + '</span></td>' +
+            '<td>$' + tierRevenue[tier].toLocaleString() + '</td>' +
+            '<td>' + tierBreakdown[tier] + '</td></tr>';
+    }
+    html += '</tbody></table></div>';
+    
+    // Activity Breakdown
+    html += '<div class="card"><div class="card-header"><h2 class="card-title">📊 Activity Breakdown (All Time)</h2></div>' +
+        '<div class="activity-stats">' +
+        '<div class="stat-card"><div class="stat-icon">📞</div><div class="stat-value">' + activityStats.calls + '</div><div class="stat-label">Calls</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">📧</div><div class="stat-value">' + activityStats.emails + '</div><div class="stat-label">Emails</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">💼</div><div class="stat-value">' + activityStats.linkedin + '</div><div class="stat-label">LinkedIn</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">🔄</div><div class="stat-value">' + activityStats.followups + '</div><div class="stat-label">Follow-ups</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">🎥</div><div class="stat-value">' + activityStats.demos + '</div><div class="stat-label">Demos</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value">' + activityStats.proposals + '</div><div class="stat-label">Proposals</div></div></div></div>';
+    
+    // Rep Leaderboard
+    html += '<div class="card"><div class="card-header"><h2 class="card-title">🏆 Rep Leaderboard (All Time)</h2></div>';
+    for (var i = 0; i < Math.min(repLeaderboard.length, 5); i++) {
+        var r = repLeaderboard[i];
+        html += '<div class="leaderboard-item"><div class="leaderboard-rank">#' + (i + 1) + '</div>' +
+            '<div class="leaderboard-info"><div class="leaderboard-name">' + r.name + '</div></div>' +
+            '<div class="leaderboard-value">$' + r.revenue.toLocaleString() + '</div></div>';
+    }
+    html += '</div>';
+    
+    html += '<div class="charts-grid">' +
+        '<div class="chart-card"><h3>Revenue Trend</h3><div class="chart-container"><canvas id="reportRevenueTrendChart"></canvas></div></div>' +
+        '<div class="chart-card"><h3>Revenue by Tier</h3><div class="chart-container"><canvas id="reportRevenueByTierChart"></canvas></div></div></div>';
+    
+    document.getElementById('contentArea').innerHTML = html;
+    setTimeout(function() {
+        renderRevenueTrendChart('reportRevenueTrendChart', deals);
+        renderRevenueByTierChart('reportRevenueByTierChart', deals);
+    }, 100);
 }
 
 // ============ PIPELINE VIEW ============
@@ -1978,7 +2244,7 @@ function renderPipeline() {
             html += '<div class="kanban-card' + (isStale && stage !== 'Closed Won' && stage !== 'Closed Lost' ? ' stale' : '') + '" draggable="true" ondragstart="handleDragStart(event,\'' + deal.id + '\')" ondragend="handleDragEnd(event)" onclick="openDealDetailsModal(\'' + deal.id + '\')">' +
                 '<div class="kanban-card-title">' + deal.name + '</div>' +
                 '<div class="kanban-card-value">$' + deal.value.toLocaleString() + '</div>' +
-                '<span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span>' +
+                '<span class="badge badge-' + (deal.tier || 'starter').toLowerCase() + '">' + (deal.tier || 'N/A') + '</span>' +
                 '<div class="kanban-card-meta">👤 ' + deal.owner + (dealAge !== null ? ' • ' + dealAge + ' days' : '') + '</div>';
             if (isStale && stage !== 'Closed Won' && stage !== 'Closed Lost') {
                 html += '<div class="stale-indicator">⚠️ ' + (daysSinceActivity !== null ? daysSinceActivity + ' days since touch' : 'No activity') + '</div>';
@@ -1991,41 +2257,12 @@ function renderPipeline() {
     document.getElementById('contentArea').innerHTML = html;
 }
 
-function handleDragStart(e, dealId) {
-    draggedDealId = dealId;
-    e.target.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-}
-
-function handleDragEnd(e) {
-    e.target.classList.remove('dragging');
-    var cols = document.querySelectorAll('.kanban-column');
-    for (var i = 0; i < cols.length; i++) cols[i].classList.remove('drag-over');
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-}
-
-function handleDragEnter(e) {
-    e.preventDefault();
-    if (e.target.classList.contains('kanban-column')) e.target.classList.add('drag-over');
-}
-
-function handleDragLeave(e) {
-    if (e.target.classList.contains('kanban-column')) e.target.classList.remove('drag-over');
-}
-
-function handleDrop(e, newStage) {
-    e.preventDefault();
-    var cols = document.querySelectorAll('.kanban-column');
-    for (var i = 0; i < cols.length; i++) cols[i].classList.remove('drag-over');
-    if (draggedDealId) {
-        updateDealStage(draggedDealId, newStage);
-        draggedDealId = null;
-    }
-}
+function handleDragStart(e, dealId) { draggedDealId = dealId; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+function handleDragEnd(e) { e.target.classList.remove('dragging'); var cols = document.querySelectorAll('.kanban-column'); for (var i = 0; i < cols.length; i++) cols[i].classList.remove('drag-over'); }
+function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function handleDragEnter(e) { e.preventDefault(); if (e.target.classList.contains('kanban-column')) e.target.classList.add('drag-over'); }
+function handleDragLeave(e) { if (e.target.classList.contains('kanban-column')) e.target.classList.remove('drag-over'); }
+function handleDrop(e, newStage) { e.preventDefault(); var cols = document.querySelectorAll('.kanban-column'); for (var i = 0; i < cols.length; i++) cols[i].classList.remove('drag-over'); if (draggedDealId) { updateDealStage(draggedDealId, newStage); draggedDealId = null; } }
 
 // ============ CONTACTS VIEW ============
 function renderContacts() {
@@ -2039,7 +2276,6 @@ function renderContacts() {
     }
     if (ownerFilter) contacts = contacts.filter(function(c) { return c.owner === ownerFilter; });
     
-    // Sorting
     var sortField = state.sorting.contacts.field;
     var sortDir = state.sorting.contacts.dir;
     contacts.sort(function(a, b) {
@@ -2058,11 +2294,6 @@ function renderContacts() {
         ownerOptions += '<option value="' + owners[i] + '"' + (ownerFilter === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
     }
     
-    function getSortClass(field) {
-        if (state.sorting.contacts.field !== field) return 'sortable';
-        return state.sorting.contacts.dir === 'asc' ? 'sortable sort-asc' : 'sortable sort-desc';
-    }
-    
     var html = '<div class="filters-bar">' +
         '<input type="text" class="filter-input" placeholder="Search contacts..." value="' + (searchFilter || '') + '" oninput="state.filters.contacts.search=this.value;renderContacts();">' +
         '<select class="filter-select" onchange="state.filters.contacts.owner=this.value;renderContacts();">' + ownerOptions + '</select>' +
@@ -2071,55 +2302,25 @@ function renderContacts() {
         '<option value="name-desc"' + (sortField === 'name' && sortDir === 'desc' ? ' selected' : '') + '>Name Z-A</option>' +
         '<option value="company-asc"' + (sortField === 'company' && sortDir === 'asc' ? ' selected' : '') + '>Company A-Z</option>' +
         '<option value="company-desc"' + (sortField === 'company' && sortDir === 'desc' ? ' selected' : '') + '>Company Z-A</option>' +
-        '<option value="createdTime-desc"' + (sortField === 'createdTime' && sortDir === 'desc' ? ' selected' : '') + '>Newest First</option>' +
-        '<option value="createdTime-asc"' + (sortField === 'createdTime' && sortDir === 'asc' ? ' selected' : '') + '>Oldest First</option></select>' +
+        '<option value="createdTime-desc"' + (sortField === 'createdTime' && sortDir === 'desc' ? ' selected' : '') + '>Newest</option>' +
+        '<option value="createdTime-asc"' + (sortField === 'createdTime' && sortDir === 'asc' ? ' selected' : '') + '>Oldest</option></select>' +
         '<button class="btn btn-primary btn-small" onclick="openAddContactModal()">➕ Add Contact</button></div>' +
-        '<div class="card"><table><thead><tr>' +
-        '<th class="' + getSortClass('name') + '" onclick="toggleContactSort(\'name\')">Name</th>' +
-        '<th>Email</th><th>Phone</th>' +
-        '<th class="' + getSortClass('company') + '" onclick="toggleContactSort(\'company\')">Company</th>' +
-        '<th>Role</th><th>Owner</th></tr></thead><tbody>';
+        '<div class="card"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Role</th><th>Owner</th></tr></thead><tbody>';
     
     for (var i = 0; i < contacts.length; i++) {
         var c = contacts[i];
         var companyLink = c.company ? '<span class="clickable-link" onclick="event.stopPropagation();openAccountByName(\'' + c.company.replace(/'/g, "\\'") + '\')">' + c.company + '</span>' : '-';
         html += '<tr class="clickable" onclick="openContactDetailModal(\'' + c.id + '\')">' +
-            '<td><strong>' + c.name + '</strong></td>' +
-            '<td>' + (c.email || '-') + '</td>' +
-            '<td>' + (c.phone || '-') + '</td>' +
-            '<td>' + companyLink + '</td>' +
-            '<td>' + (c.role || '-') + '</td>' +
-            '<td>' + (c.owner || '-') + '</td></tr>';
+            '<td><strong>' + c.name + '</strong></td><td>' + (c.email || '-') + '</td><td>' + (c.phone || '-') + '</td>' +
+            '<td>' + companyLink + '</td><td>' + (c.role || '-') + '</td><td>' + (c.owner || '-') + '</td></tr>';
     }
     html += '</tbody></table></div>';
     document.getElementById('contentArea').innerHTML = html;
 }
 
-function handleContactSort(value) {
-    var parts = value.split('-');
-    state.sorting.contacts.field = parts[0];
-    state.sorting.contacts.dir = parts[1];
-    renderContacts();
-}
-
-function toggleContactSort(field) {
-    if (state.sorting.contacts.field === field) {
-        state.sorting.contacts.dir = state.sorting.contacts.dir === 'asc' ? 'desc' : 'asc';
-    } else {
-        state.sorting.contacts.field = field;
-        state.sorting.contacts.dir = 'asc';
-    }
-    renderContacts();
-}
-
-function openAccountByName(accountName) {
-    for (var i = 0; i < state.data.accounts.length; i++) {
-        if (state.data.accounts[i].name === accountName) {
-            openAccountDetailModal(state.data.accounts[i].id);
-            return;
-        }
-    }
-}
+function handleContactSort(value) { var parts = value.split('-'); state.sorting.contacts.field = parts[0]; state.sorting.contacts.dir = parts[1]; renderContacts(); }
+function openAccountByName(accountName) { for (var i = 0; i < state.data.accounts.length; i++) { if (state.data.accounts[i].name === accountName) { openAccountDetailModal(state.data.accounts[i].id); return; } } }
+function filterContactsByAccount(accountName) { state.filters.contacts.search = accountName; renderView('contacts'); }
 
 // ============ ACCOUNTS VIEW ============
 function renderAccounts() {
@@ -2128,14 +2329,10 @@ function renderAccounts() {
     var industryFilter = state.filters.accounts.industry;
     var ownerFilter = state.filters.accounts.owner;
     
-    if (searchFilter) {
-        var q = searchFilter.toLowerCase();
-        accounts = accounts.filter(function(a) { return a.name.toLowerCase().indexOf(q) !== -1; });
-    }
+    if (searchFilter) { var q = searchFilter.toLowerCase(); accounts = accounts.filter(function(a) { return a.name.toLowerCase().indexOf(q) !== -1; }); }
     if (industryFilter) accounts = accounts.filter(function(a) { return a.industry === industryFilter; });
     if (ownerFilter) accounts = accounts.filter(function(a) { return a.owner === ownerFilter; });
     
-    // Sorting
     var sortField = state.sorting.accounts.field;
     var sortDir = state.sorting.accounts.dir;
     accounts.sort(function(a, b) {
@@ -2147,27 +2344,14 @@ function renderAccounts() {
     
     var industryOptions = '<option value="">All Industries</option>';
     var industries = [];
-    for (var i = 0; i < state.data.accounts.length; i++) {
-        if (industries.indexOf(state.data.accounts[i].industry) === -1 && state.data.accounts[i].industry) industries.push(state.data.accounts[i].industry);
-    }
+    for (var i = 0; i < state.data.accounts.length; i++) { if (industries.indexOf(state.data.accounts[i].industry) === -1 && state.data.accounts[i].industry) industries.push(state.data.accounts[i].industry); }
     industries.sort();
-    for (var i = 0; i < industries.length; i++) {
-        industryOptions += '<option value="' + industries[i] + '"' + (industryFilter === industries[i] ? ' selected' : '') + '>' + industries[i] + '</option>';
-    }
+    for (var i = 0; i < industries.length; i++) { industryOptions += '<option value="' + industries[i] + '"' + (industryFilter === industries[i] ? ' selected' : '') + '>' + industries[i] + '</option>'; }
     
     var ownerOptions = '<option value="">All Owners</option>';
     var owners = [];
-    for (var i = 0; i < state.data.accounts.length; i++) {
-        if (owners.indexOf(state.data.accounts[i].owner) === -1 && state.data.accounts[i].owner) owners.push(state.data.accounts[i].owner);
-    }
-    for (var i = 0; i < owners.length; i++) {
-        ownerOptions += '<option value="' + owners[i] + '"' + (ownerFilter === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
-    }
-    
-    function getSortClass(field) {
-        if (state.sorting.accounts.field !== field) return 'sortable';
-        return state.sorting.accounts.dir === 'asc' ? 'sortable sort-asc' : 'sortable sort-desc';
-    }
+    for (var i = 0; i < state.data.accounts.length; i++) { if (owners.indexOf(state.data.accounts[i].owner) === -1 && state.data.accounts[i].owner) owners.push(state.data.accounts[i].owner); }
+    for (var i = 0; i < owners.length; i++) { ownerOptions += '<option value="' + owners[i] + '"' + (ownerFilter === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>'; }
     
     var html = '<div class="filters-bar">' +
         '<input type="text" class="filter-input" placeholder="Search accounts..." value="' + (searchFilter || '') + '" oninput="state.filters.accounts.search=this.value;renderAccounts();">' +
@@ -2177,59 +2361,29 @@ function renderAccounts() {
         '<option value="name-asc"' + (sortField === 'name' && sortDir === 'asc' ? ' selected' : '') + '>Name A-Z</option>' +
         '<option value="name-desc"' + (sortField === 'name' && sortDir === 'desc' ? ' selected' : '') + '>Name Z-A</option>' +
         '<option value="industry-asc"' + (sortField === 'industry' && sortDir === 'asc' ? ' selected' : '') + '>Industry A-Z</option>' +
-        '<option value="industry-desc"' + (sortField === 'industry' && sortDir === 'desc' ? ' selected' : '') + '>Industry Z-A</option>' +
-        '<option value="createdTime-desc"' + (sortField === 'createdTime' && sortDir === 'desc' ? ' selected' : '') + '>Newest First</option>' +
-        '<option value="createdTime-asc"' + (sortField === 'createdTime' && sortDir === 'asc' ? ' selected' : '') + '>Oldest First</option></select>' +
+        '<option value="createdTime-desc"' + (sortField === 'createdTime' && sortDir === 'desc' ? ' selected' : '') + '>Newest</option></select>' +
         '<button class="btn btn-primary btn-small" onclick="openAddAccountModal()">➕ Add Account</button></div>' +
-        '<div class="card"><table><thead><tr>' +
-        '<th class="' + getSortClass('name') + '" onclick="toggleAccountSort(\'name\')">Account Name</th>' +
-        '<th class="' + getSortClass('industry') + '" onclick="toggleAccountSort(\'industry\')">Industry</th>' +
-        '<th>Contacts</th><th>Deals</th><th>Website</th><th>Owner</th></tr></thead><tbody>';
+        '<div class="card"><table><thead><tr><th>Account</th><th>Industry</th><th>Contacts</th><th>Deals</th><th>Activities</th><th>Owner</th></tr></thead><tbody>';
     
     for (var i = 0; i < accounts.length; i++) {
         var a = accounts[i];
         var contactCount = state.data.contacts.filter(function(c) { return c.company === a.name || c.accountId === a.id; }).length;
         var dealCount = state.data.deals.filter(function(d) { return d.name.toLowerCase().indexOf(a.name.toLowerCase()) !== -1; }).length;
+        var activityCount = state.data.activities.filter(function(act) { return act.account === a.name; }).length;
         
         html += '<tr class="clickable" onclick="openAccountDetailModal(\'' + a.id + '\')">' +
-            '<td><strong>' + a.name + '</strong></td>' +
-            '<td>' + (a.industry || '-') + '</td>' +
-            '<td><span class="clickable-link" onclick="event.stopPropagation();filterContactsByAccount(\'' + a.name.replace(/'/g, "\\'") + '\')">' + contactCount + ' contacts</span></td>' +
-            '<td><span class="clickable-link" onclick="event.stopPropagation();filterPipelineByAccount(\'' + a.name.replace(/'/g, "\\'") + '\')">' + dealCount + ' deals</span></td>' +
-            '<td>' + (a.website ? '<a href="' + a.website + '" target="_blank" onclick="event.stopPropagation();">🔗</a>' : '-') + '</td>' +
+            '<td><strong>' + a.name + '</strong></td><td>' + (a.industry || '-') + '</td>' +
+            '<td><span class="clickable-link" onclick="event.stopPropagation();filterContactsByAccount(\'' + a.name.replace(/'/g, "\\'") + '\')">' + contactCount + '</span></td>' +
+            '<td><span class="clickable-link" onclick="event.stopPropagation();filterPipelineByAccount(\'' + a.name.replace(/'/g, "\\'") + '\')">' + dealCount + '</span></td>' +
+            '<td><span class="clickable-link" onclick="event.stopPropagation();filterActivitiesByAccount(\'' + a.name.replace(/'/g, "\\'") + '\')">' + activityCount + '</span></td>' +
             '<td>' + (a.owner || '-') + '</td></tr>';
     }
     html += '</tbody></table></div>';
     document.getElementById('contentArea').innerHTML = html;
 }
 
-function handleAccountSort(value) {
-    var parts = value.split('-');
-    state.sorting.accounts.field = parts[0];
-    state.sorting.accounts.dir = parts[1];
-    renderAccounts();
-}
-
-function toggleAccountSort(field) {
-    if (state.sorting.accounts.field === field) {
-        state.sorting.accounts.dir = state.sorting.accounts.dir === 'asc' ? 'desc' : 'asc';
-    } else {
-        state.sorting.accounts.field = field;
-        state.sorting.accounts.dir = 'asc';
-    }
-    renderAccounts();
-}
-
-function filterContactsByAccount(accountName) {
-    state.filters.contacts.search = accountName;
-    renderView('contacts');
-}
-
-function filterPipelineByAccount(accountName) {
-    // Simple implementation - show pipeline and filter message
-    renderView('pipeline');
-    alert('Showing deals related to: ' + accountName);
-}
+function handleAccountSort(value) { var parts = value.split('-'); state.sorting.accounts.field = parts[0]; state.sorting.accounts.dir = parts[1]; renderAccounts(); }
+function filterPipelineByAccount(accountName) { renderView('pipeline'); alert('Showing deals for: ' + accountName); }
 
 // ============ EVENTS VIEW ============
 function renderEvents() {
@@ -2257,7 +2411,7 @@ function renderEvents() {
             '<td>' + deal.name + '</td>' +
             '<td>' + (eventDate ? eventDate.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '-') + '</td>' +
             '<td>' + statusBadge + '</td>' +
-            '<td><span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span></td>' +
+            '<td><span class="badge badge-' + (deal.tier || 'starter').toLowerCase() + '">' + (deal.tier || 'N/A') + '</span></td>' +
             '<td>$' + deal.value.toLocaleString() + '</td></tr>';
     }
     if (eventsWithDates.length === 0) html += '<tr><td colspan="6" style="text-align:center;color:var(--text-gray);">No events scheduled</td></tr>';
@@ -2270,9 +2424,11 @@ function renderEvents() {
 function renderActivityView() {
     var activities = state.data.activities.slice();
     
-    // Filter by rep if set (from leadership clicking on rep)
+    // Filter by rep if set
     if (state.filterRep) {
         activities = activities.filter(function(a) { return a.owner === state.filterRep; });
+    } else if (state.filterAccount) {
+        activities = activities.filter(function(a) { return a.account === state.filterAccount; });
     } else if (state.currentUser.role !== 'Leadership') {
         activities = activities.filter(function(a) { return a.owner === state.currentUser.name; });
     }
@@ -2281,13 +2437,18 @@ function renderActivityView() {
     
     var typeIcons = { 'Call': '📞', 'Email': '📧', 'LinkedIn': '💼', 'Demo': '🎥', 'Proposal': '📄', 'Follow-up': '🔄', 'Meeting': '📅', 'Discovery Call': '🔍' };
     
-    var filterText = state.filterRep ? ' for ' + state.filterRep : '';
+    var filterText = state.filterRep ? ' for ' + state.filterRep : (state.filterAccount ? ' for ' + state.filterAccount : '');
     
-    var html = '<div class="filters-bar">' +
-        (state.filterRep ? '<button class="btn btn-secondary btn-small" onclick="state.filterRep=null;renderActivityView();">✕ Clear filter (' + state.filterRep + ')</button>' : '') +
-        '<button class="btn btn-primary btn-small" onclick="openLogActivityModal()">📝 Log Activity</button></div>' +
+    var html = '<div class="filters-bar">';
+    if (state.filterRep) {
+        html += '<button class="btn btn-secondary btn-small" onclick="state.filterRep=null;renderActivityView();">✕ Clear (' + state.filterRep + ')</button>';
+    }
+    if (state.filterAccount) {
+        html += '<button class="btn btn-secondary btn-small" onclick="state.filterAccount=null;renderActivityView();">✕ Clear (' + state.filterAccount + ')</button>';
+    }
+    html += '<button class="btn btn-primary btn-small" onclick="openLogActivityModal()">📝 Log Activity</button></div>' +
         '<div class="card"><div class="card-header"><h2 class="card-title">📝 Activity Log' + filterText + '</h2><span style="color:var(--text-gray);">' + activities.length + ' activities</span></div>' +
-        '<table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Result</th><th>Owner</th><th>Actions</th></tr></thead><tbody>';
+        '<table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Result</th><th>Owner</th><th></th></tr></thead><tbody>';
     
     for (var i = 0; i < Math.min(activities.length, 100); i++) {
         var a = activities[i];
@@ -2304,60 +2465,6 @@ function renderActivityView() {
     html += '</tbody></table></div>';
     
     document.getElementById('contentArea').innerHTML = html;
-}
-
-// ============ REPORTS VIEW ============
-function renderReports() {
-    var deals = getUserDeals();
-    var today = new Date();
-    var monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    var lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    var lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
-    
-    var thisMonthWon = deals.filter(function(d) {
-        if (d.stage.toLowerCase().indexOf('won') === -1) return false;
-        var dt = d.closeDate ? new Date(d.closeDate) : null;
-        return dt && dt >= monthStart;
-    });
-    var lastMonthWon = deals.filter(function(d) {
-        if (d.stage.toLowerCase().indexOf('won') === -1) return false;
-        var dt = d.closeDate ? new Date(d.closeDate) : null;
-        return dt && dt >= lastMonthStart && dt <= lastMonthEnd;
-    });
-    
-    var thisMonthRevenue = 0, lastMonthRevenue = 0;
-    for (var i = 0; i < thisMonthWon.length; i++) thisMonthRevenue += thisMonthWon[i].value;
-    for (var i = 0; i < lastMonthWon.length; i++) lastMonthRevenue += lastMonthWon[i].value;
-    var revenueChange = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100) : 0;
-    
-    var tierBreakdown = { 'Starter': 0, 'Growth': 0, 'Pro': 0, 'Enterprise': 0 };
-    for (var i = 0; i < thisMonthWon.length; i++) {
-        if (tierBreakdown.hasOwnProperty(thisMonthWon[i].tier)) tierBreakdown[thisMonthWon[i].tier]++;
-    }
-    
-    var html = '<div class="kpi-grid">' +
-        '<div class="kpi-card"><div class="kpi-label">This Month Revenue</div><div class="kpi-value" style="color:var(--primary);">$' + thisMonthRevenue.toLocaleString() + '</div>' +
-        '<div style="font-size:13px;color:' + (revenueChange >= 0 ? 'var(--success)' : 'var(--danger)') + ';">' + (revenueChange >= 0 ? '↑' : '↓') + ' ' + Math.abs(revenueChange).toFixed(1) + '% vs last month</div></div>' +
-        '<div class="kpi-card"><div class="kpi-label">Deals Closed</div><div class="kpi-value">' + thisMonthWon.length + '</div><div style="font-size:13px;color:var(--text-gray);">Last month: ' + lastMonthWon.length + '</div></div>' +
-        '<div class="kpi-card"><div class="kpi-label">Avg Deal Size</div><div class="kpi-value">$' + (thisMonthWon.length > 0 ? Math.round(thisMonthRevenue / thisMonthWon.length).toLocaleString() : '0') + '</div></div>' +
-        '<div class="kpi-card"><div class="kpi-label">Pipeline Value</div><div class="kpi-value">$' + deals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') === -1 && d.stage.toLowerCase().indexOf('lost') === -1; }).reduce(function(sum, d) { return sum + d.value; }, 0).toLocaleString() + '</div></div></div>' +
-        
-        '<div class="card"><div class="card-header"><h2 class="card-title">📊 Tier Breakdown (This Month)</h2></div>' +
-        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center;">';
-    
-    for (var tier in tierBreakdown) {
-        html += '<div style="padding:20px;background:var(--bg-light);border-radius:10px;"><div style="font-size:32px;font-weight:700;color:' + tierColors[tier] + ';">' + tierBreakdown[tier] + '</div><div style="font-size:13px;color:var(--text-gray);">' + tier + '</div></div>';
-    }
-    html += '</div></div>' +
-        '<div class="charts-grid">' +
-        '<div class="chart-card"><h3>Revenue Trend</h3><div class="chart-container"><canvas id="reportRevenueTrendChart"></canvas></div></div>' +
-        '<div class="chart-card"><h3>Revenue by Tier (All Time)</h3><div class="chart-container"><canvas id="reportRevenueByTierChart"></canvas></div></div></div>';
-    
-    document.getElementById('contentArea').innerHTML = html;
-    setTimeout(function() {
-        renderRevenueTrendChart('reportRevenueTrendChart', deals);
-        renderRevenueByTierChart('reportRevenueByTierChart', deals);
-    }, 100);
 }
 
 // ============ INITIALIZE ============
