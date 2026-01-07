@@ -42,6 +42,7 @@
         .btn-secondary:hover { background: var(--border); }
         .btn-success { background: var(--success); color: var(--white); }
         .btn-danger { background: var(--danger); color: var(--white); }
+        .btn-warning { background: var(--warning); color: var(--white); }
         .btn-small { padding: 10px 18px; font-size: 14px; }
         .btn-icon { padding: 8px 12px; font-size: 14px; border-radius: 8px; min-width: 36px; }
         .btn-full { width: 100%; }
@@ -64,7 +65,7 @@
         .profile-dropdown { position: relative; }
         .profile-btn { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: var(--bg-light); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; }
         .profile-btn:hover { background: var(--border); }
-        .profile-menu { position: absolute; top: 100%; right: 0; background: var(--white); border-radius: 12px; box-shadow: var(--shadow-lg); min-width: 200px; margin-top: 8px; display: none; z-index: 1000; overflow: hidden; }
+        .profile-menu { position: absolute; top: 100%; right: 0; background: var(--white); border-radius: 12px; box-shadow: var(--shadow-lg); min-width: 220px; margin-top: 8px; display: none; z-index: 1000; overflow: hidden; }
         .profile-menu.active { display: block; }
         .profile-menu-item { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 14px; }
         .profile-menu-item:hover { background: var(--bg-light); }
@@ -119,6 +120,8 @@
         .activity-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 14px; }
         .stat-card { text-align: center; padding: 18px 14px; background: var(--bg-light); border-radius: 12px; transition: all 0.2s; }
         .stat-card:hover { background: var(--white); box-shadow: var(--shadow-sm); }
+        .stat-card.clickable { cursor: pointer; }
+        .stat-card.clickable:hover { transform: translateY(-2px); }
         .stat-icon { font-size: 24px; margin-bottom: 8px; }
         .stat-value { font-size: 28px; font-weight: 700; color: var(--primary); }
         .stat-label { font-size: 11px; color: var(--text-gray); margin-top: 4px; }
@@ -146,7 +149,11 @@
         
         table { width: 100%; border-collapse: collapse; }
         thead { background: var(--bg-light); }
-        th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; color: var(--text-gray); }
+        th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; color: var(--text-gray); cursor: pointer; }
+        th:hover { background: var(--border); }
+        th.sortable::after { content: ' ↕'; opacity: 0.4; }
+        th.sort-asc::after { content: ' ↑'; opacity: 1; }
+        th.sort-desc::after { content: ' ↓'; opacity: 1; }
         td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
         tr:hover { background: rgba(102,126,234,0.02); }
         tr.clickable { cursor: pointer; }
@@ -172,11 +179,6 @@
         .chart-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
         .chart-container { position: relative; height: 280px; }
         
-        .floor-tracker { text-align: center; padding: 24px; }
-        .capacity-circle { width: 160px; height: 160px; margin: 0 auto 16px; border-radius: 50%; background: var(--gradient); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(102,126,234,0.3); }
-        .capacity-number { font-size: 42px; font-weight: 800; }
-        .capacity-label { font-size: 13px; opacity: 0.9; }
-        
         .rep-card { background: var(--white); padding: 20px; border-radius: 14px; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s; border-left: 4px solid var(--success); }
         .rep-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
         .rep-card.yellow { border-left-color: var(--warning); }
@@ -193,7 +195,7 @@
         .modal.active { display: flex; }
         .modal-content { background: var(--white); padding: 32px; border-radius: 18px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
         .modal-content.wide { max-width: 900px; }
-        .modal-content.profile { max-width: 480px; padding: 0; overflow: hidden; }
+        .modal-content.profile { max-width: 500px; padding: 0; overflow: hidden; }
         .modal-header { margin-bottom: 24px; }
         .modal-header h2 { font-size: 22px; font-weight: 700; }
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
@@ -205,7 +207,22 @@
         .celebration-title { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
         .celebration-text { font-size: 16px; color: var(--text-gray); margin-bottom: 24px; }
         
+        .checklist-section { background: var(--bg-light); padding: 16px; border-radius: 12px; margin-bottom: 16px; }
+        .checklist-title { font-weight: 700; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .checklist-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; font-size: 13px; }
+        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; cursor: pointer; }
+        .checklist-item.completed { text-decoration: line-through; opacity: 0.6; }
+        .checklist-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .checklist-progress-text { font-size: 14px; font-weight: 600; }
+        
         .quick-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .clickable-link { color: var(--primary); cursor: pointer; text-decoration: underline; }
+        .clickable-link:hover { color: #764ba2; }
+        
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg-light); padding: 4px; border-radius: 10px; }
+        .tab { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .tab.active { background: var(--white); box-shadow: var(--shadow-sm); color: var(--primary); }
+        .tab:hover:not(.active) { background: var(--border); }
         
         @media (max-width: 768px) {
             .charts-grid { grid-template-columns: 1fr; }
@@ -258,8 +275,7 @@
                             <span>▼</span>
                         </button>
                         <div class="profile-menu" id="profileMenu">
-                            <div class="profile-menu-item" onclick="openProfileSettings()">⚙️ Settings</div>
-                            <div class="profile-menu-item" onclick="openChangePasswordModal()">🔐 Change Password</div>
+                            <div class="profile-menu-item" onclick="openProfileSettings()">⚙️ Account Settings</div>
                             <div class="profile-menu-divider"></div>
                             <div class="profile-menu-item" onclick="logout()" style="color: var(--danger);">🚪 Logout</div>
                         </div>
@@ -274,7 +290,7 @@
 
     <script>
 // ============ STATE & CONFIG ============
-const state = {
+var state = {
     currentUser: null,
     currentView: 'dashboard',
     baseId: localStorage.getItem('airtable_baseId') || '',
@@ -282,27 +298,31 @@ const state = {
     charts: {},
     filterRep: null,
     dismissedNudges: JSON.parse(localStorage.getItem('dismissedNudges') || '[]'),
-    celebratedAchievements: JSON.parse(localStorage.getItem('celebratedAchievements') || '[]'),
+    celebratedToday: JSON.parse(localStorage.getItem('celebratedToday_' + new Date().toDateString()) || '[]'),
+    dailyChecklist: JSON.parse(localStorage.getItem('dailyChecklist_' + new Date().toDateString()) || '{}'),
     data: { deals: [], activities: [], tasks: [], contacts: [], accounts: [], teamMembers: [], pricingRules: [] },
     teamMemberMap: {},
-    filters: { contacts: { search: '', owner: '' }, accounts: { search: '', industry: '', owner: '' }, pipeline: { tier: '', owner: '' } }
+    filters: { contacts: { search: '', owner: '' }, accounts: { search: '', industry: '', owner: '' }, pipeline: { tier: '', owner: '' } },
+    sorting: { contacts: { field: 'name', dir: 'asc' }, accounts: { field: 'name', dir: 'asc' } }
 };
 
-const savedSession = localStorage.getItem('nuconnect_session');
+var savedSession = localStorage.getItem('nuconnect_session');
 if (savedSession) { try { state.currentUser = JSON.parse(savedSession); } catch(e) {} }
 
-const savedPasswords = JSON.parse(localStorage.getItem('nuconnect_passwords') || '{}');
-const defaultPasswords = { 'Javonte': 'nuconnect2025', 'Teslim': 'nuconnect2025', 'Israel': 'nuconnect2025', 'Conrad': 'nuconnect2025', 'Test User': 'test2024', 'Test Leadership': 'testleader2024', 'Ramallah': 'admin2025', 'Keyna': 'admin2025' };
-const userPasswords = { ...defaultPasswords, ...savedPasswords };
+var savedPasswords = JSON.parse(localStorage.getItem('nuconnect_passwords') || '{}');
+var defaultPasswords = { 'Javonte': 'nuconnect2025', 'Teslim': 'nuconnect2025', 'Israel': 'nuconnect2025', 'Conrad': 'nuconnect2025', 'Test User': 'test2024', 'Test Leadership': 'testleader2024', 'Ramallah': 'admin2025', 'Keyna': 'admin2025' };
+var userPasswords = {};
+for (var k in defaultPasswords) userPasswords[k] = defaultPasswords[k];
+for (var k in savedPasswords) userPasswords[k] = savedPasswords[k];
 
-const userTimezones = JSON.parse(localStorage.getItem('nuconnect_timezones') || '{}');
+var userTimezones = JSON.parse(localStorage.getItem('nuconnect_timezones') || '{}');
 
-const tierPricing = { 'Starter': 750, 'Growth': 1250, 'Pro': 2000, 'Enterprise': 4200 };
-const tierColors = { 'Starter': '#9e9e9e', 'Growth': '#22c55e', 'Pro': '#f59e0b', 'Enterprise': '#667eea' };
+var tierPricing = { 'Starter': 750, 'Growth': 1250, 'Pro': 2000, 'Enterprise': 4200 };
+var tierColors = { 'Starter': '#9e9e9e', 'Growth': '#22c55e', 'Pro': '#f59e0b', 'Enterprise': '#667eea' };
 
-const industryOptions = ['Technology', 'Finance & Banking', 'Healthcare', 'Education', 'Retail & E-commerce', 'Real Estate', 'Manufacturing', 'Entertainment & Media', 'Non-Profit', 'Government', 'Legal Services', 'Hospitality & Events', 'Sports & Fitness', 'Food & Beverage', 'Transportation & Logistics', 'Energy & Utilities', 'Construction', 'Agriculture', 'Telecommunications', 'Marketing & Advertising', 'Professional Services', 'Insurance', 'Automotive', 'Aerospace', 'Pharmaceuticals', 'Biotechnology', 'Fashion & Apparel', 'Beauty & Cosmetics', 'Travel & Tourism', 'Gaming & Esports', 'Music & Arts', 'Consulting', 'Human Resources', 'Security Services', 'Environmental Services', 'Other'];
+var industryOptions = ['Technology', 'Finance & Banking', 'Healthcare', 'Education', 'Retail & E-commerce', 'Real Estate', 'Manufacturing', 'Entertainment & Media', 'Non-Profit', 'Government', 'Legal Services', 'Hospitality & Events', 'Sports & Fitness', 'Food & Beverage', 'Transportation & Logistics', 'Energy & Utilities', 'Construction', 'Agriculture', 'Telecommunications', 'Marketing & Advertising', 'Professional Services', 'Insurance', 'Automotive', 'Aerospace', 'Pharmaceuticals', 'Biotechnology', 'Fashion & Apparel', 'Beauty & Cosmetics', 'Travel & Tourism', 'Gaming & Esports', 'Music & Arts', 'Consulting', 'Human Resources', 'Security Services', 'Environmental Services', 'Other'];
 
-const TOUCHPOINT_CADENCE = [
+var TOUCHPOINT_CADENCE = [
     { week: 1, action: 'Intro Email + Pitch Deck', goal: 'Position NuConnect as a strategic partner' },
     { week: 2, action: 'Value Add, Demo Invite, Case Study', goal: 'Build trust with proof of impact' },
     { week: 3, action: 'Follow-up Email, Pricing & Legal', goal: 'Drive engagement, show polish' },
@@ -314,7 +334,43 @@ const TOUCHPOINT_CADENCE = [
     { week: 9, action: 'Onboarding Kickoff', goal: 'Begin setup & collaboration' }
 ];
 
-const KPI_TARGETS = {
+var DAILY_CHECKLIST = [
+    { id: 'morning', title: '🌅 Morning Login & Hygiene', items: [
+        'Logged in by 9:00am local time', 'Checked inbox (responded to all new replies)', 'Reviewed calendar for today', 'Cleared all overdue tasks', 'Reviewed pipeline for follow-ups'
+    ]},
+    { id: 'pipeline-review', title: '📋 Pipeline Review (Start of Day)', items: [
+        'Review pipeline (What deals can move today)', 'Identify 3 priority deals to push forward', 'Pull follow-ups due today', 'Add 3-5 new leads to CRM'
+    ]},
+    { id: 'leads', title: '🎯 New Lead Generation (Top of Funnel)', items: [
+        'Added 20-25 new qualified leads', 'All leads logged in CRM', 'All new leads enrolled into email cadence same day', 'Lead source noted (event, list, referral, LinkedIn, etc.)'
+    ]},
+    { id: 'outbound', title: '📤 Outbound Outreach', items: [
+        'Sent 20-25 new outbound emails', 'Sent 5-10 LinkedIn touches', 'First-touch messages personalized', 'CTAs clearly stated (discovery call or reply)'
+    ]},
+    { id: 'followups', title: '🔄 Follow-Ups & Replies', items: [
+        'Completed 10-15 follow-ups', 'Responded to all warm replies same day (when possible)', 'Nudged leads toward next step (call, proposal, close)'
+    ]},
+    { id: 'daily-activity', title: '🔁 DAILY ACTIVITY (NON-NEGOTIABLE)', items: [
+        'Complete 20-25 total touchpoints (email, LinkedIn, calls, follow-ups)', '10 follow-ups minimum', '5-10 outbound messages minimum', '2-5 call attempts minimum', 'Log every touchpoint in CRM (no exceptions)'
+    ]},
+    { id: 'discovery', title: '📞 DISCOVERY & PIPELINE MOVEMENT', items: [
+        'Book at least 1 discovery call OR complete a scheduled discovery OR send a proposal', 'At least ONE deal moved to next stage today'
+    ]},
+    { id: 'qualification', title: '🎯 QUALIFICATION CHECK (PROTECT PRICING)', items: [
+        'Confirm attendee count for discoveries', 'Confirm event date', 'Confirm budget range', 'Assign correct tier (Starter/Growth/Pro/Enterprise)', 'Max 1 Starter deal per month - Push Growth or Pro by default'
+    ]},
+    { id: 'deal-progression', title: '💼 DEAL PROGRESSION TASKS', items: [
+        'Proposal sent within 48 hours of discovery', 'Follow-up task scheduled', 'Decision maker identified', 'Next step scheduled on calendar'
+    ]},
+    { id: 'pipeline', title: '📈 Pipeline Movement', items: [
+        'Moved 1-2 leads forward in pipeline stage', 'Updated deal stage accurately', 'Notes added for any meaningful conversation'
+    ]},
+    { id: 'eod', title: '🕔 END OF DAY CHECK (5 MIN)', items: [
+        'Did I complete 20-25 touchpoints?', 'Did I add new leads?', 'Did I move at least one deal forward?', 'Did I log everything in CRM?', 'Tomorrow\'s follow-ups scheduled', 'Pipeline reviewed for momentum gaps', 'Calendar prepped for next business day'
+    ]}
+];
+
+var KPI_TARGETS = {
     BDR: { monthlyRevenueMin: 9750, monthlyRevenueMax: 12700, monthlyEventsMin: 6, monthlyEventsMax: 7, dailyTouchpointsMin: 20, dailyTouchpointsMax: 25, dailyCalls: 15, dailyEmails: 10, dailyLinkedIn: 5, quota: 45000 },
     AE: { monthlyRevenueMin: 15000, monthlyRevenueMax: 20000, monthlyEventsMin: 4, monthlyEventsMax: 6, dailyTouchpointsMin: 15, dailyTouchpointsMax: 20, dailyCalls: 10, dailyEmails: 8, dailyLinkedIn: 3, quota: 60000 },
     Team: { monthlyRevenueMin: 28000, monthlyRevenueMax: 35000, monthlyEventsMin: 18, monthlyEventsMax: 22 }
@@ -322,8 +378,9 @@ const KPI_TARGETS = {
 
 function getKPITargets(role) { return role === 'AE' ? KPI_TARGETS.AE : KPI_TARGETS.BDR; }
 
-const allNavItems = [
+var allNavItems = [
     { id: 'dashboard', icon: '📊', label: 'Dashboard' },
+    { id: 'checklist', icon: '✅', label: 'Daily Checklist' },
     { id: 'pipeline', icon: '📈', label: 'Pipeline' },
     { id: 'contacts', icon: '👥', label: 'Contacts' },
     { id: 'accounts', icon: '🏢', label: 'Accounts' },
@@ -331,18 +388,17 @@ const allNavItems = [
     { id: 'activity', icon: '📝', label: 'Activities' },
     { id: 'reports', icon: '📑', label: 'Reports' }
 ];
-const leadershipNavItems = [
+var leadershipNavItems = [
     { id: 'leadership', icon: '👔', label: 'Analytics' },
     { id: 'team', icon: '👨‍👩‍👧‍👦', label: 'Team Overview' }
 ];
 
 // ============ GREETING & TIME ============
 function getGreeting() {
-    const tz = userTimezones[state.currentUser?.name] || Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const hour = new Date().toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: tz });
-    const h = parseInt(hour);
-    if (h < 12) return 'Good morning';
-    if (h < 17) return 'Good afternoon';
+    var tz = userTimezones[state.currentUser ? state.currentUser.name : ''] || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var hour = parseInt(new Date().toLocaleString('en-US', { hour: 'numeric', hour12: false, timeZone: tz }));
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
     return 'Good evening';
 }
 
@@ -353,91 +409,100 @@ function toggleProfileMenu() {
 
 document.addEventListener('click', function(e) {
     if (!e.target.closest('.profile-dropdown')) {
-        document.getElementById('profileMenu')?.classList.remove('active');
+        var menu = document.getElementById('profileMenu');
+        if (menu) menu.classList.remove('active');
     }
 });
 
 function openProfileSettings() {
-    const currentTz = userTimezones[state.currentUser.name] || Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const timezones = ['America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Phoenix', 'America/Anchorage', 'Pacific/Honolulu', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Asia/Shanghai', 'Australia/Sydney'];
+    var currentTz = userTimezones[state.currentUser.name] || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var timezones = ['Africa/Lagos', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Phoenix', 'America/Anchorage', 'Pacific/Honolulu', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Asia/Shanghai', 'Australia/Sydney'];
     
-    let tzOptions = timezones.map(tz => '<option value="' + tz + '"' + (currentTz === tz ? ' selected' : '') + '>' + tz + '</option>').join('');
+    var tzOptions = '';
+    for (var i = 0; i < timezones.length; i++) {
+        tzOptions += '<option value="' + timezones[i] + '"' + (currentTz === timezones[i] ? ' selected' : '') + '>' + timezones[i] + '</option>';
+    }
     
-    document.getElementById('modalContainer').innerHTML = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>⚙️ Profile Settings</h2></div>' +
+    var isLeadership = state.currentUser.role === 'Leadership';
+    var repOptions = '';
+    if (isLeadership) {
+        var reps = state.data.teamMembers.filter(function(m) { return m.role !== 'Leadership'; });
+        for (var i = 0; i < reps.length; i++) {
+            repOptions += '<option value="' + reps[i].name + '">' + reps[i].name + ' (' + reps[i].role + ')</option>';
+        }
+    }
+    
+    var html = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>⚙️ Account Settings</h2></div>' +
         '<div class="form-group"><label>Your Name</label><input type="text" value="' + state.currentUser.name + '" disabled></div>' +
         '<div class="form-group"><label>Role</label><input type="text" value="' + state.currentUser.role + '" disabled></div>' +
         '<div class="form-group"><label>Timezone</label><select id="timezoneSelect">' + tzOptions + '</select></div>' +
-        '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveProfileSettings()">Save</button></div>' +
-        '</div></div>';
+        '<hr style="margin:20px 0;border:none;border-top:1px solid var(--border);">' +
+        '<h3 style="margin-bottom:16px;">🔐 Change Password</h3>' +
+        '<div class="form-group"><label>Current Password</label><input type="password" id="currentPassword" placeholder="Enter current password"></div>' +
+        '<div class="form-group"><label>New Password</label><input type="password" id="newPassword" placeholder="Enter new password (min 6 chars)"></div>' +
+        '<div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPassword" placeholder="Confirm new password"></div>';
+    
+    if (isLeadership) {
+        html += '<hr style="margin:20px 0;border:none;border-top:1px solid var(--border);">' +
+            '<h3 style="margin-bottom:16px;">🔑 Reset Rep Password</h3>' +
+            '<div class="form-group"><label>Select Rep</label><select id="resetRepSelect"><option value="">Choose rep...</option>' + repOptions + '</select></div>' +
+            '<div class="form-group"><label>New Password for Rep</label><input type="password" id="resetRepPassword" placeholder="New password for rep"></div>' +
+            '<button class="btn btn-warning btn-small" onclick="resetRepPassword()">Reset Rep Password</button>';
+    }
+    
+    html += '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveProfileSettings()">Save Settings</button></div></div></div>';
+    document.getElementById('modalContainer').innerHTML = html;
     toggleProfileMenu();
 }
 
 function saveProfileSettings() {
-    const tz = document.getElementById('timezoneSelect').value;
+    var tz = document.getElementById('timezoneSelect').value;
     userTimezones[state.currentUser.name] = tz;
     localStorage.setItem('nuconnect_timezones', JSON.stringify(userTimezones));
+    
+    var current = document.getElementById('currentPassword').value;
+    var newPass = document.getElementById('newPassword').value;
+    var confirm = document.getElementById('confirmPassword').value;
+    
+    if (current || newPass || confirm) {
+        if (userPasswords[state.currentUser.name] !== current) { alert('Current password is incorrect'); return; }
+        if (newPass.length < 6) { alert('New password must be at least 6 characters'); return; }
+        if (newPass !== confirm) { alert('New passwords do not match'); return; }
+        
+        userPasswords[state.currentUser.name] = newPass;
+        savedPasswords[state.currentUser.name] = newPass;
+        localStorage.setItem('nuconnect_passwords', JSON.stringify(savedPasswords));
+        alert('Password changed successfully!');
+    }
+    
     closeModal();
     renderView(state.currentView);
 }
 
-function openChangePasswordModal() {
-    document.getElementById('modalContainer').innerHTML = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>🔐 Change Password</h2></div>' +
-        '<div class="form-group"><label>Current Password</label><input type="password" id="currentPassword" placeholder="Enter current password"></div>' +
-        '<div class="form-group"><label>New Password</label><input type="password" id="newPassword" placeholder="Enter new password (min 6 chars)"></div>' +
-        '<div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPassword" placeholder="Confirm new password"></div>' +
-        '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="changePassword()">Change Password</button></div>' +
-        '</div></div>';
-    toggleProfileMenu();
-}
-
-function changePassword() {
-    const current = document.getElementById('currentPassword').value;
-    const newPass = document.getElementById('newPassword').value;
-    const confirm = document.getElementById('confirmPassword').value;
+function resetRepPassword() {
+    var repName = document.getElementById('resetRepSelect').value;
+    var newPass = document.getElementById('resetRepPassword').value;
     
-    if (userPasswords[state.currentUser.name] !== current) { alert('Current password is incorrect'); return; }
-    if (newPass.length < 6) { alert('New password must be at least 6 characters'); return; }
-    if (newPass !== confirm) { alert('New passwords do not match'); return; }
-    
-    userPasswords[state.currentUser.name] = newPass;
-    savedPasswords[state.currentUser.name] = newPass;
-    localStorage.setItem('nuconnect_passwords', JSON.stringify(savedPasswords));
-    closeModal();
-    alert('Password changed successfully!');
-}
-
-function openResetPasswordModal(memberName) {
-    document.getElementById('modalContainer').innerHTML = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>🔑 Reset Password for ' + memberName + '</h2></div>' +
-        '<div class="form-group"><label>New Password</label><input type="password" id="resetNewPassword" placeholder="Enter new password (min 6 chars)"></div>' +
-        '<div class="form-group"><label>Confirm Password</label><input type="password" id="resetConfirmPassword" placeholder="Confirm new password"></div>' +
-        '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="resetPassword(\'' + memberName + '\')">Reset Password</button></div>' +
-        '</div></div>';
-}
-
-function resetPassword(memberName) {
-    const newPass = document.getElementById('resetNewPassword').value;
-    const confirm = document.getElementById('resetConfirmPassword').value;
-    
+    if (!repName) { alert('Please select a rep'); return; }
     if (newPass.length < 6) { alert('Password must be at least 6 characters'); return; }
-    if (newPass !== confirm) { alert('Passwords do not match'); return; }
     
-    userPasswords[memberName] = newPass;
-    savedPasswords[memberName] = newPass;
+    userPasswords[repName] = newPass;
+    savedPasswords[repName] = newPass;
     localStorage.setItem('nuconnect_passwords', JSON.stringify(savedPasswords));
-    closeModal();
-    alert('Password reset successfully for ' + memberName + '!');
+    alert('Password reset successfully for ' + repName + '!');
+    document.getElementById('resetRepSelect').value = '';
+    document.getElementById('resetRepPassword').value = '';
 }
 
 // ============ CELEBRATIONS ============
 function showCelebration(type, message) {
-    const achievementId = type + '-' + new Date().toDateString();
-    if (state.celebratedAchievements.includes(achievementId)) return;
+    if (state.celebratedToday.indexOf(type) !== -1) return;
     
-    state.celebratedAchievements.push(achievementId);
-    localStorage.setItem('celebratedAchievements', JSON.stringify(state.celebratedAchievements));
+    state.celebratedToday.push(type);
+    localStorage.setItem('celebratedToday_' + new Date().toDateString(), JSON.stringify(state.celebratedToday));
     
-    const icons = { 'deal-moved': '🚀', 'kpi-hit': '🏆', 'revenue-goal': '💰', 'close-to-goal': '🔥' };
-    const titles = { 'deal-moved': 'Deal Advanced!', 'kpi-hit': 'KPI Achieved!', 'revenue-goal': 'Revenue Goal Hit!', 'close-to-goal': 'Almost There!' };
+    var icons = { 'deal-moved': '🚀', 'kpi-hit': '🏆', 'revenue-goal': '💰', 'close-to-goal': '🔥', 'deal-won': '🎉' };
+    var titles = { 'deal-moved': 'Deal Advanced!', 'kpi-hit': 'KPI Achieved!', 'revenue-goal': 'Revenue Goal Hit!', 'close-to-goal': 'Almost There!', 'deal-won': 'Deal Won!' };
     
     document.getElementById('celebrationContainer').innerHTML = 
         '<div class="celebration-overlay" onclick="closeCelebration()">' +
@@ -458,14 +523,13 @@ function closeCelebration() {
 }
 
 function checkAchievements() {
-    if (state.currentUser.role === 'Leadership') return;
+    if (!state.currentUser || state.currentUser.role === 'Leadership') return;
     
-    const today = new Date().toISOString().split('T')[0];
-    const targets = getKPITargets(state.currentUser.role);
-    const userActivities = state.data.activities.filter(a => a.owner === state.currentUser.name);
-    const todayActivities = userActivities.filter(a => a.date && a.date.split('T')[0] === today);
+    var today = new Date().toISOString().split('T')[0];
+    var targets = getKPITargets(state.currentUser.role);
+    var userActivities = state.data.activities.filter(function(a) { return a.owner === state.currentUser.name; });
+    var todayActivities = userActivities.filter(function(a) { return a.date && a.date.split('T')[0] === today; });
     
-    // Check touchpoints
     if (todayActivities.length >= targets.dailyTouchpointsMin) {
         showCelebration('kpi-hit', 'You hit your daily touchpoint goal of ' + targets.dailyTouchpointsMin + '+ activities!');
     } else if (todayActivities.length >= targets.dailyTouchpointsMin - 3 && todayActivities.length < targets.dailyTouchpointsMin) {
@@ -474,7 +538,7 @@ function checkAchievements() {
 }
 
 // ============ SEARCH ============
-let searchTimeout = null;
+var searchTimeout = null;
 window.searchResults = [];
 
 function handleSearch(query) {
@@ -483,26 +547,33 @@ function handleSearch(query) {
 }
 
 function performSearch(query) {
-    const resultsDiv = document.getElementById('searchResults');
+    var resultsDiv = document.getElementById('searchResults');
     if (!query || query.length < 2) { resultsDiv.innerHTML = ''; resultsDiv.classList.remove('active'); return; }
-    const q = query.toLowerCase();
-    const results = [];
+    var q = query.toLowerCase();
+    var results = [];
 
-    state.data.deals.forEach(function(deal) {
-        if (deal.name.toLowerCase().includes(q)) {
+    for (var i = 0; i < state.data.deals.length; i++) {
+        var deal = state.data.deals[i];
+        if (deal.name.toLowerCase().indexOf(q) !== -1) {
             results.push({ type: 'Deal', title: deal.name, meta: deal.tier + ' • $' + deal.value.toLocaleString(), action: function() { closeSearch(); renderView('pipeline'); }});
         }
-    });
-    state.data.contacts.forEach(function(contact) {
-        if (contact.name.toLowerCase().includes(q) || (contact.email && contact.email.toLowerCase().includes(q))) {
-            results.push({ type: 'Contact', title: contact.name, meta: contact.email || 'No email', action: function() { closeSearch(); openContactDetailModal(contact.id); }});
+    }
+    for (var i = 0; i < state.data.contacts.length; i++) {
+        var contact = state.data.contacts[i];
+        if (contact.name.toLowerCase().indexOf(q) !== -1 || (contact.email && contact.email.toLowerCase().indexOf(q) !== -1)) {
+            (function(c) {
+                results.push({ type: 'Contact', title: c.name, meta: c.email || 'No email', action: function() { closeSearch(); openContactDetailModal(c.id); }});
+            })(contact);
         }
-    });
-    state.data.accounts.forEach(function(account) {
-        if (account.name.toLowerCase().includes(q)) {
-            results.push({ type: 'Account', title: account.name, meta: account.industry || 'No industry', action: function() { closeSearch(); openAccountDetailModal(account.id); }});
+    }
+    for (var i = 0; i < state.data.accounts.length; i++) {
+        var account = state.data.accounts[i];
+        if (account.name.toLowerCase().indexOf(q) !== -1) {
+            (function(a) {
+                results.push({ type: 'Account', title: a.name, meta: a.industry || 'No industry', action: function() { closeSearch(); openAccountDetailModal(a.id); }});
+            })(account);
         }
-    });
+    }
 
     if (results.length === 0) {
         resultsDiv.innerHTML = '<div class="search-result-item"><div class="search-result-title">No results found</div></div>';
@@ -534,7 +605,7 @@ function dismissNudge(nudgeId, btn) {
 
 function generateNudges() {
     var nudges = [];
-    if (state.currentUser.role === 'Leadership') return nudges;
+    if (!state.currentUser || state.currentUser.role === 'Leadership') return nudges;
     
     var now = new Date();
     var today = now.toISOString().split('T')[0];
@@ -547,33 +618,42 @@ function generateNudges() {
     
     var userDeals = state.data.deals.filter(function(d) { return d.owner === state.currentUser.name; });
     var monthClosedDeals = userDeals.filter(function(d) {
-        if (!d.stage.toLowerCase().includes('won')) return false;
+        if (d.stage.toLowerCase().indexOf('won') === -1) return false;
         var dealDate = d.closeDate ? new Date(d.closeDate) : (d.createdTime ? new Date(d.createdTime) : null);
         return dealDate && dealDate >= monthStart;
     });
     
-    var monthRevenue = monthClosedDeals.reduce(function(sum, d) { return sum + d.value; }, 0);
+    var monthRevenue = 0;
+    for (var i = 0; i < monthClosedDeals.length; i++) monthRevenue += monthClosedDeals[i].value;
     var revenuePercent = (monthRevenue / targets.monthlyRevenueMin) * 100;
     
-    if (revenuePercent < 50 && !state.dismissedNudges.includes('revenue-low')) {
+    if (revenuePercent < 50 && state.dismissedNudges.indexOf('revenue-low') === -1) {
         nudges.push({ id: 'revenue-low', type: 'danger', icon: '🚨', text: 'You\'re at ' + revenuePercent.toFixed(0) + '% of target. Let\'s pick up the pace!' });
-    } else if (revenuePercent >= 100 && !state.dismissedNudges.includes('revenue-hit-' + today)) {
+    } else if (revenuePercent >= 100 && state.dismissedNudges.indexOf('revenue-hit-' + today) === -1) {
         nudges.push({ id: 'revenue-hit-' + today, type: 'success', icon: '🎉', text: 'Amazing! You\'ve hit ' + revenuePercent.toFixed(0) + '% of your target!' });
     }
     
-    if (now.getHours() >= 15 && todayTouchpoints < 15 && !state.dismissedNudges.includes('touchpoints-' + today)) {
+    if (now.getHours() >= 15 && todayTouchpoints < 15 && state.dismissedNudges.indexOf('touchpoints-' + today) === -1) {
         nudges.push({ id: 'touchpoints-' + today, type: 'warning', icon: '⏰', text: 'Only ' + todayTouchpoints + '/' + targets.dailyTouchpointsMax + ' touchpoints today. Time to hustle!' });
     }
     
-    var pipelineDeals = userDeals.filter(function(d) { return !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'); });
-    var staleDeals = pipelineDeals.filter(function(d) {
-        var lastActivity = userActivities.filter(function(a) { return a.account && d.name.toLowerCase().includes(a.account.toLowerCase()); }).sort(function(x,y) { return new Date(y.date) - new Date(x.date); })[0];
-        if (!lastActivity) return true;
-        return getDaysSince(lastActivity.date) >= 5;
-    });
+    var pipelineDeals = userDeals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') === -1 && d.stage.toLowerCase().indexOf('lost') === -1; });
+    var staleCount = 0;
+    for (var i = 0; i < pipelineDeals.length; i++) {
+        var deal = pipelineDeals[i];
+        var lastActivity = null;
+        for (var j = 0; j < userActivities.length; j++) {
+            if (userActivities[j].account && deal.name.toLowerCase().indexOf(userActivities[j].account.toLowerCase()) !== -1) {
+                if (!lastActivity || new Date(userActivities[j].date) > new Date(lastActivity.date)) {
+                    lastActivity = userActivities[j];
+                }
+            }
+        }
+        if (!lastActivity || getDaysSince(lastActivity.date) >= 5) staleCount++;
+    }
     
-    if (staleDeals.length > 0 && !state.dismissedNudges.includes('stale-' + today)) {
-        nudges.push({ id: 'stale-' + today, type: 'info', icon: '📌', text: staleDeals.length + ' deal' + (staleDeals.length > 1 ? 's need' : ' needs') + ' attention! Move to next touchpoint.' });
+    if (staleCount > 0 && state.dismissedNudges.indexOf('stale-' + today) === -1) {
+        nudges.push({ id: 'stale-' + today, type: 'info', icon: '📌', text: staleCount + ' deal' + (staleCount > 1 ? 's need' : ' needs') + ' attention! Move to next touchpoint.' });
     }
     
     return nudges.slice(0, 4);
@@ -596,7 +676,9 @@ function renderNudges() {
 
 // ============ CHARTS ============
 function destroyCharts() {
-    Object.values(state.charts).forEach(function(chart) { if (chart && typeof chart.destroy === 'function') chart.destroy(); });
+    for (var key in state.charts) {
+        if (state.charts[key] && typeof state.charts[key].destroy === 'function') state.charts[key].destroy();
+    }
     state.charts = {};
 }
 
@@ -614,11 +696,13 @@ function renderRevenueTrendChart(canvasId, deals, label) {
         if (month < 0) { month += 12; year -= 1; }
         var monthStart = new Date(year, month, 1), monthEnd = new Date(year, month + 1, 0);
         var monthDeals = deals.filter(function(d) {
-            if (!d.stage.toLowerCase().includes('won')) return false;
+            if (d.stage.toLowerCase().indexOf('won') === -1) return false;
             var closeDate = d.closeDate ? new Date(d.closeDate) : (d.createdTime ? new Date(d.createdTime) : null);
             return closeDate && closeDate >= monthStart && closeDate <= monthEnd;
         });
-        monthlyData.push(monthDeals.reduce(function(sum, d) { return sum + d.value; }, 0));
+        var total = 0;
+        for (var j = 0; j < monthDeals.length; j++) total += monthDeals[j].value;
+        monthlyData.push(total);
         labels.push(monthNames[month]);
     }
     
@@ -633,13 +717,15 @@ function renderRevenueByTierChart(canvasId, deals) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
-    var wonDeals = deals.filter(function(d) { return d.stage.toLowerCase().includes('won'); });
+    var wonDeals = deals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') !== -1; });
     var tierData = { 'Starter': 0, 'Growth': 0, 'Pro': 0, 'Enterprise': 0 };
-    wonDeals.forEach(function(d) { if (tierData.hasOwnProperty(d.tier)) tierData[d.tier] += d.value; });
+    for (var i = 0; i < wonDeals.length; i++) {
+        if (tierData.hasOwnProperty(wonDeals[i].tier)) tierData[wonDeals[i].tier] += wonDeals[i].value;
+    }
     
     state.charts[canvasId] = new Chart(ctx, {
         type: 'pie',
-        data: { labels: Object.keys(tierData), datasets: [{ data: Object.values(tierData), backgroundColor: [tierColors.Starter, tierColors.Growth, tierColors.Pro, tierColors.Enterprise] }] },
+        data: { labels: Object.keys(tierData), datasets: [{ data: [tierData.Starter, tierData.Growth, tierData.Pro, tierData.Enterprise], backgroundColor: [tierColors.Starter, tierColors.Growth, tierColors.Pro, tierColors.Enterprise] }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 }
@@ -658,36 +744,53 @@ function getDaysSince(dateString) {
 
 function getOwnerName(ownerField) {
     if (Array.isArray(ownerField) && ownerField.length > 0) {
-        var member = state.data.teamMembers.find(function(m) { return m.id === ownerField[0]; });
-        return member ? member.name : '';
+        for (var i = 0; i < state.data.teamMembers.length; i++) {
+            if (state.data.teamMembers[i].id === ownerField[0]) return state.data.teamMembers[i].name;
+        }
     }
     return ownerField || '';
 }
 
 function getAccountName(accountField) {
     if (Array.isArray(accountField) && accountField.length > 0) {
-        var account = state.data.accounts.find(function(a) { return a.id === accountField[0]; });
-        return account ? account.name : '';
+        for (var i = 0; i < state.data.accounts.length; i++) {
+            if (state.data.accounts[i].id === accountField[0]) return state.data.accounts[i].name;
+        }
     }
     return '';
 }
 
 function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
 
+function getActivityStats(activities) {
+    var stats = { calls: 0, emails: 0, linkedin: 0, demos: 0, proposals: 0, meetings: 0, followups: 0 };
+    for (var i = 0; i < activities.length; i++) {
+        var type = (activities[i].type || '').toLowerCase();
+        if (type.indexOf('call') !== -1) stats.calls++;
+        else if (type.indexOf('email') !== -1) stats.emails++;
+        else if (type.indexOf('linkedin') !== -1) stats.linkedin++;
+        else if (type.indexOf('demo') !== -1) stats.demos++;
+        else if (type.indexOf('proposal') !== -1) stats.proposals++;
+        else if (type.indexOf('meeting') !== -1) stats.meetings++;
+        else if (type.indexOf('follow') !== -1) stats.followups++;
+    }
+    return stats;
+}
+
 // ============ INITIALIZATION ============
-async function init() {
-    console.log('%c🚀 NuConnect CRM v5.0', 'background: #667eea; color: white; font-size: 16px; padding: 10px;');
+function init() {
+    console.log('%c🚀 NuConnect CRM v6.0', 'background: #667eea; color: white; font-size: 16px; padding: 10px;');
     
     if (state.baseId && state.apiKey) {
-        await loadTeamMembers();
-        
-        if (state.currentUser) {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-            await initApp();
-        } else {
-            populateLoginSelect();
-        }
+        loadTeamMembers().then(function() {
+            if (state.currentUser) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.remove('hidden');
+                initApp();
+            } else {
+                populateLoginSelect();
+            }
+        });
     } else {
         showConfigPrompt();
     }
@@ -708,17 +811,18 @@ function saveConfig() {
     else alert('Please fill in both fields');
 }
 
-async function loadTeamMembers() {
-    try {
-        var response = await fetchFromAirtable('Team Members');
+function loadTeamMembers() {
+    return fetchFromAirtable('Team Members').then(function(response) {
         if (response && response.records) {
-            state.data.teamMembers = response.records.map(function(r) { 
-                return { id: r.id, name: r.fields.Name || '', role: r.fields.Role || '', quota: r.fields['Monthly Quota'] || (r.fields.Role === 'AE' ? 60000 : 45000) }; 
-            });
+            state.data.teamMembers = [];
             state.teamMemberMap = {};
-            response.records.forEach(function(r) { if (r.fields.Name) state.teamMemberMap[r.fields.Name] = r.id; });
+            for (var i = 0; i < response.records.length; i++) {
+                var r = response.records[i];
+                state.data.teamMembers.push({ id: r.id, name: r.fields.Name || '', role: r.fields.Role || '', quota: r.fields['Monthly Quota'] || (r.fields.Role === 'AE' ? 60000 : 45000) });
+                if (r.fields.Name) state.teamMemberMap[r.fields.Name] = r.id;
+            }
         }
-    } catch (error) {
+    }).catch(function(error) {
         console.error('Error loading team members:', error);
         state.data.teamMembers = [
             { id: 'rec1', name: 'Javonte', role: 'BDR', quota: 45000 }, { id: 'rec2', name: 'Teslim', role: 'BDR', quota: 45000 },
@@ -727,21 +831,22 @@ async function loadTeamMembers() {
             { id: 'rec7', name: 'Ramallah', role: 'Leadership', quota: 0 }, { id: 'rec8', name: 'Keyna', role: 'Leadership', quota: 0 }
         ];
         state.teamMemberMap = { 'Javonte': 'rec1', 'Teslim': 'rec2', 'Israel': 'rec3', 'Conrad': 'rec4', 'Test User': 'rec5', 'Test Leadership': 'rec6', 'Ramallah': 'rec7', 'Keyna': 'rec8' };
-    }
+    });
 }
 
 function populateLoginSelect() {
     var select = document.getElementById('userSelect');
     if (!select) return;
-    state.data.teamMembers.forEach(function(member) {
+    for (var i = 0; i < state.data.teamMembers.length; i++) {
+        var member = state.data.teamMembers[i];
         var option = document.createElement('option');
         option.value = member.name;
         option.textContent = member.name + ' (' + member.role + ')';
         select.appendChild(option);
-    });
+    }
 }
 
-async function handleLogin() {
+function handleLogin() {
     var select = document.getElementById('userSelect');
     var passwordInput = document.getElementById('passwordInput');
     var errorDiv = document.getElementById('loginError');
@@ -751,29 +856,35 @@ async function handleLogin() {
     if (!enteredPassword) { errorDiv.textContent = 'Please enter your password'; errorDiv.classList.remove('hidden'); return; }
     if (userPasswords[selectedName] !== enteredPassword) { errorDiv.textContent = 'Incorrect password'; errorDiv.classList.remove('hidden'); passwordInput.value = ''; return; }
     
-    var user = state.data.teamMembers.find(function(m) { return m.name === selectedName; });
-    if (user) { 
-        state.currentUser = user; 
-        localStorage.setItem('nuconnect_session', JSON.stringify(user));
-        document.getElementById('loginScreen').classList.add('hidden'); 
-        document.getElementById('appContainer').classList.remove('hidden'); 
-        await initApp(); 
+    for (var i = 0; i < state.data.teamMembers.length; i++) {
+        if (state.data.teamMembers[i].name === selectedName) {
+            state.currentUser = state.data.teamMembers[i];
+            localStorage.setItem('nuconnect_session', JSON.stringify(state.currentUser));
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            initApp();
+            break;
+        }
     }
 }
 
-async function initApp() {
+function initApp() {
     document.getElementById('currentUserName').textContent = state.currentUser.name + ' • ' + state.currentUser.role;
     document.getElementById('profileName').textContent = state.currentUser.name;
     buildNavigation();
-    await loadAllData();
-    renderView('dashboard');
-    setInterval(async function() { await loadAllData(); }, 5 * 60 * 1000);
+    loadAllData().then(function() {
+        renderView('dashboard');
+    });
+    setInterval(function() { loadAllData(); }, 5 * 60 * 1000);
 }
 
 function buildNavigation() {
     var nav = document.getElementById('sidebarNav');
     var items = allNavItems.slice();
-    if (state.currentUser.role === 'Leadership') items = items.concat(leadershipNavItems);
+    if (state.currentUser.role === 'Leadership') {
+        items = items.filter(function(item) { return item.id !== 'checklist'; });
+        items = items.concat(leadershipNavItems);
+    }
     var html = '';
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
@@ -791,89 +902,103 @@ function logout() {
 }
 
 // ============ AIRTABLE API ============
-async function fetchFromAirtable(tableName, method, body) {
+function fetchFromAirtable(tableName, method, body) {
     method = method || 'GET';
-    try {
-        var url = 'https://api.airtable.com/v0/' + state.baseId + '/' + encodeURIComponent(tableName);
-        var options = { method: method, headers: { 'Authorization': 'Bearer ' + state.apiKey, 'Content-Type': 'application/json' } };
-        if (body && ['POST', 'PATCH', 'PUT'].includes(method)) options.body = JSON.stringify(body);
-        var response = await fetch(url, options);
+    var url = 'https://api.airtable.com/v0/' + state.baseId + '/' + encodeURIComponent(tableName);
+    var options = { method: method, headers: { 'Authorization': 'Bearer ' + state.apiKey, 'Content-Type': 'application/json' } };
+    if (body && (method === 'POST' || method === 'PATCH' || method === 'PUT')) options.body = JSON.stringify(body);
+    return fetch(url, options).then(function(response) {
         if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
-        return await response.json();
-    } catch (error) { console.error('Error with ' + tableName + ':', error); throw error; }
+        return response.json();
+    });
 }
 
-async function deleteFromAirtable(tableName, recordId) {
+function deleteFromAirtable(tableName, recordId) {
     var url = 'https://api.airtable.com/v0/' + state.baseId + '/' + encodeURIComponent(tableName) + '/' + recordId;
-    var response = await fetch(url, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + state.apiKey } });
-    if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
-    return true;
+    return fetch(url, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + state.apiKey } }).then(function(response) {
+        if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+        return true;
+    });
 }
 
-async function updateInAirtable(tableName, recordId, fields) {
+function updateInAirtable(tableName, recordId, fields) {
     var url = 'https://api.airtable.com/v0/' + state.baseId + '/' + encodeURIComponent(tableName) + '/' + recordId;
-    var response = await fetch(url, { method: 'PATCH', headers: { 'Authorization': 'Bearer ' + state.apiKey, 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: fields }) });
-    if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
-    return await response.json();
+    return fetch(url, { method: 'PATCH', headers: { 'Authorization': 'Bearer ' + state.apiKey, 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: fields }) }).then(function(response) {
+        if (!response.ok) throw new Error('HTTP error! status: ' + response.status);
+        return response.json();
+    });
 }
 
-async function loadAllData() {
-    try { await Promise.all([loadDeals(), loadActivities(), loadContacts(), loadAccounts()]); }
-    catch (error) { console.error('Error loading data:', error); }
+function loadAllData() {
+    return Promise.all([loadDeals(), loadActivities(), loadContacts(), loadAccounts()]).catch(function(error) {
+        console.error('Error loading data:', error);
+    });
 }
 
-async function loadDeals() {
-    var response = await fetchFromAirtable('Deals');
-    if (response && response.records) {
-        state.data.deals = response.records.map(function(r) {
-            return {
-                id: r.id, name: r.fields['Deal Name'] || '', owner: getOwnerName(r.fields.Owner),
-                tier: Array.isArray(r.fields['Tier (lookup)']) ? r.fields['Tier (lookup)'][0] : r.fields['Tier (lookup)'] || '',
-                stage: r.fields.Stage || '', value: r.fields.Amount || 0, eventName: r.fields['Event Name'] || '',
-                closeDate: r.fields['Close Date'] || '', createdTime: r.createdTime,
-                pricingType: r.fields['Pricing Type'] || 'Public Price', status: r.fields['Status'] || 'Active'
-            };
-        });
-    }
+function loadDeals() {
+    return fetchFromAirtable('Deals').then(function(response) {
+        if (response && response.records) {
+            state.data.deals = [];
+            for (var i = 0; i < response.records.length; i++) {
+                var r = response.records[i];
+                state.data.deals.push({
+                    id: r.id, name: r.fields['Deal Name'] || '', owner: getOwnerName(r.fields.Owner),
+                    tier: Array.isArray(r.fields['Tier (lookup)']) ? r.fields['Tier (lookup)'][0] : r.fields['Tier (lookup)'] || '',
+                    stage: r.fields.Stage || '', value: r.fields.Amount || 0, eventName: r.fields['Event Name'] || '',
+                    closeDate: r.fields['Close Date'] || '', createdTime: r.createdTime,
+                    pricingType: r.fields['Pricing Type'] || 'Public Price', status: r.fields['Status'] || 'Active'
+                });
+            }
+        }
+    });
 }
 
-async function loadActivities() {
-    var response = await fetchFromAirtable('Activities');
-    if (response && response.records) {
-        state.data.activities = response.records.map(function(r) {
-            return {
-                id: r.id, name: r.fields['Activity Name'] || '', type: r.fields.Type || '',
-                date: r.fields['Activity Date/Time'] || r.fields.Date || '', owner: r.fields.Owner || '',
-                account: r.fields.Account || '', result: r.fields.Result || '', createdTime: r.createdTime
-            };
-        });
-    }
+function loadActivities() {
+    return fetchFromAirtable('Activities').then(function(response) {
+        if (response && response.records) {
+            state.data.activities = [];
+            for (var i = 0; i < response.records.length; i++) {
+                var r = response.records[i];
+                state.data.activities.push({
+                    id: r.id, name: r.fields['Activity Name'] || '', type: r.fields.Type || '',
+                    date: r.fields['Activity Date/Time'] || r.fields.Date || '', owner: r.fields.Owner || '',
+                    account: r.fields.Account || '', result: r.fields.Result || '', createdTime: r.createdTime
+                });
+            }
+        }
+    });
 }
 
-async function loadContacts() {
-    var response = await fetchFromAirtable('Contacts');
-    if (response && response.records) {
-        state.data.contacts = response.records.map(function(r) {
-            return {
-                id: r.id, name: r.fields['Full Name'] || '', email: r.fields.Email || '', phone: r.fields.Phone || '',
-                company: getAccountName(r.fields.Account), accountId: Array.isArray(r.fields.Account) ? r.fields.Account[0] : null,
-                role: r.fields.Title || '', owner: getOwnerName(r.fields['Contact Owner']), createdTime: r.createdTime
-            };
-        });
-    }
+function loadContacts() {
+    return fetchFromAirtable('Contacts').then(function(response) {
+        if (response && response.records) {
+            state.data.contacts = [];
+            for (var i = 0; i < response.records.length; i++) {
+                var r = response.records[i];
+                state.data.contacts.push({
+                    id: r.id, name: r.fields['Full Name'] || '', email: r.fields.Email || '', phone: r.fields.Phone || '',
+                    company: getAccountName(r.fields.Account), accountId: Array.isArray(r.fields.Account) ? r.fields.Account[0] : null,
+                    role: r.fields.Title || '', owner: getOwnerName(r.fields['Contact Owner']), createdTime: r.createdTime
+                });
+            }
+        }
+    });
 }
 
-async function loadAccounts() {
-    var response = await fetchFromAirtable('Accounts');
-    if (response && response.records) {
-        state.data.accounts = response.records.map(function(r) {
-            return {
-                id: r.id, name: r.fields['Account Name'] || '', industry: r.fields.Industry || '',
-                website: r.fields.Website || '', phone: r.fields.Phone || '', address: r.fields.Address || '',
-                owner: getOwnerName(r.fields['Account Owner']), createdTime: r.createdTime
-            };
-        });
-    }
+function loadAccounts() {
+    return fetchFromAirtable('Accounts').then(function(response) {
+        if (response && response.records) {
+            state.data.accounts = [];
+            for (var i = 0; i < response.records.length; i++) {
+                var r = response.records[i];
+                state.data.accounts.push({
+                    id: r.id, name: r.fields['Account Name'] || '', industry: r.fields.Industry || '',
+                    website: r.fields.Website || '', phone: r.fields.Phone || '', address: r.fields.Address || '',
+                    owner: getOwnerName(r.fields['Account Owner']), createdTime: r.createdTime
+                });
+            }
+        }
+    });
 }
 
 function getUserDeals() {
@@ -882,73 +1007,114 @@ function getUserDeals() {
 }
 
 // ============ CRUD OPERATIONS ============
-async function createDeal(dealData) {
-    try {
-        var response = await fetchFromAirtable('Deals', 'POST', { fields: dealData });
-        if (response && response.id) { await loadDeals(); closeModal(); renderView('pipeline'); alert('Deal created!'); }
-    } catch (error) { alert('Error: ' + error.message); }
-}
-
-async function createContact(contactData) {
-    try {
-        var response = await fetchFromAirtable('Contacts', 'POST', { fields: contactData });
-        if (response && response.id) { await loadContacts(); closeModal(); renderView('contacts'); alert('Contact created!'); }
-    } catch (error) { alert('Error: ' + error.message); }
-}
-
-async function createAccount(accountData) {
-    try {
-        var response = await fetchFromAirtable('Accounts', 'POST', { fields: accountData });
-        if (response && response.id) { await loadAccounts(); closeModal(); renderView('accounts'); alert('Account created!'); }
-    } catch (error) { alert('Error: ' + error.message); }
-}
-
-async function logActivity(activityData) {
-    try {
-        var response = await fetchFromAirtable('Activities', 'POST', { fields: activityData });
+function createDeal(dealData) {
+    fetchFromAirtable('Deals', 'POST', { fields: dealData }).then(function(response) {
         if (response && response.id) { 
-            await loadActivities(); 
-            closeModal(); 
-            renderView(state.currentView); 
-            alert('Activity logged!'); 
-            checkAchievements();
+            loadDeals().then(function() { 
+                closeModal(); 
+                renderView('pipeline'); 
+                alert('Deal created!'); 
+            }); 
         }
-    } catch (error) { alert('Error: ' + error.message); }
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
-async function deleteContact(contactId) {
+function createContact(contactData) {
+    fetchFromAirtable('Contacts', 'POST', { fields: contactData }).then(function(response) {
+        if (response && response.id) { 
+            loadContacts().then(function() { 
+                closeModal(); 
+                renderView('contacts'); 
+                alert('Contact created!'); 
+            }); 
+        }
+    }).catch(function(error) { alert('Error: ' + error.message); });
+}
+
+function createAccount(accountData) {
+    fetchFromAirtable('Accounts', 'POST', { fields: accountData }).then(function(response) {
+        if (response && response.id) { 
+            loadAccounts().then(function() { 
+                closeModal(); 
+                renderView('accounts'); 
+                alert('Account created!'); 
+            }); 
+        }
+    }).catch(function(error) { alert('Error: ' + error.message); });
+}
+
+function logActivity(activityData) {
+    fetchFromAirtable('Activities', 'POST', { fields: activityData }).then(function(response) {
+        if (response && response.id) { 
+            loadActivities().then(function() { 
+                closeModal(); 
+                renderView(state.currentView); 
+                alert('Activity logged!'); 
+                checkAchievements();
+            }); 
+        }
+    }).catch(function(error) { alert('Error: ' + error.message); });
+}
+
+function deleteContact(contactId) {
     if (!confirm('Delete this contact?')) return;
-    try { await deleteFromAirtable('Contacts', contactId); await loadContacts(); closeModal(); renderView('contacts'); }
-    catch (error) { alert('Error: ' + error.message); }
+    deleteFromAirtable('Contacts', contactId).then(function() {
+        loadContacts().then(function() { closeModal(); renderView('contacts'); });
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
-async function deleteAccount(accountId) {
+function deleteAccount(accountId) {
     if (!confirm('Delete this account?')) return;
-    try { await deleteFromAirtable('Accounts', accountId); await loadAccounts(); closeModal(); renderView('accounts'); }
-    catch (error) { alert('Error: ' + error.message); }
+    deleteFromAirtable('Accounts', accountId).then(function() {
+        loadAccounts().then(function() { closeModal(); renderView('accounts'); });
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
-async function deleteDeal(dealId) {
+function deleteDeal(dealId) {
     if (!confirm('Delete this deal?')) return;
-    try { await deleteFromAirtable('Deals', dealId); await loadDeals(); closeModal(); renderView('pipeline'); }
-    catch (error) { alert('Error: ' + error.message); }
+    deleteFromAirtable('Deals', dealId).then(function() {
+        loadDeals().then(function() { closeModal(); renderView('pipeline'); });
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
-async function deleteActivity(activityId) {
+function deleteActivity(activityId) {
     if (!confirm('Delete this activity?')) return;
-    try { await deleteFromAirtable('Activities', activityId); await loadActivities(); renderView('activity'); }
-    catch (error) { alert('Error: ' + error.message); }
+    deleteFromAirtable('Activities', activityId).then(function() {
+        loadActivities().then(function() { renderView('activity'); });
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
 // ============ DETAIL MODALS ============
 function openAccountDetailModal(accountId) {
-    var account = state.data.accounts.find(function(a) { return a.id === accountId; });
+    var account = null;
+    for (var i = 0; i < state.data.accounts.length; i++) {
+        if (state.data.accounts[i].id === accountId) { account = state.data.accounts[i]; break; }
+    }
     if (!account) return;
     
     var contacts = state.data.contacts.filter(function(c) { return c.accountId === accountId || c.company === account.name; });
-    var deals = state.data.deals.filter(function(d) { return d.name.toLowerCase().includes(account.name.toLowerCase()); });
+    var deals = state.data.deals.filter(function(d) { return d.name.toLowerCase().indexOf(account.name.toLowerCase()) !== -1; });
     var activities = state.data.activities.filter(function(a) { return a.account === account.name; });
     var isLeadership = state.currentUser.role === 'Leadership';
+    
+    var contactsList = '';
+    for (var i = 0; i < Math.min(contacts.length, 5); i++) {
+        contactsList += '<div class="clickable-link" onclick="closeModal();openContactDetailModal(\'' + contacts[i].id + '\')">' + contacts[i].name + '</div>';
+    }
+    if (contacts.length === 0) contactsList = '<div style="color:var(--text-gray);">No contacts</div>';
+    
+    var dealsList = '';
+    for (var i = 0; i < Math.min(deals.length, 5); i++) {
+        dealsList += '<div class="clickable-link" onclick="closeModal();openDealDetailsModal(\'' + deals[i].id + '\')">' + deals[i].name + ' ($' + deals[i].value.toLocaleString() + ')</div>';
+    }
+    if (deals.length === 0) dealsList = '<div style="color:var(--text-gray);">No deals</div>';
+    
+    var activitiesList = '';
+    var sortedActivities = activities.sort(function(a,b) { return new Date(b.date) - new Date(a.date); });
+    for (var i = 0; i < Math.min(sortedActivities.length, 5); i++) {
+        activitiesList += '<div style="font-size:12px;padding:4px 0;">' + sortedActivities[i].type + ' - ' + formatDateShort(sortedActivities[i].date) + '</div>';
+    }
+    if (activities.length === 0) activitiesList = '<div style="color:var(--text-gray);">No activities</div>';
     
     var html = '<div class="modal active"><div class="modal-content profile">' +
         '<div class="profile-card-header" style="background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);">' +
@@ -959,11 +1125,10 @@ function openAccountDetailModal(accountId) {
         '<div class="profile-card-row"><span class="profile-card-label">Owner</span><span class="profile-card-value">' + (account.owner || 'Unassigned') + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Website</span><span class="profile-card-value">' + (account.website || '-') + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Phone</span><span class="profile-card-value">' + (account.phone || '-') + '</span></div>' +
-        '<div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">' +
-        '<div style="background:var(--bg-light);padding:12px;border-radius:8px;"><div style="font-size:22px;font-weight:700;color:var(--primary);">' + contacts.length + '</div><div style="font-size:11px;color:var(--text-gray);">Contacts</div></div>' +
-        '<div style="background:var(--bg-light);padding:12px;border-radius:8px;"><div style="font-size:22px;font-weight:700;color:var(--primary);">' + deals.length + '</div><div style="font-size:11px;color:var(--text-gray);">Deals</div></div>' +
-        '<div style="background:var(--bg-light);padding:12px;border-radius:8px;"><div style="font-size:22px;font-weight:700;color:var(--primary);">' + activities.length + '</div><div style="font-size:11px;color:var(--text-gray);">Activities</div></div>' +
-        '</div></div>' +
+        '<div style="margin-top:16px;"><div style="font-weight:600;font-size:13px;margin-bottom:8px;">👥 Contacts (' + contacts.length + ')</div>' + contactsList + '</div>' +
+        '<div style="margin-top:12px;"><div style="font-weight:600;font-size:13px;margin-bottom:8px;">💰 Deals (' + deals.length + ')</div>' + dealsList + '</div>' +
+        '<div style="margin-top:12px;"><div style="font-weight:600;font-size:13px;margin-bottom:8px;">📝 Recent Activities (' + activities.length + ')</div>' + activitiesList + '</div>' +
+        '</div>' +
         '<div class="profile-card-actions">' +
         '<button class="btn btn-secondary btn-small" onclick="closeModal()">Close</button>';
     if (isLeadership) {
@@ -976,21 +1141,41 @@ function openAccountDetailModal(accountId) {
 }
 
 function openContactDetailModal(contactId) {
-    var contact = state.data.contacts.find(function(c) { return c.id === contactId; });
+    var contact = null;
+    for (var i = 0; i < state.data.contacts.length; i++) {
+        if (state.data.contacts[i].id === contactId) { contact = state.data.contacts[i]; break; }
+    }
     if (!contact) return;
     
     var activities = state.data.activities.filter(function(a) { return a.contact === contactId; });
     var isLeadership = state.currentUser.role === 'Leadership';
     
+    var accountLink = '';
+    if (contact.company) {
+        var account = null;
+        for (var i = 0; i < state.data.accounts.length; i++) {
+            if (state.data.accounts[i].name === contact.company || state.data.accounts[i].id === contact.accountId) {
+                account = state.data.accounts[i]; break;
+            }
+        }
+        if (account) {
+            accountLink = '<span class="clickable-link" onclick="closeModal();openAccountDetailModal(\'' + account.id + '\')">' + contact.company + '</span>';
+        } else {
+            accountLink = contact.company;
+        }
+    } else {
+        accountLink = '-';
+    }
+    
     var html = '<div class="modal active"><div class="modal-content profile">' +
         '<div class="profile-card-header">' +
         '<div class="profile-card-avatar">👤</div>' +
         '<div class="profile-card-name">' + contact.name + '</div>' +
-        '<div class="profile-card-subtitle">' + (contact.role || 'No role') + (contact.company ? ' at ' + contact.company : '') + '</div></div>' +
+        '<div class="profile-card-subtitle">' + (contact.role || 'No role') + '</div></div>' +
         '<div class="profile-card-body">' +
         '<div class="profile-card-row"><span class="profile-card-label">Email</span><span class="profile-card-value">' + (contact.email || '-') + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Phone</span><span class="profile-card-value">' + (contact.phone || '-') + '</span></div>' +
-        '<div class="profile-card-row"><span class="profile-card-label">Company</span><span class="profile-card-value">' + (contact.company || '-') + '</span></div>' +
+        '<div class="profile-card-row"><span class="profile-card-label">Company</span><span class="profile-card-value">' + accountLink + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Owner</span><span class="profile-card-value">' + (contact.owner || 'Unassigned') + '</span></div>' +
         '<div style="margin-top:16px;background:var(--bg-light);padding:14px;border-radius:8px;text-align:center;">' +
         '<div style="font-size:24px;font-weight:700;color:var(--primary);">' + activities.length + '</div>' +
@@ -1006,9 +1191,11 @@ function openContactDetailModal(contactId) {
     document.getElementById('modalContainer').innerHTML = html;
 }
 
-// Edit modals
 function openEditContactModal(contactId) {
-    var contact = state.data.contacts.find(function(c) { return c.id === contactId; });
+    var contact = null;
+    for (var i = 0; i < state.data.contacts.length; i++) {
+        if (state.data.contacts[i].id === contactId) { contact = state.data.contacts[i]; break; }
+    }
     if (!contact) return;
     var html = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>✏️ Edit Contact</h2></div>' +
         '<div class="form-group"><label>Full Name *</label><input type="text" id="editContactName" value="' + contact.name + '"></div>' +
@@ -1019,14 +1206,18 @@ function openEditContactModal(contactId) {
     document.getElementById('modalContainer').innerHTML = html;
 }
 
-async function saveEditContact(contactId) {
+function saveEditContact(contactId) {
     var fields = { 'Full Name': document.getElementById('editContactName').value, 'Email': document.getElementById('editContactEmail').value, 'Phone': document.getElementById('editContactPhone').value, 'Title': document.getElementById('editContactRole').value };
-    try { await updateInAirtable('Contacts', contactId, fields); await loadContacts(); closeModal(); renderView('contacts'); }
-    catch (error) { alert('Error: ' + error.message); }
+    updateInAirtable('Contacts', contactId, fields).then(function() {
+        loadContacts().then(function() { closeModal(); renderView('contacts'); });
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
 function openEditAccountModal(accountId) {
-    var account = state.data.accounts.find(function(a) { return a.id === accountId; });
+    var account = null;
+    for (var i = 0; i < state.data.accounts.length; i++) {
+        if (state.data.accounts[i].id === accountId) { account = state.data.accounts[i]; break; }
+    }
     if (!account) return;
     var indOptions = '';
     for (var i = 0; i < industryOptions.length; i++) {
@@ -1042,10 +1233,11 @@ function openEditAccountModal(accountId) {
     document.getElementById('modalContainer').innerHTML = html;
 }
 
-async function saveEditAccount(accountId) {
+function saveEditAccount(accountId) {
     var fields = { 'Account Name': document.getElementById('editAccountName').value, 'Industry': document.getElementById('editAccountIndustry').value, 'Website': document.getElementById('editAccountWebsite').value, 'Phone': document.getElementById('editAccountPhone').value, 'Address': document.getElementById('editAccountAddress').value };
-    try { await updateInAirtable('Accounts', accountId, fields); await loadAccounts(); closeModal(); renderView('accounts'); }
-    catch (error) { alert('Error: ' + error.message); }
+    updateInAirtable('Accounts', accountId, fields).then(function() {
+        loadAccounts().then(function() { closeModal(); renderView('accounts'); });
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
 // ============ ADD MODALS ============
@@ -1151,8 +1343,12 @@ function openLogActivityModalForAccount(accountName) {
     openLogActivityModal();
     setTimeout(function() {
         var accountSelect = document.getElementById('activityAccount');
-        var account = state.data.accounts.find(function(a) { return a.name === accountName; });
-        if (account && accountSelect) accountSelect.value = account.id;
+        for (var i = 0; i < state.data.accounts.length; i++) {
+            if (state.data.accounts[i].name === accountName) {
+                accountSelect.value = state.data.accounts[i].id;
+                break;
+            }
+        }
     }, 100);
 }
 
@@ -1161,7 +1357,10 @@ function saveActivity() {
     var result = document.getElementById('activityResult').value;
     if (!accountRecordId || !result) { alert('Please select an Account and enter Result'); return; }
     
-    var account = state.data.accounts.find(function(a) { return a.id === accountRecordId; });
+    var account = null;
+    for (var i = 0; i < state.data.accounts.length; i++) {
+        if (state.data.accounts[i].id === accountRecordId) { account = state.data.accounts[i]; break; }
+    }
     var accountName = account ? account.name : '';
     var activityType = document.getElementById('activityType').value;
     var now = new Date();
@@ -1173,7 +1372,10 @@ function saveActivity() {
 }
 
 function openDealDetailsModal(dealId) {
-    var deal = state.data.deals.find(function(d) { return d.id === dealId; });
+    var deal = null;
+    for (var i = 0; i < state.data.deals.length; i++) {
+        if (state.data.deals[i].id === dealId) { deal = state.data.deals[i]; break; }
+    }
     if (!deal) return;
     var isLeadership = state.currentUser.role === 'Leadership';
     var dealAge = getDaysSince(deal.createdTime);
@@ -1203,29 +1405,32 @@ function openDealDetailsModal(dealId) {
     document.getElementById('modalContainer').innerHTML = html;
 }
 
-async function updateDealStage(dealId, newStage) {
+function updateDealStage(dealId, newStage) {
     if (!newStage) newStage = document.getElementById('dealStageEdit').value;
-    var oldDeal = state.data.deals.find(function(d) { return d.id === dealId; });
+    var oldDeal = null;
+    for (var i = 0; i < state.data.deals.length; i++) {
+        if (state.data.deals[i].id === dealId) { oldDeal = state.data.deals[i]; break; }
+    }
     var oldStage = oldDeal ? oldDeal.stage : '';
     
-    try {
-        await fetch('https://api.airtable.com/v0/' + state.baseId + '/Deals/' + dealId, {
-            method: 'PATCH', headers: { 'Authorization': 'Bearer ' + state.apiKey, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fields: { 'Stage': newStage } })
-        });
-        await loadDeals(); 
-        closeModal(); 
-        renderView('pipeline');
-        
-        // Celebrate stage advancement
-        if (oldStage && newStage !== oldStage && newStage !== 'Closed Lost') {
-            if (newStage === 'Closed Won') {
-                showCelebration('deal-moved', 'You closed the deal! ' + oldDeal.name + ' is now won!');
-            } else {
-                showCelebration('deal-moved', oldDeal.name + ' moved from ' + oldStage + ' to ' + newStage + '!');
+    var url = 'https://api.airtable.com/v0/' + state.baseId + '/Deals/' + dealId;
+    fetch(url, {
+        method: 'PATCH', headers: { 'Authorization': 'Bearer ' + state.apiKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { 'Stage': newStage } })
+    }).then(function() {
+        loadDeals().then(function() {
+            closeModal();
+            renderView('pipeline');
+            
+            if (oldStage && newStage !== oldStage && newStage !== 'Closed Lost') {
+                if (newStage === 'Closed Won') {
+                    showCelebration('deal-won', 'You closed the deal! ' + oldDeal.name + ' is now won!');
+                } else {
+                    showCelebration('deal-moved', oldDeal.name + ' moved from ' + oldStage + ' to ' + newStage + '!');
+                }
             }
-        }
-    } catch (error) { alert('Error: ' + error.message); }
+        });
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
 // ============ VIEW RENDERING ============
@@ -1233,10 +1438,11 @@ function renderView(viewName) {
     destroyCharts();
     state.currentView = viewName;
     state.filterRep = null;
-    var titles = { 'dashboard': 'Dashboard', 'pipeline': 'Pipeline', 'contacts': 'Contacts', 'accounts': 'Accounts', 'events': 'Events', 'activity': 'Activities', 'reports': 'Reports', 'leadership': 'Analytics', 'team': 'Team Overview' };
+    var titles = { 'dashboard': 'Dashboard', 'checklist': 'Daily Checklist', 'pipeline': 'Pipeline', 'contacts': 'Contacts', 'accounts': 'Accounts', 'events': 'Events', 'activity': 'Activities', 'reports': 'Reports', 'leadership': 'Analytics', 'team': 'Team Overview' };
     document.getElementById('pageTitle').textContent = titles[viewName] || viewName;
     
     if (viewName === 'dashboard') renderDashboard();
+    else if (viewName === 'checklist') renderChecklist();
     else if (viewName === 'pipeline') renderPipeline();
     else if (viewName === 'contacts') renderContacts();
     else if (viewName === 'accounts') renderAccounts();
@@ -1252,20 +1458,6 @@ function renderView(viewName) {
 function renderDashboard() {
     if (state.currentUser.role === 'Leadership') { renderLeadershipDashboard(); return; }
     renderRepDashboard();
-}
-
-function getActivityStats(activities) {
-    var stats = { calls: 0, emails: 0, linkedin: 0, demos: 0, proposals: 0, meetings: 0 };
-    for (var i = 0; i < activities.length; i++) {
-        var type = (activities[i].type || '').toLowerCase();
-        if (type.includes('call')) stats.calls++;
-        else if (type.includes('email')) stats.emails++;
-        else if (type.includes('linkedin')) stats.linkedin++;
-        else if (type.includes('demo')) stats.demos++;
-        else if (type.includes('proposal')) stats.proposals++;
-        else if (type.includes('meeting')) stats.meetings++;
-    }
-    return stats;
 }
 
 function renderRepDashboard() {
@@ -1284,26 +1476,33 @@ function renderRepDashboard() {
     var allTimeStats = getActivityStats(userActivities);
     
     var monthClosedDeals = deals.filter(function(d) {
-        if (!d.stage.toLowerCase().includes('won')) return false;
+        if (d.stage.toLowerCase().indexOf('won') === -1) return false;
         var dealDate = d.closeDate ? new Date(d.closeDate) : (d.createdTime ? new Date(d.createdTime) : null);
         return dealDate && dealDate >= monthStart;
     });
     
-    var monthRevenue = monthClosedDeals.reduce(function(sum, d) { return sum + d.value; }, 0);
+    var monthRevenue = 0;
+    for (var i = 0; i < monthClosedDeals.length; i++) monthRevenue += monthClosedDeals[i].value;
     var revenuePercentOfMax = (monthRevenue / targets.monthlyRevenueMax) * 100;
     var eventsPercentOfMax = (monthClosedDeals.length / targets.monthlyEventsMax) * 100;
     
     var growthPlusCount = monthClosedDeals.filter(function(d) { return d.tier !== 'Starter'; }).length;
     var qualityScore = monthClosedDeals.length > 0 ? (growthPlusCount / monthClosedDeals.length) * 100 : 0;
     
-    var pipelineDeals = deals.filter(function(d) { return !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'); });
-    var staleDeals = pipelineDeals.filter(function(d) {
-        var lastActivity = userActivities.filter(function(a) { return a.account && d.name.toLowerCase().includes(a.account.toLowerCase()); }).sort(function(x,y) { return new Date(y.date) - new Date(x.date); })[0];
-        if (!lastActivity) return true;
-        return getDaysSince(lastActivity.date) >= 5;
-    });
+    var pipelineDeals = deals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') === -1 && d.stage.toLowerCase().indexOf('lost') === -1; });
+    var staleDeals = [];
+    for (var i = 0; i < pipelineDeals.length; i++) {
+        var deal = pipelineDeals[i];
+        var lastActivity = null;
+        for (var j = 0; j < userActivities.length; j++) {
+            if (userActivities[j].account && deal.name.toLowerCase().indexOf(userActivities[j].account.toLowerCase()) !== -1) {
+                if (!lastActivity || new Date(userActivities[j].date) > new Date(lastActivity.date)) lastActivity = userActivities[j];
+            }
+        }
+        if (!lastActivity || getDaysSince(lastActivity.date) >= 5) staleDeals.push(deal);
+    }
     
-    var allClosedDeals = deals.filter(function(d) { return d.stage.toLowerCase().includes('won'); }).sort(function(a, b) { return new Date(b.closeDate || b.createdTime) - new Date(a.closeDate || a.createdTime); });
+    var allClosedDeals = deals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') !== -1; }).sort(function(a, b) { return new Date(b.closeDate || b.createdTime) - new Date(a.closeDate || a.createdTime); });
     
     function getStatusColor(value, target) { return value >= target ? 'var(--success)' : value >= target * 0.5 ? 'var(--warning)' : 'var(--danger)'; }
     function getStatusIcon(value, target) { return value >= target ? '✅' : value >= target * 0.5 ? '⚠️' : '❌'; }
@@ -1311,21 +1510,22 @@ function renderRepDashboard() {
     var greeting = getGreeting() + ', ' + state.currentUser.name + '!';
     var dateStr = today.toLocaleDateString('en-US', {weekday:'long',month:'short',day:'numeric'});
 
-    var html = '<div class="greeting-banner"><div class="greeting-text">' + greeting + '</div><div class="greeting-sub">Let\'s crush those goals today!</div></div>' +
+    var html = '<div class="greeting-banner"><div class="greeting-text">' + greeting + '</div><div class="greeting-sub">"Talk to people. Move deals. Protect pricing."</div></div>' +
         renderNudges() +
         '<div class="quick-actions">' +
         '<button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ New Deal</button>' +
         '<button class="btn btn-secondary btn-small" onclick="openLogActivityModal()">📝 Log Activity</button>' +
         '<button class="btn btn-secondary btn-small" onclick="openAddContactModal()">👤 Contact</button>' +
-        '<button class="btn btn-secondary btn-small" onclick="openAddAccountModal()">🏢 Account</button></div>' +
+        '<button class="btn btn-secondary btn-small" onclick="openAddAccountModal()">🏢 Account</button>' +
+        '<button class="btn btn-success btn-small" onclick="renderView(\'checklist\')">✅ Daily Checklist</button></div>' +
         
         '<div class="card"><div class="card-header"><h2 class="card-title">📅 Daily Scorecard</h2><span style="font-size:13px;color:var(--text-gray);">' + dateStr + '</span></div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;">' +
         '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Touchpoints</span><span>' + getStatusIcon(todayTouchpoints,targets.dailyTouchpointsMin) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin) + ';">' + todayTouchpoints + '</div><div style="font-size:12px;color:var(--text-gray);">Target: ' + targets.dailyTouchpointsMin + '-' + targets.dailyTouchpointsMax + '</div><div class="progress-bar"><div class="progress-fill" style="width:' + Math.min((todayTouchpoints/targets.dailyTouchpointsMax)*100,100) + '%;background:' + getStatusColor(todayTouchpoints,targets.dailyTouchpointsMin) + ';"></div></div></div>' +
         '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayStats.calls,targets.dailyCalls) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Calls Made</span><span>' + getStatusIcon(todayStats.calls,targets.dailyCalls) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayStats.calls,targets.dailyCalls) + ';">' + todayStats.calls + '</div><div style="font-size:12px;color:var(--text-gray);">Target: ' + targets.dailyCalls + '+</div></div>' +
         '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayStats.emails,targets.dailyEmails) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Emails Sent</span><span>' + getStatusIcon(todayStats.emails,targets.dailyEmails) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayStats.emails,targets.dailyEmails) + ';">' + todayStats.emails + '</div><div style="font-size:12px;color:var(--text-gray);">Target: ' + targets.dailyEmails + '+</div></div>' +
         '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayStats.linkedin,targets.dailyLinkedIn) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">LinkedIn</span><span>' + getStatusIcon(todayStats.linkedin,targets.dailyLinkedIn) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayStats.linkedin,targets.dailyLinkedIn) + ';">' + todayStats.linkedin + '</div><div style="font-size:12px;color:var(--text-gray);">Target: ' + targets.dailyLinkedIn + '+</div></div>' +
-        '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayNewLeads,3) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">New Leads</span><span>' + getStatusIcon(todayNewLeads,3) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayNewLeads,3) + ';">' + todayNewLeads + '</div><div style="font-size:12px;color:var(--text-gray);">Target: 3-5</div></div>' +
+        '<div class="kpi-card" style="border-left:4px solid ' + getStatusColor(todayStats.followups,10) + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Follow-ups</span><span>' + getStatusIcon(todayStats.followups,10) + '</span></div><div class="kpi-value" style="color:' + getStatusColor(todayStats.followups,10) + ';">' + todayStats.followups + '</div><div style="font-size:12px;color:var(--text-gray);">Target: 10-15</div></div>' +
         '<div class="kpi-card" style="border-left:4px solid ' + (staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)') + ';"><div style="display:flex;justify-content:space-between;"><span class="kpi-label">Needs Attention</span><span>' + (staleDeals.length > 0 ? '⚠️' : '✅') + '</span></div><div class="kpi-value" style="color:' + (staleDeals.length > 0 ? 'var(--warning)' : 'var(--success)') + ';">' + staleDeals.length + '</div><div style="font-size:12px;color:var(--text-gray);">Stale 5+ days</div></div>' +
         '</div></div>' +
         
@@ -1341,15 +1541,11 @@ function renderRepDashboard() {
         '<div class="stat-card"><div class="stat-icon">📞</div><div class="stat-value">' + allTimeStats.calls + '</div><div class="stat-label">Calls Made</div></div>' +
         '<div class="stat-card"><div class="stat-icon">📧</div><div class="stat-value">' + allTimeStats.emails + '</div><div class="stat-label">Emails Sent</div></div>' +
         '<div class="stat-card"><div class="stat-icon">💼</div><div class="stat-value">' + allTimeStats.linkedin + '</div><div class="stat-label">LinkedIn</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">🔄</div><div class="stat-value">' + allTimeStats.followups + '</div><div class="stat-label">Follow-ups</div></div>' +
         '<div class="stat-card"><div class="stat-icon">🎥</div><div class="stat-value">' + allTimeStats.demos + '</div><div class="stat-label">Demos</div></div>' +
         '<div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value">' + allTimeStats.proposals + '</div><div class="stat-label">Proposals</div></div>' +
-        '<div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value">' + allTimeStats.meetings + '</div><div class="stat-label">Meetings</div></div>' +
         '<div class="stat-card"><div class="stat-icon">🎉</div><div class="stat-value">' + allClosedDeals.length + '</div><div class="stat-label">Total Wins</div></div>' +
-        '</div></div>' +
-        
-        '<div class="charts-grid">' +
-        '<div class="chart-card"><h3>📈 Revenue Trend (6 Months)</h3><div class="chart-container"><canvas id="repRevenueTrendChart"></canvas></div></div>' +
-        '<div class="chart-card"><h3>🥧 Revenue by Tier</h3><div class="chart-container"><canvas id="repRevenueByTierChart"></canvas></div></div></div>';
+        '</div></div>';
     
     // Recent wins
     if (allClosedDeals.length > 0) {
@@ -1357,12 +1553,16 @@ function renderRepDashboard() {
         for (var i = 0; i < Math.min(allClosedDeals.length, 5); i++) {
             var deal = allClosedDeals[i];
             var daysAgo = getDaysSince(deal.closeDate);
-            html += '<div style="background:var(--bg-light);padding:14px 18px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;">' +
+            html += '<div style="background:var(--bg-light);padding:14px 18px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="openDealDetailsModal(\'' + deal.id + '\')">' +
                 '<div><div style="font-weight:600;font-size:15px;margin-bottom:4px;">' + deal.name + '</div><div style="font-size:12px;color:var(--text-gray);"><span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span> ' + (daysAgo !== null ? (daysAgo === 0 ? '• Today' : '• ' + daysAgo + ' days ago') : '') + '</div></div>' +
                 '<div style="font-size:20px;font-weight:700;color:var(--primary);">$' + deal.value.toLocaleString() + '</div></div>';
         }
         html += '</div></div>';
     }
+    
+    html += '<div class="charts-grid">' +
+        '<div class="chart-card"><h3>📈 Revenue Trend (6 Months)</h3><div class="chart-container"><canvas id="repRevenueTrendChart"></canvas></div></div>' +
+        '<div class="chart-card"><h3>🥧 Revenue by Tier</h3><div class="chart-container"><canvas id="repRevenueByTierChart"></canvas></div></div></div>';
     
     document.getElementById('contentArea').innerHTML = html;
     
@@ -1370,6 +1570,78 @@ function renderRepDashboard() {
         renderRevenueTrendChart('repRevenueTrendChart', deals);
         renderRevenueByTierChart('repRevenueByTierChart', deals);
     }, 100);
+}
+
+// Daily Checklist
+function renderChecklist() {
+    var totalItems = 0, completedItems = 0;
+    for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
+        totalItems += DAILY_CHECKLIST[i].items.length;
+        for (var j = 0; j < DAILY_CHECKLIST[i].items.length; j++) {
+            var key = DAILY_CHECKLIST[i].id + '-' + j;
+            if (state.dailyChecklist[key]) completedItems++;
+        }
+    }
+    var progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+    
+    var today = new Date().toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    
+    var html = '<div class="greeting-banner"><div class="greeting-text">✅ Daily Checklist</div><div class="greeting-sub">' + today + '</div></div>' +
+        '<div class="card"><div class="card-header"><h2 class="card-title">📌 Daily Mantra</h2></div>' +
+        '<div style="text-align:center;padding:20px;font-size:24px;font-weight:700;color:var(--primary);">"Talk to people. Move deals. Protect pricing."</div></div>' +
+        
+        '<div class="card"><div class="checklist-progress"><div class="checklist-progress-text">' + completedItems + '/' + totalItems + ' completed</div>' +
+        '<div style="flex:1;"><div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:' + progress + '%;background:var(--success);"></div></div></div>' +
+        '<div style="font-weight:700;color:' + (progress >= 100 ? 'var(--success)' : 'var(--primary)') + ';">' + progress.toFixed(0) + '%</div></div>';
+    
+    for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
+        var section = DAILY_CHECKLIST[i];
+        var sectionCompleted = 0;
+        for (var j = 0; j < section.items.length; j++) {
+            if (state.dailyChecklist[section.id + '-' + j]) sectionCompleted++;
+        }
+        
+        html += '<div class="checklist-section"><div class="checklist-title">' + section.title + ' <span style="font-weight:400;color:var(--text-gray);">(' + sectionCompleted + '/' + section.items.length + ')</span></div>';
+        for (var j = 0; j < section.items.length; j++) {
+            var key = section.id + '-' + j;
+            var checked = state.dailyChecklist[key] ? ' checked' : '';
+            var completedClass = state.dailyChecklist[key] ? ' completed' : '';
+            html += '<div class="checklist-item' + completedClass + '">' +
+                '<input type="checkbox" id="' + key + '"' + checked + ' onchange="toggleChecklistItem(\'' + key + '\')">' +
+                '<label for="' + key + '">' + section.items[j] + '</label></div>';
+        }
+        html += '</div>';
+    }
+    
+    html += '</div>' +
+        '<div class="card" style="background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border-left:4px solid var(--primary);">' +
+        '<div style="font-weight:700;margin-bottom:8px;">❌ If any End of Day answer is NO → tomorrow starts behind.</div></div>' +
+        '<div class="card" style="background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);">' +
+        '<div style="font-weight:700;margin-bottom:8px;">✔ A "Good Day" at NuConnect Means:</div>' +
+        '<ul style="margin-left:20px;font-size:14px;"><li>Consistent lead volume</li><li>Clean pipeline</li><li>Momentum toward meetings and closes</li></ul>' +
+        '<div style="margin-top:12px;font-style:italic;color:var(--text-gray);">Consistency beats intensity. Show up, follow the system, and results will follow.</div></div>' +
+;
+    
+    document.getElementById('contentArea').innerHTML = html;
+}
+
+function toggleChecklistItem(key) {
+    state.dailyChecklist[key] = !state.dailyChecklist[key];
+    localStorage.setItem('dailyChecklist_' + new Date().toDateString(), JSON.stringify(state.dailyChecklist));
+    
+    var totalItems = 0, completedItems = 0;
+    for (var i = 0; i < DAILY_CHECKLIST.length; i++) {
+        totalItems += DAILY_CHECKLIST[i].items.length;
+        for (var j = 0; j < DAILY_CHECKLIST[i].items.length; j++) {
+            if (state.dailyChecklist[DAILY_CHECKLIST[i].id + '-' + j]) completedItems++;
+        }
+    }
+    
+    if (completedItems === totalItems) {
+        showCelebration('kpi-hit', 'You completed your entire daily checklist! Amazing work!');
+    }
+    
+    renderChecklist();
 }
 
 // Leadership Dashboard
@@ -1384,12 +1656,13 @@ function renderLeadershipDashboard() {
     var teamStats = getActivityStats(todayActivities);
     
     var monthClosedDeals = allDeals.filter(function(d) {
-        if (!d.stage.toLowerCase().includes('won')) return false;
+        if (d.stage.toLowerCase().indexOf('won') === -1) return false;
         var dealDate = d.closeDate ? new Date(d.closeDate) : (d.createdTime ? new Date(d.createdTime) : null);
         return dealDate && dealDate >= monthStart;
     });
     
-    var monthRevenue = monthClosedDeals.reduce(function(sum, d) { return sum + d.value; }, 0);
+    var monthRevenue = 0;
+    for (var i = 0; i < monthClosedDeals.length; i++) monthRevenue += monthClosedDeals[i].value;
     var growthPlusDeals = monthClosedDeals.filter(function(d) { return d.tier !== 'Starter'; }).length;
     var qualityScore = monthClosedDeals.length > 0 ? (growthPlusDeals / monthClosedDeals.length) * 100 : 0;
     
@@ -1397,24 +1670,22 @@ function renderLeadershipDashboard() {
     
     // Build rep cards
     var repCardsHtml = '';
-    var needsAttentionHtml = '';
-    var onTrackHtml = '';
-    
     var reps = state.data.teamMembers.filter(function(m) { return m.role !== 'Leadership'; });
+    
     for (var i = 0; i < reps.length; i++) {
         var member = reps[i];
         var memberDeals = allDeals.filter(function(d) { return d.owner === member.name; });
         var memberActivities = allActivities.filter(function(a) { return a.owner === member.name; });
         var memberTodayActivities = todayActivities.filter(function(a) { return a.owner === member.name; });
         var memberStats = getActivityStats(memberTodayActivities);
-        var memberAllStats = getActivityStats(memberActivities);
         
         var memberMonthWon = memberDeals.filter(function(d) {
-            if (!d.stage.toLowerCase().includes('won')) return false;
+            if (d.stage.toLowerCase().indexOf('won') === -1) return false;
             var dealDate = d.closeDate ? new Date(d.closeDate) : (d.createdTime ? new Date(d.createdTime) : null);
             return dealDate && dealDate >= monthStart;
         });
-        var memberRevenue = memberMonthWon.reduce(function(sum, d) { return sum + d.value; }, 0);
+        var memberRevenue = 0;
+        for (var j = 0; j < memberMonthWon.length; j++) memberRevenue += memberMonthWon[j].value;
         var targets = getKPITargets(member.role);
         var attainment = (memberRevenue / targets.monthlyRevenueMax) * 100;
         
@@ -1433,12 +1704,19 @@ function renderLeadershipDashboard() {
             '<div><div style="font-size:12px;color:var(--text-gray);">Month Revenue</div><div style="font-size:22px;font-weight:700;color:var(--primary);">$' + (memberRevenue/1000).toFixed(1) + 'K</div></div>' +
             '<div style="text-align:right;"><div style="font-size:12px;color:var(--text-gray);">% of Max</div><div style="font-size:22px;font-weight:700;color:var(--primary);">' + attainment.toFixed(0) + '%</div></div></div>' +
             '<div class="progress-bar"><div class="progress-fill" style="width:' + Math.min(attainment,100) + '%;background:' + (attainment >= 100 ? 'var(--success)' : attainment >= 70 ? 'var(--warning)' : 'var(--danger)') + ';"></div></div></div>';
-        
-        if (attainment < 70) {
-            needsAttentionHtml += '<div class="kpi-alert-item needs-attention" style="background:#fee2e2;padding:12px 16px;border-radius:8px;margin-bottom:8px;border-left:4px solid var(--danger);">🔴 <strong>' + member.name + '</strong> at ' + attainment.toFixed(0) + '% - needs coaching <button class="btn btn-small btn-secondary" style="margin-left:auto;font-size:11px;" onclick="event.stopPropagation();openResetPasswordModal(\'' + member.name + '\')">Reset Password</button></div>';
-        } else if (attainment >= 100) {
-            onTrackHtml += '<div class="kpi-alert-item on-track" style="background:#d1fae5;padding:12px 16px;border-radius:8px;margin-bottom:8px;border-left:4px solid var(--success);">🟢 <strong>' + member.name + '</strong> at ' + attainment.toFixed(0) + '% - exceeding!</div>';
-        }
+    }
+
+    // Recent wins
+    var allWonDeals = allDeals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') !== -1; })
+        .sort(function(a,b) { return new Date(b.closeDate || b.createdTime) - new Date(a.closeDate || a.createdTime); });
+    
+    var recentWinsHtml = '';
+    for (var i = 0; i < Math.min(allWonDeals.length, 5); i++) {
+        var deal = allWonDeals[i];
+        var daysAgo = getDaysSince(deal.closeDate);
+        recentWinsHtml += '<div style="background:var(--bg-light);padding:14px 18px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:10px;" onclick="openDealDetailsModal(\'' + deal.id + '\')">' +
+            '<div><div style="font-weight:600;font-size:15px;margin-bottom:4px;">' + deal.name + '</div><div style="font-size:12px;color:var(--text-gray);">' + deal.owner + ' • <span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span> ' + (daysAgo !== null ? (daysAgo === 0 ? '• Today' : '• ' + daysAgo + ' days ago') : '') + '</div></div>' +
+            '<div style="font-size:20px;font-weight:700;color:var(--primary);">$' + deal.value.toLocaleString() + '</div></div>';
     }
 
     var html = '<div class="greeting-banner"><div class="greeting-text">' + greeting + '</div><div class="greeting-sub">Here\'s how the team is performing.</div></div>' +
@@ -1459,22 +1737,25 @@ function renderLeadershipDashboard() {
         '<div class="stat-card"><div class="stat-icon">📞</div><div class="stat-value">' + teamStats.calls + '</div><div class="stat-label">Calls</div></div>' +
         '<div class="stat-card"><div class="stat-icon">📧</div><div class="stat-value">' + teamStats.emails + '</div><div class="stat-label">Emails</div></div>' +
         '<div class="stat-card"><div class="stat-icon">💼</div><div class="stat-value">' + teamStats.linkedin + '</div><div class="stat-label">LinkedIn</div></div>' +
+        '<div class="stat-card"><div class="stat-icon">🔄</div><div class="stat-value">' + teamStats.followups + '</div><div class="stat-label">Follow-ups</div></div>' +
         '<div class="stat-card"><div class="stat-icon">🎥</div><div class="stat-value">' + teamStats.demos + '</div><div class="stat-label">Demos</div></div>' +
-        '<div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value">' + teamStats.proposals + '</div><div class="stat-label">Proposals</div></div>' +
-        '<div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value">' + teamStats.meetings + '</div><div class="stat-label">Meetings</div></div></div></div>';
-    
-    if (needsAttentionHtml || onTrackHtml) {
-        html += '<div class="card"><div class="card-header"><h2 class="card-title">📋 KPI Alerts</h2></div><div>' + needsAttentionHtml + onTrackHtml + '</div></div>';
-    }
-    
-    html += '<div class="card"><div class="card-header"><h2 class="card-title">👥 Sales Team</h2></div>' +
+        '<div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value">' + teamStats.proposals + '</div><div class="stat-label">Proposals</div></div></div></div>' +
+        
+        '<div class="card"><div class="card-header"><h2 class="card-title">👥 Sales Team</h2></div>' +
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;">' + repCardsHtml + '</div></div>';
+    
+    if (allWonDeals.length > 0) {
+        html += '<div class="card"><div class="card-header"><h2 class="card-title">🏆 Recent Wins</h2></div>' + recentWinsHtml + '</div>';
+    }
     
     document.getElementById('contentArea').innerHTML = html;
 }
 
 function openRepDetailsModal(memberId) {
-    var member = state.data.teamMembers.find(function(m) { return m.id === memberId; });
+    var member = null;
+    for (var i = 0; i < state.data.teamMembers.length; i++) {
+        if (state.data.teamMembers[i].id === memberId) { member = state.data.teamMembers[i]; break; }
+    }
     if (!member) return;
     
     var today = new Date();
@@ -1487,52 +1768,110 @@ function openRepDetailsModal(memberId) {
     var memberTodayActivities = memberActivities.filter(function(a) { return a.date && a.date.split('T')[0] === todayISO; });
     
     var memberMonthWon = memberDeals.filter(function(d) {
-        if (!d.stage.toLowerCase().includes('won')) return false;
+        if (d.stage.toLowerCase().indexOf('won') === -1) return false;
         var dealDate = d.closeDate ? new Date(d.closeDate) : (d.createdTime ? new Date(d.createdTime) : null);
         return dealDate && dealDate >= monthStart;
     });
     
     var todayStats = getActivityStats(memberTodayActivities);
     var allStats = getActivityStats(memberActivities);
-    var memberRevenue = memberMonthWon.reduce(function(sum, d) { return sum + d.value; }, 0);
+    var memberRevenue = 0;
+    for (var i = 0; i < memberMonthWon.length; i++) memberRevenue += memberMonthWon[i].value;
     var revenuePercentOfMax = (memberRevenue / targets.monthlyRevenueMax) * 100;
     
+    // All time deals
+    var allWon = memberDeals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') !== -1; });
+    var allTimeRevenue = 0;
+    for (var i = 0; i < allWon.length; i++) allTimeRevenue += allWon[i].value;
+    
+    // Recent activities list (clickable)
+    var recentActivities = memberActivities.sort(function(a,b) { return new Date(b.date) - new Date(a.date); }).slice(0, 5);
+    var activitiesHtml = '';
+    for (var i = 0; i < recentActivities.length; i++) {
+        var a = recentActivities[i];
+        activitiesHtml += '<div class="clickable-link" style="padding:6px 0;border-bottom:1px solid var(--border);" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');">' + a.type + ' - ' + a.account + ' (' + formatDateShort(a.date) + ')</div>';
+    }
+    if (recentActivities.length === 0) activitiesHtml = '<div style="color:var(--text-gray);">No recent activities</div>';
+    
     var html = '<div class="modal active"><div class="modal-content wide"><div class="modal-header"><h2>' + member.name + ' - Performance</h2></div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px;margin-bottom:24px;">' +
-        '<div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">Today Calls</div><div style="font-size:28px;font-weight:700;color:var(--primary);">' + todayStats.calls + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">Today Emails</div><div style="font-size:28px;font-weight:700;color:var(--primary);">' + todayStats.emails + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">Today LinkedIn</div><div style="font-size:28px;font-weight:700;color:var(--primary);">' + todayStats.linkedin + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">All Calls</div><div style="font-size:28px;font-weight:700;">' + allStats.calls + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">All Emails</div><div style="font-size:28px;font-weight:700;">' + allStats.emails + '</div></div>' +
-        '<div class="stat-card"><div style="font-size:11px;color:var(--text-gray);">All LinkedIn</div><div style="font-size:28px;font-weight:700;">' + allStats.linkedin + '</div></div></div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-bottom:20px;">' +
+        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Calls</div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + todayStats.calls + '</div></div>' +
+        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Emails</div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + todayStats.emails + '</div></div>' +
+        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today LinkedIn</div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + todayStats.linkedin + '</div></div>' +
+        '<div class="stat-card clickable" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');"><div style="font-size:10px;color:var(--text-gray);">Today Follow-ups</div><div style="font-size:24px;font-weight:700;color:var(--primary);">' + todayStats.followups + '</div></div>' +
+        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All Calls</div><div style="font-size:24px;font-weight:700;">' + allStats.calls + '</div></div>' +
+        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All Emails</div><div style="font-size:24px;font-weight:700;">' + allStats.emails + '</div></div>' +
+        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">All LinkedIn</div><div style="font-size:24px;font-weight:700;">' + allStats.linkedin + '</div></div>' +
+        '<div class="stat-card"><div style="font-size:10px;color:var(--text-gray);">Total Activities</div><div style="font-size:24px;font-weight:700;">' + memberActivities.length + '</div></div></div>' +
         
-        '<div style="background:var(--bg-light);padding:20px;border-radius:12px;margin-bottom:20px;">' +
-        '<div style="display:flex;justify-content:space-between;margin-bottom:12px;">' +
-        '<div><div style="font-size:12px;color:var(--text-gray);">Monthly Revenue</div><div style="font-size:36px;font-weight:800;color:var(--primary);">$' + (memberRevenue/1000).toFixed(1) + 'K</div></div>' +
-        '<div style="text-align:right;"><div style="font-size:12px;color:var(--text-gray);">Target</div><div style="font-size:16px;font-weight:600;">$' + (targets.monthlyRevenueMin/1000).toFixed(1) + 'K-$' + (targets.monthlyRevenueMax/1000).toFixed(1) + 'K</div></div></div>' +
-        '<div class="progress-bar" style="height:12px;"><div class="progress-fill" style="width:' + Math.min(revenuePercentOfMax,100) + '%;background:var(--success);"></div></div>' +
-        '<div style="text-align:right;margin-top:8px;font-size:14px;font-weight:700;color:var(--success);">' + revenuePercentOfMax.toFixed(0) + '% of Max</div></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">' +
+        '<div style="background:var(--bg-light);padding:20px;border-radius:12px;">' +
+        '<div style="font-size:12px;color:var(--text-gray);margin-bottom:8px;">Monthly Revenue</div>' +
+        '<div style="font-size:32px;font-weight:800;color:var(--primary);">$' + (memberRevenue/1000).toFixed(1) + 'K</div>' +
+        '<div style="font-size:12px;color:var(--text-gray);">Target: $' + (targets.monthlyRevenueMin/1000).toFixed(1) + 'K-$' + (targets.monthlyRevenueMax/1000).toFixed(1) + 'K</div>' +
+        '<div class="progress-bar" style="height:10px;margin-top:10px;"><div class="progress-fill" style="width:' + Math.min(revenuePercentOfMax,100) + '%;background:var(--success);"></div></div>' +
+        '<div style="text-align:right;font-size:13px;font-weight:700;margin-top:4px;">' + revenuePercentOfMax.toFixed(0) + '%</div></div>' +
         
-        '<div class="modal-actions"><button class="btn btn-warning" onclick="closeModal();openResetPasswordModal(\'' + member.name + '\')">🔑 Reset Password</button><button class="btn btn-secondary" onclick="closeModal()">Close</button></div></div></div>';
+        '<div style="background:var(--bg-light);padding:20px;border-radius:12px;">' +
+        '<div style="font-size:12px;color:var(--text-gray);margin-bottom:8px;">All-Time Stats</div>' +
+        '<div style="font-size:32px;font-weight:800;color:var(--success);">$' + (allTimeRevenue/1000).toFixed(1) + 'K</div>' +
+        '<div style="font-size:12px;color:var(--text-gray);">' + allWon.length + ' deals won all time</div></div></div>' +
+        
+        '<div style="margin-bottom:20px;"><div style="font-weight:600;margin-bottom:10px;">📝 Recent Activities (Click to view all)</div>' + activitiesHtml + '</div>' +
+        
+        '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button>' +
+        '<button class="btn btn-primary" onclick="closeModal();state.filterRep=\'' + member.name + '\';renderView(\'activity\');">View All Activities</button></div></div></div>';
     document.getElementById('modalContainer').innerHTML = html;
 }
 
 function renderLeadershipAnalytics() {
     var allDeals = state.data.deals;
+    var allActivities = state.data.activities;
     var today = new Date();
     var yearStart = new Date(today.getFullYear(), 0, 1);
     
     var yearDeals = allDeals.filter(function(d) { var dt = d.createdTime ? new Date(d.createdTime) : null; return dt && dt >= yearStart; });
     var floorDeals = yearDeals.filter(function(d) { return d.pricingType === 'Floor Price'; });
     var totalFloorUsed = floorDeals.length;
+    
+    // All time stats by rep
+    var reps = state.data.teamMembers.filter(function(m) { return m.role !== 'Leadership'; });
+    var repStatsHtml = '<table><thead><tr><th>Rep</th><th>Role</th><th>All-Time Revenue</th><th>All-Time Deals</th><th>Total Activities</th><th>Calls</th><th>Emails</th><th>LinkedIn</th></tr></thead><tbody>';
+    
+    for (var i = 0; i < reps.length; i++) {
+        var rep = reps[i];
+        var repDeals = allDeals.filter(function(d) { return d.owner === rep.name && d.stage.toLowerCase().indexOf('won') !== -1; });
+        var repActivities = allActivities.filter(function(a) { return a.owner === rep.name; });
+        var repStats = getActivityStats(repActivities);
+        var repRevenue = 0;
+        for (var j = 0; j < repDeals.length; j++) repRevenue += repDeals[j].value;
+        
+        repStatsHtml += '<tr onclick="openRepDetailsModal(\'' + rep.id + '\')" class="clickable">' +
+            '<td><strong>' + rep.name + '</strong></td>' +
+            '<td>' + rep.role + '</td>' +
+            '<td>$' + repRevenue.toLocaleString() + '</td>' +
+            '<td>' + repDeals.length + '</td>' +
+            '<td>' + repActivities.length + '</td>' +
+            '<td>' + repStats.calls + '</td>' +
+            '<td>' + repStats.emails + '</td>' +
+            '<td>' + repStats.linkedin + '</td></tr>';
+    }
+    repStatsHtml += '</tbody></table>';
 
-    var html = '<div class="charts-grid">' +
+    var html = '<div class="tabs">' +
+        '<div class="tab active" onclick="renderLeadershipAnalytics()">📊 Analytics</div>' +
+        '<div class="tab" onclick="renderTeamOverview()">👥 Team Overview</div></div>' +
+        
+        '<div class="charts-grid">' +
         '<div class="chart-card"><h3>📈 Team Revenue (6 Months)</h3><div class="chart-container"><canvas id="teamRevenueTrendChart"></canvas></div></div>' +
         '<div class="chart-card"><h3>🥧 Revenue by Tier</h3><div class="chart-container"><canvas id="teamRevenueByTierChart"></canvas></div></div></div>' +
         
+        '<div class="card"><div class="card-header"><h2 class="card-title">📊 All-Time Rep Performance</h2></div>' + repStatsHtml + '</div>' +
+        
         '<div class="card"><div class="card-header"><h2 class="card-title">🚨 Floor-Price Capacity (' + today.getFullYear() + ')</h2></div>' +
-        '<div class="floor-tracker"><div class="capacity-circle"><div class="capacity-number">' + totalFloorUsed + '/10</div><div class="capacity-label">used</div></div>' +
-        '<p style="color:var(--text-gray);margin-top:16px;">Remaining: <strong>' + (10 - totalFloorUsed) + '</strong> floor-price events</p></div></div>';
+        '<div style="text-align:center;padding:30px;"><div style="width:160px;height:160px;margin:0 auto 16px;border-radius:50%;background:var(--gradient);display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;box-shadow:0 8px 24px rgba(102,126,234,0.3);">' +
+        '<div style="font-size:42px;font-weight:800;">' + totalFloorUsed + '/10</div><div style="font-size:13px;opacity:0.9;">used</div></div>' +
+        '<p style="color:var(--text-gray);">Remaining: <strong>' + (10 - totalFloorUsed) + '</strong> floor-price events</p></div></div>';
     
     document.getElementById('contentArea').innerHTML = html;
     
@@ -1544,494 +1883,474 @@ function renderLeadershipAnalytics() {
 
 function renderTeamOverview() {
     var monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    var html = '<div class="card"><div class="card-header"><h2 class="card-title">👨‍👩‍👧‍👦 Team Performance</h2></div><table><thead><tr><th>Name</th><th>Role</th><th>Target</th><th>Revenue</th><th>% of Max</th><th>Wins</th><th>Actions</th></tr></thead><tbody>';
+    var html = '<div class="tabs">' +
+        '<div class="tab" onclick="renderLeadershipAnalytics()">📊 Analytics</div>' +
+        '<div class="tab active" onclick="renderTeamOverview()">👥 Team Overview</div></div>' +
+        
+        '<div class="card"><div class="card-header"><h2 class="card-title">👨‍👩‍👧‍👦 Team Performance</h2></div><table><thead><tr><th>Name</th><th>Role</th><th>Target</th><th>Revenue</th><th>% of Max</th><th>Wins</th></tr></thead><tbody>';
     
     var reps = state.data.teamMembers.filter(function(m) { return m.role !== 'Leadership'; });
     for (var i = 0; i < reps.length; i++) {
         var m = reps[i];
         var memberDeals = state.data.deals.filter(function(d) { return d.owner === m.name; });
         var monthWon = memberDeals.filter(function(d) {
-            if (!d.stage.toLowerCase().includes('won')) return false;
+            if (d.stage.toLowerCase().indexOf('won') === -1) return false;
             var dt = d.closeDate ? new Date(d.closeDate) : null;
             return dt && dt >= monthStart;
         });
-        var revenue = monthWon.reduce(function(sum, d) { return sum + d.value; }, 0);
+        var revenue = 0;
+        for (var j = 0; j < monthWon.length; j++) revenue += monthWon[j].value;
         var targets = getKPITargets(m.role);
         var attainment = (revenue / targets.monthlyRevenueMax) * 100;
         var badgeClass = attainment >= 100 ? 'badge-success' : attainment >= 70 ? 'badge-warning' : 'badge-danger';
         
-        html += '<tr><td><strong>' + m.name + '</strong></td><td>' + m.role + '</td><td>$' + targets.monthlyRevenueMax.toLocaleString() + '</td><td>$' + revenue.toLocaleString() + '</td>' +
-            '<td><span class="badge ' + badgeClass + '">' + attainment.toFixed(0) + '%</span></td><td>' + monthWon.length + '</td>' +
-            '<td><button class="btn btn-small btn-secondary" onclick="openResetPasswordModal(\'' + m.name + '\')">🔑 Reset</button></td></tr>';
+        html += '<tr class="clickable" onclick="openRepDetailsModal(\'' + m.id + '\')"><td><strong>' + m.name + '</strong></td><td>' + m.role + '</td><td>$' + targets.monthlyRevenueMax.toLocaleString() + '</td><td>$' + revenue.toLocaleString() + '</td>' +
+            '<td><span class="badge ' + badgeClass + '">' + attainment.toFixed(0) + '%</span></td><td>' + monthWon.length + '</td></tr>';
     }
     html += '</tbody></table></div>';
     document.getElementById('contentArea').innerHTML = html;
 }
 
-// Pipeline with drag and drop
+// ============ PIPELINE VIEW ============
+var draggedDealId = null;
+
 function renderPipeline() {
-    var allDeals = getUserDeals();
-    var stages = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won'];
-    var isLeadership = state.currentUser.role === 'Leadership';
-    var userActivities = state.data.activities.filter(function(a) { return isLeadership || a.owner === state.currentUser.name; });
+    var deals = getUserDeals();
+    var stages = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won', 'Closed Lost'];
     
-    var deals = allDeals;
-    if (state.filters.pipeline.tier) deals = deals.filter(function(d) { return d.tier === state.filters.pipeline.tier; });
-    if (state.filters.pipeline.owner) deals = deals.filter(function(d) { return d.owner === state.filters.pipeline.owner; });
+    var tierFilter = state.filters.pipeline.tier;
+    var ownerFilter = state.filters.pipeline.owner;
     
+    if (tierFilter) deals = deals.filter(function(d) { return d.tier === tierFilter; });
+    if (ownerFilter) deals = deals.filter(function(d) { return d.owner === ownerFilter; });
+    
+    var ownerOptions = '<option value="">All Owners</option>';
     var owners = [];
-    for (var i = 0; i < allDeals.length; i++) {
-        if (allDeals[i].owner && owners.indexOf(allDeals[i].owner) === -1) owners.push(allDeals[i].owner);
+    for (var i = 0; i < state.data.deals.length; i++) {
+        if (owners.indexOf(state.data.deals[i].owner) === -1 && state.data.deals[i].owner) owners.push(state.data.deals[i].owner);
     }
-    
-    var ownerOptions = '';
     for (var i = 0; i < owners.length; i++) {
-        ownerOptions += '<option value="' + owners[i] + '"' + (state.filters.pipeline.owner === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
+        ownerOptions += '<option value="' + owners[i] + '"' + (ownerFilter === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
     }
     
-    var html = '<div class="quick-actions" style="margin-bottom:16px;"><button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ Add New Deal</button></div>' +
-        '<div class="filters-bar"><span style="font-weight:600;font-size:14px;">Filters:</span>' +
+    var html = '<div class="filters-bar">' +
         '<select class="filter-select" onchange="state.filters.pipeline.tier=this.value;renderPipeline();">' +
-        '<option value="">All Tiers</option>' +
-        '<option value="Starter"' + (state.filters.pipeline.tier === 'Starter' ? ' selected' : '') + '>Starter</option>' +
-        '<option value="Growth"' + (state.filters.pipeline.tier === 'Growth' ? ' selected' : '') + '>Growth</option>' +
-        '<option value="Pro"' + (state.filters.pipeline.tier === 'Pro' ? ' selected' : '') + '>Pro</option>' +
-        '<option value="Enterprise"' + (state.filters.pipeline.tier === 'Enterprise' ? ' selected' : '') + '>Enterprise</option></select>';
-    
-    if (isLeadership) {
-        html += '<select class="filter-select" onchange="state.filters.pipeline.owner=this.value;renderPipeline();"><option value="">All Owners</option>' + ownerOptions + '</select>';
-    }
-    
-    if (state.filters.pipeline.tier || state.filters.pipeline.owner) {
-        html += '<button class="btn btn-secondary btn-small" onclick="state.filters.pipeline={tier:\'\',owner:\'\'};renderPipeline();">Clear</button>';
-    }
-    html += '</div><div class="kanban-board">';
+        '<option value="">All Tiers</option><option value="Starter"' + (tierFilter === 'Starter' ? ' selected' : '') + '>Starter</option>' +
+        '<option value="Growth"' + (tierFilter === 'Growth' ? ' selected' : '') + '>Growth</option>' +
+        '<option value="Pro"' + (tierFilter === 'Pro' ? ' selected' : '') + '>Pro</option>' +
+        '<option value="Enterprise"' + (tierFilter === 'Enterprise' ? ' selected' : '') + '>Enterprise</option></select>' +
+        '<select class="filter-select" onchange="state.filters.pipeline.owner=this.value;renderPipeline();">' + ownerOptions + '</select>' +
+        '<button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ Add Deal</button></div>' +
+        '<div class="kanban-board">';
     
     for (var s = 0; s < stages.length; s++) {
         var stage = stages[s];
         var stageDeals = deals.filter(function(d) { return d.stage === stage; });
+        var stageTotal = 0;
+        for (var i = 0; i < stageDeals.length; i++) stageTotal += stageDeals[i].value;
         
-        html += '<div class="kanban-column" data-stage="' + stage + '" ondrop="handleDrop(event, \'' + stage + '\')" ondragover="handleDragOver(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)">' +
-            '<div class="kanban-header"><span>' + stage + '</span><span class="kanban-count">' + stageDeals.length + '</span></div>';
+        html += '<div class="kanban-column" ondrop="handleDrop(event,\'' + stage + '\')" ondragover="handleDragOver(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)">' +
+            '<div class="kanban-header"><span>' + stage + '</span><span class="kanban-count">' + stageDeals.length + ' • $' + (stageTotal/1000).toFixed(1) + 'K</span></div>';
         
-        if (stageDeals.length === 0) {
-            html += '<p style="color:var(--text-gray);text-align:center;padding:24px;font-size:13px;">No deals</p>';
-        } else {
-            for (var d = 0; d < stageDeals.length; d++) {
-                var deal = stageDeals[d];
-                var lastActivity = userActivities.filter(function(a) { return a.account && deal.name.toLowerCase().includes(a.account.toLowerCase()); }).sort(function(x,y) { return new Date(y.date) - new Date(x.date); })[0];
-                var daysSinceActivity = lastActivity ? getDaysSince(lastActivity.date) : 999;
-                var isStale = daysSinceActivity >= 5 && !stage.toLowerCase().includes('won');
-                var dealAge = getDaysSince(deal.createdTime);
-                var currentWeek = Math.min(Math.ceil(dealAge / 7) || 1, 9);
-                
-                html += '<div class="kanban-card' + (isStale ? ' stale' : '') + '" draggable="true" ondragstart="handleDragStart(event, \'' + deal.id + '\')" ondragend="handleDragEnd(event)" onclick="openDealDetailsModal(\'' + deal.id + '\')" data-deal-id="' + deal.id + '">' +
-                    '<div style="display:flex;justify-content:space-between;"><div class="kanban-card-title">' + deal.name + '</div>';
-                if (isLeadership) {
-                    html += '<button class="btn btn-icon btn-danger" onclick="event.stopPropagation();deleteDeal(\'' + deal.id + '\')" style="padding:3px 6px;font-size:11px;">🗑️</button>';
+        for (var i = 0; i < stageDeals.length; i++) {
+            var deal = stageDeals[i];
+            var dealAge = getDaysSince(deal.createdTime);
+            var userActivities = state.data.activities.filter(function(a) { return a.owner === deal.owner; });
+            var lastActivity = null;
+            for (var j = 0; j < userActivities.length; j++) {
+                if (userActivities[j].account && deal.name.toLowerCase().indexOf(userActivities[j].account.toLowerCase()) !== -1) {
+                    if (!lastActivity || new Date(userActivities[j].date) > new Date(lastActivity.date)) lastActivity = userActivities[j];
                 }
-                html += '</div><div class="kanban-card-value">$' + deal.value.toLocaleString() + '</div>' +
-                    '<div style="display:flex;gap:6px;align-items:center;"><span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span><span class="badge badge-info">Week ' + currentWeek + '</span></div>' +
-                    '<div class="kanban-card-meta">Owner: ' + deal.owner + '</div>';
-                if (isStale) {
-                    html += '<div class="stale-indicator">⚠️ ' + daysSinceActivity + '+ days idle</div>';
-                }
-                html += '</div>';
             }
+            var daysSinceActivity = lastActivity ? getDaysSince(lastActivity.date) : null;
+            var isStale = daysSinceActivity === null || daysSinceActivity >= 5;
+            
+            html += '<div class="kanban-card' + (isStale && stage !== 'Closed Won' && stage !== 'Closed Lost' ? ' stale' : '') + '" draggable="true" ondragstart="handleDragStart(event,\'' + deal.id + '\')" ondragend="handleDragEnd(event)" onclick="openDealDetailsModal(\'' + deal.id + '\')">' +
+                '<div class="kanban-card-title">' + deal.name + '</div>' +
+                '<div class="kanban-card-value">$' + deal.value.toLocaleString() + '</div>' +
+                '<span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span>' +
+                '<div class="kanban-card-meta">👤 ' + deal.owner + (dealAge !== null ? ' • ' + dealAge + ' days' : '') + '</div>';
+            if (isStale && stage !== 'Closed Won' && stage !== 'Closed Lost') {
+                html += '<div class="stale-indicator">⚠️ ' + (daysSinceActivity !== null ? daysSinceActivity + ' days since touch' : 'No activity') + '</div>';
+            }
+            html += '</div>';
         }
         html += '</div>';
     }
     html += '</div>';
-    
     document.getElementById('contentArea').innerHTML = html;
 }
 
-var draggedDealId = null;
-
-function handleDragStart(event, dealId) {
+function handleDragStart(e, dealId) {
     draggedDealId = dealId;
-    event.target.classList.add('dragging');
-    event.dataTransfer.effectAllowed = 'move';
+    e.target.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
 }
 
-function handleDragEnd(event) {
-    event.target.classList.remove('dragging');
-    var columns = document.querySelectorAll('.kanban-column');
-    for (var i = 0; i < columns.length; i++) {
-        columns[i].classList.remove('drag-over');
-    }
+function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+    var cols = document.querySelectorAll('.kanban-column');
+    for (var i = 0; i < cols.length; i++) cols[i].classList.remove('drag-over');
 }
 
-function handleDragOver(event) {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
 }
 
-function handleDragEnter(event) {
-    event.preventDefault();
-    var column = event.target.closest('.kanban-column');
-    if (column) column.classList.add('drag-over');
+function handleDragEnter(e) {
+    e.preventDefault();
+    if (e.target.classList.contains('kanban-column')) e.target.classList.add('drag-over');
 }
 
-function handleDragLeave(event) {
-    var column = event.target.closest('.kanban-column');
-    if (column && !column.contains(event.relatedTarget)) {
-        column.classList.remove('drag-over');
-    }
+function handleDragLeave(e) {
+    if (e.target.classList.contains('kanban-column')) e.target.classList.remove('drag-over');
 }
 
-function handleDrop(event, newStage) {
-    event.preventDefault();
-    var column = event.target.closest('.kanban-column');
-    if (column) column.classList.remove('drag-over');
-    
-    if (draggedDealId && newStage) {
+function handleDrop(e, newStage) {
+    e.preventDefault();
+    var cols = document.querySelectorAll('.kanban-column');
+    for (var i = 0; i < cols.length; i++) cols[i].classList.remove('drag-over');
+    if (draggedDealId) {
         updateDealStage(draggedDealId, newStage);
+        draggedDealId = null;
     }
-    draggedDealId = null;
 }
 
-// Contacts
+// ============ CONTACTS VIEW ============
 function renderContacts() {
-    var contacts = state.data.contacts;
-    var isLeadership = state.currentUser.role === 'Leadership';
+    var contacts = state.data.contacts.slice();
+    var searchFilter = state.filters.contacts.search;
+    var ownerFilter = state.filters.contacts.owner;
     
-    if (state.filters.contacts.search) {
-        var q = state.filters.contacts.search.toLowerCase();
-        contacts = contacts.filter(function(c) { return c.name.toLowerCase().includes(q) || (c.email && c.email.toLowerCase().includes(q)) || (c.company && c.company.toLowerCase().includes(q)); });
+    if (searchFilter) {
+        var q = searchFilter.toLowerCase();
+        contacts = contacts.filter(function(c) { return c.name.toLowerCase().indexOf(q) !== -1 || (c.email && c.email.toLowerCase().indexOf(q) !== -1) || (c.company && c.company.toLowerCase().indexOf(q) !== -1); });
     }
-    if (state.filters.contacts.owner) {
-        contacts = contacts.filter(function(c) { return c.owner === state.filters.contacts.owner; });
-    }
+    if (ownerFilter) contacts = contacts.filter(function(c) { return c.owner === ownerFilter; });
     
+    // Sorting
+    var sortField = state.sorting.contacts.field;
+    var sortDir = state.sorting.contacts.dir;
+    contacts.sort(function(a, b) {
+        var aVal = (a[sortField] || '').toString().toLowerCase();
+        var bVal = (b[sortField] || '').toString().toLowerCase();
+        if (sortDir === 'asc') return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+        return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+    });
+    
+    var ownerOptions = '<option value="">All Owners</option>';
     var owners = [];
     for (var i = 0; i < state.data.contacts.length; i++) {
-        if (state.data.contacts[i].owner && owners.indexOf(state.data.contacts[i].owner) === -1) owners.push(state.data.contacts[i].owner);
+        if (owners.indexOf(state.data.contacts[i].owner) === -1 && state.data.contacts[i].owner) owners.push(state.data.contacts[i].owner);
     }
-    var ownerOptions = '';
     for (var i = 0; i < owners.length; i++) {
-        ownerOptions += '<option value="' + owners[i] + '"' + (state.filters.contacts.owner === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
+        ownerOptions += '<option value="' + owners[i] + '"' + (ownerFilter === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
     }
     
-    var html = '<div class="quick-actions" style="margin-bottom:16px;"><button class="btn btn-primary btn-small" onclick="openAddContactModal()">➕ Add New Contact</button></div>' +
-        '<div class="filters-bar"><input type="text" class="filter-input" placeholder="Search contacts..." value="' + state.filters.contacts.search + '" oninput="state.filters.contacts.search=this.value;renderContacts();">';
-    if (isLeadership) {
-        html += '<select class="filter-select" onchange="state.filters.contacts.owner=this.value;renderContacts();"><option value="">All Owners</option>' + ownerOptions + '</select>';
+    function getSortClass(field) {
+        if (state.sorting.contacts.field !== field) return 'sortable';
+        return state.sorting.contacts.dir === 'asc' ? 'sortable sort-asc' : 'sortable sort-desc';
     }
-    if (state.filters.contacts.search || state.filters.contacts.owner) {
-        html += '<button class="btn btn-secondary btn-small" onclick="state.filters.contacts={search:\'\',owner:\'\'};renderContacts();">Clear</button>';
-    }
-    html += '</div>' +
-        '<div class="card"><div class="card-header"><h2 class="card-title">👥 Contacts</h2><span style="font-size:13px;color:var(--text-gray);">' + contacts.length + ' contacts</span></div>' +
-        '<table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Company</th><th>Owner</th>' + (isLeadership ? '<th>Actions</th>' : '') + '</tr></thead><tbody>';
     
-    if (contacts.length === 0) {
-        html += '<tr><td colspan="' + (isLeadership ? 6 : 5) + '" style="text-align:center;padding:40px;color:var(--text-gray);">No contacts found</td></tr>';
-    } else {
-        for (var i = 0; i < contacts.length; i++) {
-            var c = contacts[i];
-            html += '<tr class="clickable" onclick="openContactDetailModal(\'' + c.id + '\')">' +
-                '<td><strong>' + c.name + '</strong>' + (c.role ? '<br><span style="font-size:12px;color:var(--text-gray);">' + c.role + '</span>' : '') + '</td>' +
-                '<td>' + (c.email || '-') + '</td><td>' + (c.phone || '-') + '</td><td>' + (c.company || '-') + '</td><td>' + (c.owner || '-') + '</td>';
-            if (isLeadership) {
-                html += '<td class="action-buttons" onclick="event.stopPropagation();">' +
-                    '<button class="btn btn-icon btn-secondary" onclick="openEditContactModal(\'' + c.id + '\')">✏️</button>' +
-                    '<button class="btn btn-icon btn-danger" onclick="deleteContact(\'' + c.id + '\')">🗑️</button></td>';
-            }
-            html += '</tr>';
-        }
+    var html = '<div class="filters-bar">' +
+        '<input type="text" class="filter-input" placeholder="Search contacts..." value="' + (searchFilter || '') + '" oninput="state.filters.contacts.search=this.value;renderContacts();">' +
+        '<select class="filter-select" onchange="state.filters.contacts.owner=this.value;renderContacts();">' + ownerOptions + '</select>' +
+        '<select class="filter-select" onchange="handleContactSort(this.value)">' +
+        '<option value="name-asc"' + (sortField === 'name' && sortDir === 'asc' ? ' selected' : '') + '>Name A-Z</option>' +
+        '<option value="name-desc"' + (sortField === 'name' && sortDir === 'desc' ? ' selected' : '') + '>Name Z-A</option>' +
+        '<option value="company-asc"' + (sortField === 'company' && sortDir === 'asc' ? ' selected' : '') + '>Company A-Z</option>' +
+        '<option value="company-desc"' + (sortField === 'company' && sortDir === 'desc' ? ' selected' : '') + '>Company Z-A</option>' +
+        '<option value="createdTime-desc"' + (sortField === 'createdTime' && sortDir === 'desc' ? ' selected' : '') + '>Newest First</option>' +
+        '<option value="createdTime-asc"' + (sortField === 'createdTime' && sortDir === 'asc' ? ' selected' : '') + '>Oldest First</option></select>' +
+        '<button class="btn btn-primary btn-small" onclick="openAddContactModal()">➕ Add Contact</button></div>' +
+        '<div class="card"><table><thead><tr>' +
+        '<th class="' + getSortClass('name') + '" onclick="toggleContactSort(\'name\')">Name</th>' +
+        '<th>Email</th><th>Phone</th>' +
+        '<th class="' + getSortClass('company') + '" onclick="toggleContactSort(\'company\')">Company</th>' +
+        '<th>Role</th><th>Owner</th></tr></thead><tbody>';
+    
+    for (var i = 0; i < contacts.length; i++) {
+        var c = contacts[i];
+        var companyLink = c.company ? '<span class="clickable-link" onclick="event.stopPropagation();openAccountByName(\'' + c.company.replace(/'/g, "\\'") + '\')">' + c.company + '</span>' : '-';
+        html += '<tr class="clickable" onclick="openContactDetailModal(\'' + c.id + '\')">' +
+            '<td><strong>' + c.name + '</strong></td>' +
+            '<td>' + (c.email || '-') + '</td>' +
+            '<td>' + (c.phone || '-') + '</td>' +
+            '<td>' + companyLink + '</td>' +
+            '<td>' + (c.role || '-') + '</td>' +
+            '<td>' + (c.owner || '-') + '</td></tr>';
     }
     html += '</tbody></table></div>';
     document.getElementById('contentArea').innerHTML = html;
 }
 
-// Accounts
-function renderAccounts() {
-    var accounts = state.data.accounts;
-    var isLeadership = state.currentUser.role === 'Leadership';
-    
-    if (state.filters.accounts.search) {
-        var q = state.filters.accounts.search.toLowerCase();
-        accounts = accounts.filter(function(a) { return a.name.toLowerCase().includes(q); });
+function handleContactSort(value) {
+    var parts = value.split('-');
+    state.sorting.contacts.field = parts[0];
+    state.sorting.contacts.dir = parts[1];
+    renderContacts();
+}
+
+function toggleContactSort(field) {
+    if (state.sorting.contacts.field === field) {
+        state.sorting.contacts.dir = state.sorting.contacts.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+        state.sorting.contacts.field = field;
+        state.sorting.contacts.dir = 'asc';
     }
-    if (state.filters.accounts.industry) {
-        accounts = accounts.filter(function(a) { return a.industry === state.filters.accounts.industry; });
-    }
-    if (state.filters.accounts.owner) {
-        accounts = accounts.filter(function(a) { return a.owner === state.filters.accounts.owner; });
-    }
-    
-    var industries = [], owners = [];
+    renderContacts();
+}
+
+function openAccountByName(accountName) {
     for (var i = 0; i < state.data.accounts.length; i++) {
-        if (state.data.accounts[i].industry && industries.indexOf(state.data.accounts[i].industry) === -1) industries.push(state.data.accounts[i].industry);
-        if (state.data.accounts[i].owner && owners.indexOf(state.data.accounts[i].owner) === -1) owners.push(state.data.accounts[i].owner);
-    }
-    var indOptions = '', ownerOptions = '';
-    for (var i = 0; i < industries.length; i++) indOptions += '<option value="' + industries[i] + '"' + (state.filters.accounts.industry === industries[i] ? ' selected' : '') + '>' + industries[i] + '</option>';
-    for (var i = 0; i < owners.length; i++) ownerOptions += '<option value="' + owners[i] + '"' + (state.filters.accounts.owner === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
-    
-    var html = '<div class="quick-actions" style="margin-bottom:16px;"><button class="btn btn-primary btn-small" onclick="openAddAccountModal()">➕ Add New Account</button></div>' +
-        '<div class="filters-bar"><input type="text" class="filter-input" placeholder="Search accounts..." value="' + state.filters.accounts.search + '" oninput="state.filters.accounts.search=this.value;renderAccounts();">' +
-        '<select class="filter-select" onchange="state.filters.accounts.industry=this.value;renderAccounts();"><option value="">All Industries</option>' + indOptions + '</select>';
-    if (isLeadership) {
-        html += '<select class="filter-select" onchange="state.filters.accounts.owner=this.value;renderAccounts();"><option value="">All Owners</option>' + ownerOptions + '</select>';
-    }
-    if (state.filters.accounts.search || state.filters.accounts.industry || state.filters.accounts.owner) {
-        html += '<button class="btn btn-secondary btn-small" onclick="state.filters.accounts={search:\'\',industry:\'\',owner:\'\'};renderAccounts();">Clear</button>';
-    }
-    html += '</div>' +
-        '<div class="card"><div class="card-header"><h2 class="card-title">🏢 Accounts</h2><span style="font-size:13px;color:var(--text-gray);">' + accounts.length + ' accounts</span></div>' +
-        '<table><thead><tr><th>Account Name</th><th>Industry</th><th>Contacts</th><th>Deals</th><th>Owner</th>' + (isLeadership ? '<th>Actions</th>' : '') + '</tr></thead><tbody>';
-    
-    if (accounts.length === 0) {
-        html += '<tr><td colspan="' + (isLeadership ? 6 : 5) + '" style="text-align:center;padding:40px;color:var(--text-gray);">No accounts found</td></tr>';
-    } else {
-        for (var i = 0; i < accounts.length; i++) {
-            var a = accounts[i];
-            var contactCount = state.data.contacts.filter(function(c) { return c.accountId === a.id || c.company === a.name; }).length;
-            var dealCount = state.data.deals.filter(function(d) { return d.name.toLowerCase().includes(a.name.toLowerCase()); }).length;
-            html += '<tr class="clickable" onclick="openAccountDetailModal(\'' + a.id + '\')">' +
-                '<td><strong>' + a.name + '</strong></td>' +
-                '<td>' + (a.industry ? '<span class="badge badge-info">' + a.industry + '</span>' : '-') + '</td>' +
-                '<td>' + contactCount + '</td><td>' + dealCount + '</td><td>' + (a.owner || '-') + '</td>';
-            if (isLeadership) {
-                html += '<td class="action-buttons" onclick="event.stopPropagation();">' +
-                    '<button class="btn btn-icon btn-secondary" onclick="openEditAccountModal(\'' + a.id + '\')">✏️</button>' +
-                    '<button class="btn btn-icon btn-danger" onclick="deleteAccount(\'' + a.id + '\')">🗑️</button></td>';
-            }
-            html += '</tr>';
+        if (state.data.accounts[i].name === accountName) {
+            openAccountDetailModal(state.data.accounts[i].id);
+            return;
         }
     }
-    html += '</tbody></table></div>';
-    document.getElementById('contentArea').innerHTML = html;
 }
 
-// Activity View
-function renderActivityView() {
-    var activities = state.data.activities;
-    var isLeadership = state.currentUser.role === 'Leadership';
+// ============ ACCOUNTS VIEW ============
+function renderAccounts() {
+    var accounts = state.data.accounts.slice();
+    var searchFilter = state.filters.accounts.search;
+    var industryFilter = state.filters.accounts.industry;
+    var ownerFilter = state.filters.accounts.owner;
     
-    if (!isLeadership) {
-        activities = activities.filter(function(a) { return a.owner === state.currentUser.name; });
-    } else if (state.filterRep) {
-        activities = activities.filter(function(a) { return a.owner === state.filterRep; });
+    if (searchFilter) {
+        var q = searchFilter.toLowerCase();
+        accounts = accounts.filter(function(a) { return a.name.toLowerCase().indexOf(q) !== -1; });
+    }
+    if (industryFilter) accounts = accounts.filter(function(a) { return a.industry === industryFilter; });
+    if (ownerFilter) accounts = accounts.filter(function(a) { return a.owner === ownerFilter; });
+    
+    // Sorting
+    var sortField = state.sorting.accounts.field;
+    var sortDir = state.sorting.accounts.dir;
+    accounts.sort(function(a, b) {
+        var aVal = (a[sortField] || '').toString().toLowerCase();
+        var bVal = (b[sortField] || '').toString().toLowerCase();
+        if (sortDir === 'asc') return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+        return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+    });
+    
+    var industryOptions = '<option value="">All Industries</option>';
+    var industries = [];
+    for (var i = 0; i < state.data.accounts.length; i++) {
+        if (industries.indexOf(state.data.accounts[i].industry) === -1 && state.data.accounts[i].industry) industries.push(state.data.accounts[i].industry);
+    }
+    industries.sort();
+    for (var i = 0; i < industries.length; i++) {
+        industryOptions += '<option value="' + industries[i] + '"' + (industryFilter === industries[i] ? ' selected' : '') + '>' + industries[i] + '</option>';
     }
     
-    activities = activities.sort(function(a, b) { return new Date(b.date || b.createdTime) - new Date(a.date || a.createdTime); }).slice(0, 50);
-    
+    var ownerOptions = '<option value="">All Owners</option>';
     var owners = [];
-    for (var i = 0; i < state.data.activities.length; i++) {
-        if (state.data.activities[i].owner && owners.indexOf(state.data.activities[i].owner) === -1) owners.push(state.data.activities[i].owner);
+    for (var i = 0; i < state.data.accounts.length; i++) {
+        if (owners.indexOf(state.data.accounts[i].owner) === -1 && state.data.accounts[i].owner) owners.push(state.data.accounts[i].owner);
     }
-    var ownerOptions = '';
     for (var i = 0; i < owners.length; i++) {
-        ownerOptions += '<option value="' + owners[i] + '"' + (state.filterRep === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
+        ownerOptions += '<option value="' + owners[i] + '"' + (ownerFilter === owners[i] ? ' selected' : '') + '>' + owners[i] + '</option>';
     }
     
-    var html = '<div class="quick-actions" style="margin-bottom:16px;"><button class="btn btn-primary btn-small" onclick="openLogActivityModal()">📝 Log Activity</button></div>';
-    
-    if (isLeadership) {
-        html += '<div class="filters-bar"><span style="font-weight:600;font-size:14px;">Filter by Rep:</span>' +
-            '<select class="filter-select" onchange="state.filterRep=this.value||null;renderActivityView();"><option value="">All Reps</option>' + ownerOptions + '</select>';
-        if (state.filterRep) {
-            html += '<button class="btn btn-secondary btn-small" onclick="state.filterRep=null;renderActivityView();">Clear Filter</button>';
-        }
-        html += '</div>';
+    function getSortClass(field) {
+        if (state.sorting.accounts.field !== field) return 'sortable';
+        return state.sorting.accounts.dir === 'asc' ? 'sortable sort-asc' : 'sortable sort-desc';
     }
     
-    html += '<div class="card"><div class="card-header"><h2 class="card-title">📝 Activities</h2><span style="font-size:13px;color:var(--text-gray);">' + activities.length + ' activities</span></div>' +
-        '<table><thead><tr><th>Type</th><th>Account</th><th>Result</th><th>Date</th><th>Owner</th>' + (isLeadership ? '<th>Actions</th>' : '') + '</tr></thead><tbody>';
+    var html = '<div class="filters-bar">' +
+        '<input type="text" class="filter-input" placeholder="Search accounts..." value="' + (searchFilter || '') + '" oninput="state.filters.accounts.search=this.value;renderAccounts();">' +
+        '<select class="filter-select" onchange="state.filters.accounts.industry=this.value;renderAccounts();">' + industryOptions + '</select>' +
+        '<select class="filter-select" onchange="state.filters.accounts.owner=this.value;renderAccounts();">' + ownerOptions + '</select>' +
+        '<select class="filter-select" onchange="handleAccountSort(this.value)">' +
+        '<option value="name-asc"' + (sortField === 'name' && sortDir === 'asc' ? ' selected' : '') + '>Name A-Z</option>' +
+        '<option value="name-desc"' + (sortField === 'name' && sortDir === 'desc' ? ' selected' : '') + '>Name Z-A</option>' +
+        '<option value="industry-asc"' + (sortField === 'industry' && sortDir === 'asc' ? ' selected' : '') + '>Industry A-Z</option>' +
+        '<option value="industry-desc"' + (sortField === 'industry' && sortDir === 'desc' ? ' selected' : '') + '>Industry Z-A</option>' +
+        '<option value="createdTime-desc"' + (sortField === 'createdTime' && sortDir === 'desc' ? ' selected' : '') + '>Newest First</option>' +
+        '<option value="createdTime-asc"' + (sortField === 'createdTime' && sortDir === 'asc' ? ' selected' : '') + '>Oldest First</option></select>' +
+        '<button class="btn btn-primary btn-small" onclick="openAddAccountModal()">➕ Add Account</button></div>' +
+        '<div class="card"><table><thead><tr>' +
+        '<th class="' + getSortClass('name') + '" onclick="toggleAccountSort(\'name\')">Account Name</th>' +
+        '<th class="' + getSortClass('industry') + '" onclick="toggleAccountSort(\'industry\')">Industry</th>' +
+        '<th>Contacts</th><th>Deals</th><th>Website</th><th>Owner</th></tr></thead><tbody>';
     
-    if (activities.length === 0) {
-        html += '<tr><td colspan="' + (isLeadership ? 6 : 5) + '" style="text-align:center;padding:40px;color:var(--text-gray);">No activities found</td></tr>';
-    } else {
-        for (var i = 0; i < activities.length; i++) {
-            var a = activities[i];
-            var typeIcon = '📝';
-            var t = (a.type || '').toLowerCase();
-            if (t.includes('call')) typeIcon = '📞';
-            else if (t.includes('email')) typeIcon = '📧';
-            else if (t.includes('linkedin')) typeIcon = '💼';
-            else if (t.includes('demo')) typeIcon = '🎥';
-            else if (t.includes('proposal')) typeIcon = '📄';
-            else if (t.includes('meeting')) typeIcon = '📅';
-            
-            html += '<tr><td>' + typeIcon + ' ' + (a.type || '-') + '</td><td>' + (a.account || '-') + '</td><td style="max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (a.result || '-') + '</td><td>' + formatDateShort(a.date) + '</td><td>' + (a.owner || '-') + '</td>';
-            if (isLeadership) {
-                html += '<td><button class="btn btn-icon btn-danger" onclick="deleteActivity(\'' + a.id + '\')">🗑️</button></td>';
-            }
-            html += '</tr>';
-        }
+    for (var i = 0; i < accounts.length; i++) {
+        var a = accounts[i];
+        var contactCount = state.data.contacts.filter(function(c) { return c.company === a.name || c.accountId === a.id; }).length;
+        var dealCount = state.data.deals.filter(function(d) { return d.name.toLowerCase().indexOf(a.name.toLowerCase()) !== -1; }).length;
+        
+        html += '<tr class="clickable" onclick="openAccountDetailModal(\'' + a.id + '\')">' +
+            '<td><strong>' + a.name + '</strong></td>' +
+            '<td>' + (a.industry || '-') + '</td>' +
+            '<td><span class="clickable-link" onclick="event.stopPropagation();filterContactsByAccount(\'' + a.name.replace(/'/g, "\\'") + '\')">' + contactCount + ' contacts</span></td>' +
+            '<td><span class="clickable-link" onclick="event.stopPropagation();filterPipelineByAccount(\'' + a.name.replace(/'/g, "\\'") + '\')">' + dealCount + ' deals</span></td>' +
+            '<td>' + (a.website ? '<a href="' + a.website + '" target="_blank" onclick="event.stopPropagation();">🔗</a>' : '-') + '</td>' +
+            '<td>' + (a.owner || '-') + '</td></tr>';
     }
     html += '</tbody></table></div>';
     document.getElementById('contentArea').innerHTML = html;
 }
 
-// Events View
+function handleAccountSort(value) {
+    var parts = value.split('-');
+    state.sorting.accounts.field = parts[0];
+    state.sorting.accounts.dir = parts[1];
+    renderAccounts();
+}
+
+function toggleAccountSort(field) {
+    if (state.sorting.accounts.field === field) {
+        state.sorting.accounts.dir = state.sorting.accounts.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+        state.sorting.accounts.field = field;
+        state.sorting.accounts.dir = 'asc';
+    }
+    renderAccounts();
+}
+
+function filterContactsByAccount(accountName) {
+    state.filters.contacts.search = accountName;
+    renderView('contacts');
+}
+
+function filterPipelineByAccount(accountName) {
+    // Simple implementation - show pipeline and filter message
+    renderView('pipeline');
+    alert('Showing deals related to: ' + accountName);
+}
+
+// ============ EVENTS VIEW ============
 function renderEvents() {
-    var allDeals = state.data.deals;
-    var wonDeals = allDeals.filter(function(d) { return d.stage.toLowerCase().includes('won'); });
-    
-    var today = new Date();
-    var thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
-    var monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    var monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    
-    var upcomingDeals = wonDeals.filter(function(d) {
-        var closeDate = d.closeDate ? new Date(d.closeDate) : null;
-        return closeDate && closeDate >= today && closeDate <= thirtyDaysFromNow;
+    var deals = getUserDeals();
+    var eventsWithDates = deals.filter(function(d) { return d.eventName || d.closeDate; });
+    eventsWithDates.sort(function(a, b) {
+        var dateA = a.closeDate ? new Date(a.closeDate) : new Date(0);
+        var dateB = b.closeDate ? new Date(b.closeDate) : new Date(0);
+        return dateA - dateB;
     });
     
-    var monthDeals = wonDeals.filter(function(d) {
-        var closeDate = d.closeDate ? new Date(d.closeDate) : null;
-        return closeDate && closeDate >= monthStart && closeDate <= monthEnd;
-    });
+    var html = '<div class="card"><div class="card-header"><h2 class="card-title">📅 Events Calendar</h2><button class="btn btn-primary btn-small" onclick="openAddDealModal()">➕ Add Event</button></div>' +
+        '<table><thead><tr><th>Event Name</th><th>Client</th><th>Date</th><th>Status</th><th>Tier</th><th>Value</th></tr></thead><tbody>';
     
-    var html = '<div class="kpi-grid">' +
-        '<div class="kpi-card"><div class="kpi-value" style="color:var(--primary);">' + upcomingDeals.length + '</div><div class="kpi-label">📅 Upcoming (30 days)</div></div>' +
-        '<div class="kpi-card"><div class="kpi-value" style="color:var(--success);">' + monthDeals.length + '</div><div class="kpi-label">📆 This Month</div></div>' +
-        '<div class="kpi-card"><div class="kpi-value" style="color:var(--warning);">' + wonDeals.length + '</div><div class="kpi-label">🎉 Total Events Won</div></div></div>' +
+    for (var i = 0; i < eventsWithDates.length; i++) {
+        var deal = eventsWithDates[i];
+        var eventDate = deal.closeDate ? new Date(deal.closeDate) : null;
+        var isPast = eventDate && eventDate < new Date();
+        var statusBadge = deal.stage.toLowerCase().indexOf('won') !== -1 ? '<span class="badge badge-success">Confirmed</span>' :
+            deal.stage.toLowerCase().indexOf('lost') !== -1 ? '<span class="badge badge-danger">Lost</span>' :
+            '<span class="badge badge-warning">Pending</span>';
         
-        '<div class="card"><div class="card-header"><h2 class="card-title">📅 Upcoming Events (30 Days)</h2></div>';
-    
-    if (upcomingDeals.length === 0) {
-        html += '<p style="color:var(--text-gray);text-align:center;padding:30px;">No upcoming events</p>';
-    } else {
-        html += '<table><thead><tr><th>Event</th><th>Deal</th><th>Tier</th><th>Value</th><th>Date</th><th>Owner</th></tr></thead><tbody>';
-        for (var i = 0; i < upcomingDeals.length; i++) {
-            var d = upcomingDeals[i];
-            html += '<tr class="clickable" onclick="openDealDetailsModal(\'' + d.id + '\')">' +
-                '<td>' + (d.eventName || d.name) + '</td><td>' + d.name + '</td>' +
-                '<td><span class="badge badge-' + d.tier.toLowerCase() + '">' + d.tier + '</span></td>' +
-                '<td>$' + d.value.toLocaleString() + '</td><td>' + formatDateShort(d.closeDate) + '</td><td>' + d.owner + '</td></tr>';
-        }
-        html += '</tbody></table>';
+        html += '<tr class="clickable" onclick="openDealDetailsModal(\'' + deal.id + '\')" style="' + (isPast ? 'opacity:0.6;' : '') + '">' +
+            '<td><strong>' + (deal.eventName || deal.name) + '</strong></td>' +
+            '<td>' + deal.name + '</td>' +
+            '<td>' + (eventDate ? eventDate.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '-') + '</td>' +
+            '<td>' + statusBadge + '</td>' +
+            '<td><span class="badge badge-' + deal.tier.toLowerCase() + '">' + deal.tier + '</span></td>' +
+            '<td>$' + deal.value.toLocaleString() + '</td></tr>';
     }
-    html += '</div>' +
-        
-        '<div class="card"><div class="card-header"><h2 class="card-title">🏆 All Won Events</h2></div>';
-    
-    if (wonDeals.length === 0) {
-        html += '<p style="color:var(--text-gray);text-align:center;padding:30px;">No events won yet</p>';
-    } else {
-        html += '<table><thead><tr><th>Event</th><th>Deal</th><th>Tier</th><th>Value</th><th>Close Date</th><th>Owner</th></tr></thead><tbody>';
-        var sortedWon = wonDeals.sort(function(a, b) { return new Date(b.closeDate || b.createdTime) - new Date(a.closeDate || a.createdTime); });
-        for (var i = 0; i < Math.min(sortedWon.length, 20); i++) {
-            var d = sortedWon[i];
-            html += '<tr class="clickable" onclick="openDealDetailsModal(\'' + d.id + '\')">' +
-                '<td>' + (d.eventName || d.name) + '</td><td>' + d.name + '</td>' +
-                '<td><span class="badge badge-' + d.tier.toLowerCase() + '">' + d.tier + '</span></td>' +
-                '<td>$' + d.value.toLocaleString() + '</td><td>' + formatDateShort(d.closeDate) + '</td><td>' + d.owner + '</td></tr>';
-        }
-        html += '</tbody></table>';
-    }
-    html += '</div>';
+    if (eventsWithDates.length === 0) html += '<tr><td colspan="6" style="text-align:center;color:var(--text-gray);">No events scheduled</td></tr>';
+    html += '</tbody></table></div>';
     
     document.getElementById('contentArea').innerHTML = html;
 }
 
-// Reports View
+// ============ ACTIVITIES VIEW ============
+function renderActivityView() {
+    var activities = state.data.activities.slice();
+    
+    // Filter by rep if set (from leadership clicking on rep)
+    if (state.filterRep) {
+        activities = activities.filter(function(a) { return a.owner === state.filterRep; });
+    } else if (state.currentUser.role !== 'Leadership') {
+        activities = activities.filter(function(a) { return a.owner === state.currentUser.name; });
+    }
+    
+    activities.sort(function(a, b) { return new Date(b.date || b.createdTime) - new Date(a.date || a.createdTime); });
+    
+    var typeIcons = { 'Call': '📞', 'Email': '📧', 'LinkedIn': '💼', 'Demo': '🎥', 'Proposal': '📄', 'Follow-up': '🔄', 'Meeting': '📅', 'Discovery Call': '🔍' };
+    
+    var filterText = state.filterRep ? ' for ' + state.filterRep : '';
+    
+    var html = '<div class="filters-bar">' +
+        (state.filterRep ? '<button class="btn btn-secondary btn-small" onclick="state.filterRep=null;renderActivityView();">✕ Clear filter (' + state.filterRep + ')</button>' : '') +
+        '<button class="btn btn-primary btn-small" onclick="openLogActivityModal()">📝 Log Activity</button></div>' +
+        '<div class="card"><div class="card-header"><h2 class="card-title">📝 Activity Log' + filterText + '</h2><span style="color:var(--text-gray);">' + activities.length + ' activities</span></div>' +
+        '<table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Result</th><th>Owner</th><th>Actions</th></tr></thead><tbody>';
+    
+    for (var i = 0; i < Math.min(activities.length, 100); i++) {
+        var a = activities[i];
+        var icon = typeIcons[a.type] || '📌';
+        html += '<tr>' +
+            '<td>' + formatDateShort(a.date) + '</td>' +
+            '<td>' + icon + ' ' + a.type + '</td>' +
+            '<td>' + (a.account || '-') + '</td>' +
+            '<td style="max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (a.result || '-') + '</td>' +
+            '<td>' + (a.owner || '-') + '</td>' +
+            '<td><button class="btn btn-danger btn-icon" onclick="deleteActivity(\'' + a.id + '\')">🗑️</button></td></tr>';
+    }
+    if (activities.length === 0) html += '<tr><td colspan="6" style="text-align:center;color:var(--text-gray);">No activities logged</td></tr>';
+    html += '</tbody></table></div>';
+    
+    document.getElementById('contentArea').innerHTML = html;
+}
+
+// ============ REPORTS VIEW ============
 function renderReports() {
-    var allDeals = state.data.deals;
-    var allActivities = state.data.activities;
-    var wonDeals = allDeals.filter(function(d) { return d.stage.toLowerCase().includes('won'); });
-    var lostDeals = allDeals.filter(function(d) { return d.stage.toLowerCase().includes('lost'); });
+    var deals = getUserDeals();
+    var today = new Date();
+    var monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    var lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    var lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
     
-    var totalRevenue = wonDeals.reduce(function(sum, d) { return sum + d.value; }, 0);
-    var winRate = wonDeals.length + lostDeals.length > 0 ? (wonDeals.length / (wonDeals.length + lostDeals.length) * 100) : 0;
+    var thisMonthWon = deals.filter(function(d) {
+        if (d.stage.toLowerCase().indexOf('won') === -1) return false;
+        var dt = d.closeDate ? new Date(d.closeDate) : null;
+        return dt && dt >= monthStart;
+    });
+    var lastMonthWon = deals.filter(function(d) {
+        if (d.stage.toLowerCase().indexOf('won') === -1) return false;
+        var dt = d.closeDate ? new Date(d.closeDate) : null;
+        return dt && dt >= lastMonthStart && dt <= lastMonthEnd;
+    });
     
-    var pipelineDeals = allDeals.filter(function(d) { return !d.stage.toLowerCase().includes('won') && !d.stage.toLowerCase().includes('lost'); });
-    var avgDaysInPipeline = pipelineDeals.length > 0 ? pipelineDeals.reduce(function(sum, d) { return sum + (getDaysSince(d.createdTime) || 0); }, 0) / pipelineDeals.length : 0;
+    var thisMonthRevenue = 0, lastMonthRevenue = 0;
+    for (var i = 0; i < thisMonthWon.length; i++) thisMonthRevenue += thisMonthWon[i].value;
+    for (var i = 0; i < lastMonthWon.length; i++) lastMonthRevenue += lastMonthWon[i].value;
+    var revenueChange = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue * 100) : 0;
     
-    // Revenue by tier
-    var revenueByTier = { 'Starter': 0, 'Growth': 0, 'Pro': 0, 'Enterprise': 0 };
-    var dealsByTier = { 'Starter': 0, 'Growth': 0, 'Pro': 0, 'Enterprise': 0 };
-    for (var i = 0; i < wonDeals.length; i++) {
-        if (revenueByTier.hasOwnProperty(wonDeals[i].tier)) {
-            revenueByTier[wonDeals[i].tier] += wonDeals[i].value;
-            dealsByTier[wonDeals[i].tier]++;
-        }
+    var tierBreakdown = { 'Starter': 0, 'Growth': 0, 'Pro': 0, 'Enterprise': 0 };
+    for (var i = 0; i < thisMonthWon.length; i++) {
+        if (tierBreakdown.hasOwnProperty(thisMonthWon[i].tier)) tierBreakdown[thisMonthWon[i].tier]++;
     }
-    
-    // Revenue by rep
-    var revenueByRep = {}, activityByRep = {};
-    for (var i = 0; i < wonDeals.length; i++) {
-        revenueByRep[wonDeals[i].owner] = (revenueByRep[wonDeals[i].owner] || 0) + wonDeals[i].value;
-    }
-    for (var i = 0; i < allActivities.length; i++) {
-        activityByRep[allActivities[i].owner] = (activityByRep[allActivities[i].owner] || 0) + 1;
-    }
-    
-    // Leaderboard
-    var repLeaderboard = Object.entries(revenueByRep).sort(function(a, b) { return b[1] - a[1]; });
-    
-    // Activity by type
-    var activityByType = {};
-    for (var i = 0; i < allActivities.length; i++) {
-        var type = allActivities[i].type || 'Other';
-        activityByType[type] = (activityByType[type] || 0) + 1;
-    }
-    
-    // Conversion by stage
-    var stageNames = ['Qualified', 'Proposal Sent', 'Negotiation', 'Closed Won', 'Closed Lost'];
     
     var html = '<div class="kpi-grid">' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;"><div style="font-size:11px;font-weight:600;opacity:0.9;">💰 TOTAL REVENUE</div><div style="font-size:36px;font-weight:800;margin-top:8px;">$' + (totalRevenue/1000).toFixed(1) + 'K</div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%);color:white;"><div style="font-size:11px;font-weight:600;opacity:0.9;">✅ WIN RATE</div><div style="font-size:36px;font-weight:800;margin-top:8px;">' + winRate.toFixed(0) + '%</div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:white;"><div style="font-size:11px;font-weight:600;opacity:0.9;">⏱️ AVG CYCLE</div><div style="font-size:36px;font-weight:800;margin-top:8px;">' + avgDaysInPipeline.toFixed(0) + '</div><div style="font-size:12px;opacity:0.9;">days</div></div>' +
-        '<div class="kpi-card" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:white;"><div style="font-size:11px;font-weight:600;opacity:0.9;">❌ LOST</div><div style="font-size:36px;font-weight:800;margin-top:8px;">' + lostDeals.length + '</div></div></div>' +
+        '<div class="kpi-card"><div class="kpi-label">This Month Revenue</div><div class="kpi-value" style="color:var(--primary);">$' + thisMonthRevenue.toLocaleString() + '</div>' +
+        '<div style="font-size:13px;color:' + (revenueChange >= 0 ? 'var(--success)' : 'var(--danger)') + ';">' + (revenueChange >= 0 ? '↑' : '↓') + ' ' + Math.abs(revenueChange).toFixed(1) + '% vs last month</div></div>' +
+        '<div class="kpi-card"><div class="kpi-label">Deals Closed</div><div class="kpi-value">' + thisMonthWon.length + '</div><div style="font-size:13px;color:var(--text-gray);">Last month: ' + lastMonthWon.length + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-label">Avg Deal Size</div><div class="kpi-value">$' + (thisMonthWon.length > 0 ? Math.round(thisMonthRevenue / thisMonthWon.length).toLocaleString() : '0') + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-label">Pipeline Value</div><div class="kpi-value">$' + deals.filter(function(d) { return d.stage.toLowerCase().indexOf('won') === -1 && d.stage.toLowerCase().indexOf('lost') === -1; }).reduce(function(sum, d) { return sum + d.value; }, 0).toLocaleString() + '</div></div></div>' +
         
-        '<div class="card"><div class="card-header"><h2 class="card-title">🏆 Rep Leaderboard</h2></div>';
+        '<div class="card"><div class="card-header"><h2 class="card-title">📊 Tier Breakdown (This Month)</h2></div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center;">';
     
-    if (repLeaderboard.length === 0) {
-        html += '<p style="text-align:center;color:var(--text-gray);padding:20px;">No data yet</p>';
-    } else {
-        for (var i = 0; i < repLeaderboard.length; i++) {
-            var rep = repLeaderboard[i];
-            html += '<div class="leaderboard-item"><div class="leaderboard-rank">#' + (i + 1) + '</div>' +
-                '<div class="leaderboard-info"><div class="leaderboard-name">' + rep[0] + '</div>' +
-                '<div class="leaderboard-stats">' + (activityByRep[rep[0]] || 0) + ' activities</div></div>' +
-                '<div class="leaderboard-value">$' + (rep[1]/1000).toFixed(1) + 'K</div></div>';
-        }
+    for (var tier in tierBreakdown) {
+        html += '<div style="padding:20px;background:var(--bg-light);border-radius:10px;"><div style="font-size:32px;font-weight:700;color:' + tierColors[tier] + ';">' + tierBreakdown[tier] + '</div><div style="font-size:13px;color:var(--text-gray);">' + tier + '</div></div>';
     }
-    html += '</div>' +
-        
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">' +
-        '<div class="card"><div class="card-header"><h2 class="card-title">💰 Revenue by Tier</h2></div>' +
-        '<table><thead><tr><th>Tier</th><th>Revenue</th><th>Deals</th></tr></thead><tbody>';
-    
-    var tiers = ['Starter', 'Growth', 'Pro', 'Enterprise'];
-    for (var i = 0; i < tiers.length; i++) {
-        var tier = tiers[i];
-        html += '<tr><td><span class="badge badge-' + tier.toLowerCase() + '">' + tier + '</span></td>' +
-            '<td>$' + revenueByTier[tier].toLocaleString() + '</td><td>' + dealsByTier[tier] + '</td></tr>';
-    }
-    html += '</tbody></table></div>' +
-        
-        '<div class="card"><div class="card-header"><h2 class="card-title">📊 Activity Breakdown</h2></div>' +
-        '<table><thead><tr><th>Type</th><th>Count</th></tr></thead><tbody>';
-    
-    var actTypes = Object.entries(activityByType).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 8);
-    for (var i = 0; i < actTypes.length; i++) {
-        html += '<tr><td>' + actTypes[i][0] + '</td><td>' + actTypes[i][1] + '</td></tr>';
-    }
-    html += '</tbody></table></div>' +
-        
-        '<div class="card"><div class="card-header"><h2 class="card-title">📈 Conversion by Stage</h2></div>' +
-        '<table><thead><tr><th>Stage</th><th>Count</th><th>Value</th></tr></thead><tbody>';
-    
-    for (var i = 0; i < stageNames.length; i++) {
-        var stage = stageNames[i];
-        var stageDeals = allDeals.filter(function(d) { return d.stage === stage; });
-        var stageValue = stageDeals.reduce(function(sum, d) { return sum + d.value; }, 0);
-        html += '<tr><td>' + stage + '</td><td>' + stageDeals.length + '</td><td>$' + stageValue.toLocaleString() + '</td></tr>';
-    }
-    html += '</tbody></table></div></div>';
+    html += '</div></div>' +
+        '<div class="charts-grid">' +
+        '<div class="chart-card"><h3>Revenue Trend</h3><div class="chart-container"><canvas id="reportRevenueTrendChart"></canvas></div></div>' +
+        '<div class="chart-card"><h3>Revenue by Tier (All Time)</h3><div class="chart-container"><canvas id="reportRevenueByTierChart"></canvas></div></div></div>';
     
     document.getElementById('contentArea').innerHTML = html;
+    setTimeout(function() {
+        renderRevenueTrendChart('reportRevenueTrendChart', deals);
+        renderRevenueByTierChart('reportRevenueByTierChart', deals);
+    }, 100);
 }
 
-// Initialize
+// ============ INITIALIZE ============
 document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
