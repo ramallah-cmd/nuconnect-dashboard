@@ -34,6 +34,10 @@
         .form-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 44px; }
         .form-group textarea { min-height: 120px; resize: vertical; }
         .form-group select:focus, .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .inline-create { background: var(--bg-light); padding: 16px; border-radius: 12px; margin-bottom: 16px; border: 2px dashed var(--border); }
+        .inline-create .form-group { margin-bottom: 12px; }
+        .inline-create .form-group:last-child { margin-bottom: 0; }
         
         .btn { padding: 14px 24px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: var(--gradient); color: var(--white); }
@@ -916,7 +920,7 @@ function getActivityStats(activities) {
 
 // ============ INITIALIZATION ============
 function init() {
-    console.log('%c🚀 NuConnect CRM v7.0', 'background: #667eea; color: white; font-size: 16px; padding: 10px;');
+    console.log('%c🚀 NuConnect CRM v8.0', 'background: #667eea; color: white; font-size: 16px; padding: 10px;');
     
     if (state.baseId && state.apiKey) {
         loadTeamMembers().then(function() {
@@ -1130,7 +1134,8 @@ function loadContacts() {
                 state.data.contacts.push({
                     id: r.id, name: r.fields['Full Name'] || '', email: r.fields.Email || '', phone: r.fields.Phone || '',
                     company: getAccountName(r.fields.Account), accountId: Array.isArray(r.fields.Account) ? r.fields.Account[0] : null,
-                    role: r.fields.Title || '', owner: getOwnerName(r.fields['Contact Owner']), createdTime: r.createdTime
+                    role: r.fields.Title || '', owner: getOwnerName(r.fields['Contact Owner']), createdTime: r.createdTime,
+                    linkedinUrl: r.fields['LinkedIn URL'] || ''
                 });
             }
         }
@@ -1158,9 +1163,29 @@ function getUserDeals() {
     return state.data.deals.filter(function(d) { return d.owner === state.currentUser.name; });
 }
 
-// ============ CRUD OPERATIONS ============
+// ============ CRUD OPERATIONS (FIXED FOR 422 ERRORS) ============
+
+// Helper to clean empty fields - prevents 422 errors
+function cleanFields(fields) {
+    var cleaned = {};
+    for (var key in fields) {
+        var val = fields[key];
+        // Only include non-empty values
+        if (val !== null && val !== undefined && val !== '') {
+            // For arrays, only include if not empty
+            if (Array.isArray(val)) {
+                if (val.length > 0) cleaned[key] = val;
+            } else {
+                cleaned[key] = val;
+            }
+        }
+    }
+    return cleaned;
+}
+
 function createDeal(dealData) {
-    fetchFromAirtable('Deals', 'POST', { fields: dealData }).then(function(response) {
+    var cleanedData = cleanFields(dealData);
+    fetchFromAirtable('Deals', 'POST', { fields: cleanedData }).then(function(response) {
         if (response && response.id) { 
             loadDeals().then(function() { 
                 closeModal(); 
@@ -1168,11 +1193,12 @@ function createDeal(dealData) {
                 alert('Deal created!'); 
             }); 
         }
-    }).catch(function(error) { alert('Error: ' + error.message); });
+    }).catch(function(error) { alert('Error creating deal: ' + error.message); });
 }
 
 function createContact(contactData) {
-    fetchFromAirtable('Contacts', 'POST', { fields: contactData }).then(function(response) {
+    var cleanedData = cleanFields(contactData);
+    fetchFromAirtable('Contacts', 'POST', { fields: cleanedData }).then(function(response) {
         if (response && response.id) { 
             loadContacts().then(function() { 
                 closeModal(); 
@@ -1187,23 +1213,24 @@ function createContact(contactData) {
                 alert('Contact created!'); 
             }); 
         }
-    }).catch(function(error) { alert('Error: ' + error.message); });
+    }).catch(function(error) { alert('Error creating contact: ' + error.message); });
 }
 
 function createAccount(accountData) {
-    fetchFromAirtable('Accounts', 'POST', { fields: accountData }).then(function(response) {
+    var cleanedData = cleanFields(accountData);
+    return fetchFromAirtable('Accounts', 'POST', { fields: cleanedData }).then(function(response) {
         if (response && response.id) { 
-            loadAccounts().then(function() { 
-                closeModal(); 
-                renderView('accounts'); 
-                alert('Account created!'); 
+            return loadAccounts().then(function() { 
+                return response;
             }); 
         }
-    }).catch(function(error) { alert('Error: ' + error.message); });
+        return response;
+    });
 }
 
 function logActivity(activityData) {
-    fetchFromAirtable('Activities', 'POST', { fields: activityData }).then(function(response) {
+    var cleanedData = cleanFields(activityData);
+    fetchFromAirtable('Activities', 'POST', { fields: cleanedData }).then(function(response) {
         if (response && response.id) { 
             loadActivities().then(function() { 
                 closeModal(); 
@@ -1215,7 +1242,7 @@ function logActivity(activityData) {
                 alert('Activity logged!'); 
             }); 
         }
-    }).catch(function(error) { alert('Error: ' + error.message); });
+    }).catch(function(error) { alert('Error logging activity: ' + error.message); });
 }
 
 function deleteContact(contactId) {
@@ -1316,6 +1343,7 @@ function openContactDetailModal(contactId) {
     var isLeadership = state.currentUser.role === 'Leadership';
     
     var accountLink = '';
+    var hasAccount = false;
     if (contact.company) {
         var account = null;
         for (var i = 0; i < state.data.accounts.length; i++) {
@@ -1325,12 +1353,15 @@ function openContactDetailModal(contactId) {
         }
         if (account) {
             accountLink = '<span class="clickable-link" onclick="closeModal();openAccountDetailModal(\'' + account.id + '\')">' + contact.company + '</span>';
+            hasAccount = true;
         } else {
             accountLink = contact.company;
         }
     } else {
-        accountLink = '-';
+        accountLink = '<span style="color:var(--text-gray);">No account</span> <button class="btn btn-success btn-small" style="padding:4px 8px;font-size:11px;margin-left:8px;" onclick="openCreateAccountForContact(\'' + contactId + '\')">+ Create</button>';
     }
+    
+    var linkedinLink = contact.linkedinUrl ? '<a href="' + contact.linkedinUrl + '" target="_blank" style="color:var(--primary);">🔗 View Profile</a>' : '-';
     
     var dealsList = '';
     for (var i = 0; i < Math.min(deals.length, 3); i++) {
@@ -1353,6 +1384,7 @@ function openContactDetailModal(contactId) {
         '<div class="profile-card-body">' +
         '<div class="profile-card-row"><span class="profile-card-label">Email</span><span class="profile-card-value">' + (contact.email || '-') + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Phone</span><span class="profile-card-value">' + (contact.phone || '-') + '</span></div>' +
+        '<div class="profile-card-row"><span class="profile-card-label">LinkedIn</span><span class="profile-card-value" style="word-break:break-all;">' + linkedinLink + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Company</span><span class="profile-card-value">' + accountLink + '</span></div>' +
         '<div class="profile-card-row"><span class="profile-card-label">Owner</span><span class="profile-card-value">' + (contact.owner || 'Unassigned') + '</span></div>' +
         '<div style="margin-top:12px;"><div style="font-weight:600;font-size:13px;margin-bottom:6px;">💰 Deals (' + deals.length + ')</div>' + dealsList + '</div>' +
@@ -1367,6 +1399,57 @@ function openContactDetailModal(contactId) {
     html += '<button class="btn btn-primary btn-small" onclick="closeModal();openLogActivityModal()">📝 Activity</button>' +
         '</div></div></div>';
     document.getElementById('modalContainer').innerHTML = html;
+}
+
+// Create account directly from contact card
+function openCreateAccountForContact(contactId) {
+    var contact = null;
+    for (var i = 0; i < state.data.contacts.length; i++) {
+        if (state.data.contacts[i].id === contactId) { contact = state.data.contacts[i]; break; }
+    }
+    if (!contact) return;
+    
+    var industryOptions = '<option value="">Select Industry...</option><option value="Technology">Technology</option><option value="Finance">Finance</option><option value="Healthcare">Healthcare</option><option value="Retail">Retail</option><option value="Manufacturing">Manufacturing</option><option value="Education">Education</option><option value="Nonprofit">Nonprofit</option><option value="Hospitality">Hospitality</option><option value="Real Estate">Real Estate</option><option value="Other">Other</option>';
+    var ownerOptions = '';
+    for (var i = 0; i < state.data.teamMembers.length; i++) {
+        var selected = state.data.teamMembers[i].name === state.currentUser.name ? ' selected' : '';
+        ownerOptions += '<option value="' + state.data.teamMembers[i].id + '"' + selected + '>' + state.data.teamMembers[i].name + '</option>';
+    }
+    
+    var html = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>🏢 Create Account for ' + contact.name + '</h2></div>' +
+        '<div class="form-group"><label>Account Name *</label><input type="text" id="newAccountName" placeholder="Company name..."></div>' +
+        '<div class="form-group"><label>Industry</label><select id="newAccountIndustry">' + industryOptions + '</select></div>' +
+        '<div class="form-group"><label>Website</label><input type="text" id="newAccountWebsite" placeholder="https://..."></div>' +
+        '<div class="form-group"><label>Owner</label><select id="newAccountOwner">' + ownerOptions + '</select></div>' +
+        '<input type="hidden" id="linkContactId" value="' + contactId + '">' +
+        '<div class="modal-actions"><button class="btn btn-secondary" onclick="openContactDetailModal(\'' + contactId + '\')">Cancel</button>' +
+        '<button class="btn btn-primary" onclick="saveAccountForContact(\'' + contactId + '\')">Create & Link</button></div></div></div>';
+    document.getElementById('modalContainer').innerHTML = html;
+}
+
+function saveAccountForContact(contactId) {
+    var name = document.getElementById('newAccountName').value.trim();
+    if (!name) { alert('Account name is required'); return; }
+    
+    var accountData = {
+        'Name': name,
+        'Industry': document.getElementById('newAccountIndustry').value || undefined,
+        'Website': document.getElementById('newAccountWebsite').value.trim() || undefined,
+        'Account Owner': [document.getElementById('newAccountOwner').value]
+    };
+    
+    createAccount(accountData).then(function(response) {
+        if (response && response.id) {
+            // Now link the contact to this account
+            var updateData = { 'Account': [response.id] };
+            fetchFromAirtable('Contacts/' + contactId, 'PATCH', { fields: updateData }).then(function() {
+                loadContacts().then(function() {
+                    alert('Account created and linked!');
+                    openContactDetailModal(contactId);
+                });
+            });
+        }
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
 function filterActivitiesByAccount(accountName) {
@@ -1384,14 +1467,21 @@ function openEditContactModal(contactId) {
         '<div class="form-group"><label>Full Name *</label><input type="text" id="editContactName" value="' + contact.name + '"></div>' +
         '<div class="form-group"><label>Email *</label><input type="email" id="editContactEmail" value="' + contact.email + '"></div>' +
         '<div class="form-group"><label>Phone</label><input type="tel" id="editContactPhone" value="' + (contact.phone || '') + '"></div>' +
+        '<div class="form-group"><label>LinkedIn URL</label><input type="url" id="editContactLinkedin" value="' + (contact.linkedinUrl || '') + '" placeholder="https://linkedin.com/in/..."></div>' +
         '<div class="form-group"><label>Title / Role</label><input type="text" id="editContactRole" value="' + (contact.role || '') + '"></div>' +
         '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEditContact(\'' + contactId + '\')">Save</button></div></div></div>';
     document.getElementById('modalContainer').innerHTML = html;
 }
 
 function saveEditContact(contactId) {
-    var fields = { 'Full Name': document.getElementById('editContactName').value, 'Email': document.getElementById('editContactEmail').value, 'Phone': document.getElementById('editContactPhone').value, 'Title': document.getElementById('editContactRole').value };
-    updateInAirtable('Contacts', contactId, fields).then(function() {
+    var fields = { 
+        'Full Name': document.getElementById('editContactName').value, 
+        'Email': document.getElementById('editContactEmail').value, 
+        'Phone': document.getElementById('editContactPhone').value, 
+        'LinkedIn URL': document.getElementById('editContactLinkedin').value,
+        'Title': document.getElementById('editContactRole').value 
+    };
+    updateInAirtable('Contacts', contactId, cleanFields(fields)).then(function() {
         loadContacts().then(function() { closeModal(); renderView('contacts'); });
     }).catch(function(error) { alert('Error: ' + error.message); });
 }
@@ -1464,22 +1554,72 @@ function openAddContactModal() {
     for (var i = 0; i < state.data.accounts.length; i++) {
         accountOptions += '<option value="' + state.data.accounts[i].id + '">' + state.data.accounts[i].name + '</option>';
     }
+    var indOptions = '';
+    for (var i = 0; i < industryOptions.length; i++) {
+        indOptions += '<option value="' + industryOptions[i] + '">' + industryOptions[i] + '</option>';
+    }
     var html = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>➕ Add New Contact</h2></div>' +
         '<div class="form-group"><label>Full Name *</label><input type="text" id="contactName" placeholder="John Smith"></div>' +
-        '<div class="form-group"><label>Email *</label><input type="email" id="contactEmail" placeholder="john@company.com"></div>' +
-        '<div class="form-group"><label>Phone</label><input type="tel" id="contactPhone" placeholder="(555) 123-4567"></div>' +
-        '<div class="form-group"><label>Company / Account</label><select id="contactAccount"><option value="">Select...</option>' + accountOptions + '</select></div>' +
+        '<div class="form-row"><div class="form-group"><label>Email *</label><input type="email" id="contactEmail" placeholder="john@company.com"></div>' +
+        '<div class="form-group"><label>Phone</label><input type="tel" id="contactPhone" placeholder="(555) 123-4567"></div></div>' +
+        '<div class="form-group"><label>LinkedIn URL</label><input type="url" id="contactLinkedin" placeholder="https://linkedin.com/in/..."></div>' +
+        '<div class="form-group"><label>Company / Account</label><select id="contactAccount" onchange="toggleNewAccountFields()"><option value="">Select...</option>' + accountOptions + '<option value="__NEW__">➕ Create New Account</option></select></div>' +
+        '<div id="newAccountFields" class="inline-create hidden">' +
+        '<div class="form-group"><label>New Account Name *</label><input type="text" id="newAccName" placeholder="Company Name Inc."></div>' +
+        '<div class="form-group"><label>Industry</label><select id="newAccIndustry"><option value="">Select...</option>' + indOptions + '</select></div>' +
+        '</div>' +
         '<div class="form-group"><label>Title / Role</label><input type="text" id="contactRole" placeholder="Event Coordinator"></div>' +
         '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveContact()">Create Contact</button></div></div></div>';
     document.getElementById('modalContainer').innerHTML = html;
 }
 
+function toggleNewAccountFields() {
+    var select = document.getElementById('contactAccount');
+    var fields = document.getElementById('newAccountFields');
+    if (select.value === '__NEW__') {
+        fields.classList.remove('hidden');
+    } else {
+        fields.classList.add('hidden');
+    }
+}
+
 function saveContact() {
-    var contactData = { 'Full Name': document.getElementById('contactName').value, 'Email': document.getElementById('contactEmail').value, 'Phone': document.getElementById('contactPhone').value, 'Title': document.getElementById('contactRole').value };
+    var contactData = { 
+        'Full Name': document.getElementById('contactName').value, 
+        'Email': document.getElementById('contactEmail').value, 
+        'Phone': document.getElementById('contactPhone').value, 
+        'LinkedIn URL': document.getElementById('contactLinkedin').value,
+        'Title': document.getElementById('contactRole').value 
+    };
     if (!contactData['Full Name'] || !contactData['Email']) { alert('Please fill in Name and Email'); return; }
     if (state.teamMemberMap[state.currentUser.name]) contactData['Contact Owner'] = [state.teamMemberMap[state.currentUser.name]];
-    var accountId = document.getElementById('contactAccount').value;
-    if (accountId) contactData['Account'] = [accountId];
+    
+    var accountSelect = document.getElementById('contactAccount');
+    if (accountSelect.value === '__NEW__') {
+        // Create new account first, then contact
+        var newAccName = document.getElementById('newAccName').value.trim();
+        if (!newAccName) { alert('Please enter new account name'); return; }
+        var accountData = { 
+            'Account Name': newAccName, 
+            'Industry': document.getElementById('newAccIndustry').value 
+        };
+        if (state.teamMemberMap[state.currentUser.name]) accountData['Account Owner'] = [state.teamMemberMap[state.currentUser.name]];
+        
+        createAccount(accountData).then(function(response) {
+            if (response && response.id) {
+                saveContactWithAccount(response.id, contactData);
+            }
+        }).catch(function(error) { alert('Error creating account: ' + error.message); });
+    } else if (accountSelect.value) {
+        contactData['Account'] = [accountSelect.value];
+        createContact(contactData);
+    } else {
+        createContact(contactData);
+    }
+}
+
+function saveContactWithAccount(accountId, contactData) {
+    contactData['Account'] = [accountId];
     createContact(contactData);
 }
 
@@ -1502,7 +1642,11 @@ function saveAccount() {
     var accountData = { 'Account Name': document.getElementById('accountName').value, 'Industry': document.getElementById('accountIndustry').value, 'Website': document.getElementById('accountWebsite').value, 'Phone': document.getElementById('accountPhone').value, 'Address': document.getElementById('accountAddress').value };
     if (!accountData['Account Name']) { alert('Please enter account name'); return; }
     if (state.teamMemberMap[state.currentUser.name]) accountData['Account Owner'] = [state.teamMemberMap[state.currentUser.name]];
-    createAccount(accountData);
+    createAccount(accountData).then(function() {
+        closeModal();
+        renderView('accounts');
+        alert('Account created!');
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
 function openLogActivityModal() {
@@ -1513,6 +1657,7 @@ function openLogActivityModal() {
     var html = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>📝 Log Activity</h2></div>' +
         '<div class="form-group"><label>Activity Type *</label><select id="activityType">' +
         '<option value="Call">📞 Call</option><option value="Email">📧 Email</option><option value="LinkedIn">💼 LinkedIn Message</option>' +
+        '<option value="LinkedIn Connection Request">🔗 LinkedIn Connection Request</option>' +
         '<option value="Discovery Call">🔍 Discovery Call</option><option value="Demo">🎥 Demo</option>' +
         '<option value="Proposal">📄 Proposal Sent</option><option value="Follow-up">🔄 Follow-up</option><option value="Meeting">📅 Meeting</option></select></div>' +
         '<div class="form-group"><label>Account *</label><select id="activityAccount"><option value="">Select...</option>' + accountOptions + '</select></div>' +
@@ -1561,6 +1706,8 @@ function openDealDetailsModal(dealId) {
     }
     if (!deal) return;
     var isLeadership = state.currentUser.role === 'Leadership';
+    var isOwner = deal.owner === state.currentUser.name;
+    var canEdit = isOwner || isLeadership;
     
     var stageOptions = '<option value="Qualified"' + (deal.stage === 'Qualified' ? ' selected' : '') + '>Qualified</option>' +
         '<option value="Proposal Sent"' + (deal.stage === 'Proposal Sent' ? ' selected' : '') + '>Proposal Sent</option>' +
@@ -1573,13 +1720,105 @@ function openDealDetailsModal(dealId) {
         '<div style="background:var(--bg-light);padding:14px;border-radius:10px;text-align:center;"><div style="font-size:26px;font-weight:700;color:var(--primary);">$' + deal.value.toLocaleString() + '</div><div style="font-size:12px;color:var(--text-gray);">Deal Value</div></div>' +
         '<div style="background:var(--bg-light);padding:14px;border-radius:10px;text-align:center;"><span class="badge badge-' + (deal.tier || 'starter').toLowerCase() + '" style="font-size:13px;">' + (deal.tier || 'N/A') + '</span><div style="font-size:12px;color:var(--text-gray);margin-top:6px;">Tier</div></div></div>' +
         '<div class="form-group"><label>Event Name</label><input type="text" value="' + (deal.eventName || 'Not set') + '" disabled></div>' +
+        '<div class="form-group"><label>Close Date</label><input type="text" value="' + (deal.closeDate ? new Date(deal.closeDate).toLocaleDateString() : 'Not set') + '" disabled></div>' +
         '<div class="form-group"><label>Owner</label><input type="text" value="' + deal.owner + '" disabled></div>' +
-        '<div class="form-group"><label>Current Stage</label><select id="dealStageEdit">' + stageOptions + '</select></div>' +
+        '<div class="form-group"><label>Current Stage</label><select id="dealStageEdit"' + (canEdit ? '' : ' disabled') + '>' + stageOptions + '</select></div>' +
         '<div class="modal-actions">';
-    if (isLeadership) html += '<button class="btn btn-danger" onclick="deleteDeal(\'' + dealId + '\')">🗑️ Delete</button>';
+    if (canEdit) {
+        html += '<button class="btn btn-danger btn-small" onclick="deleteDeal(\'' + dealId + '\')">🗑️ Delete</button>';
+        html += '<button class="btn btn-secondary btn-small" onclick="openEditDealModal(\'' + dealId + '\')">✏️ Edit</button>';
+    }
     html += '<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>' +
-        '<button class="btn btn-primary" onclick="updateDealStage(\'' + dealId + '\')">Update</button></div></div></div>';
+        '<button class="btn btn-primary" onclick="updateDealStage(\'' + dealId + '\')"' + (canEdit ? '' : ' disabled') + '>Update Stage</button></div></div></div>';
     document.getElementById('modalContainer').innerHTML = html;
+}
+
+function openEditDealModal(dealId) {
+    var deal = null;
+    for (var i = 0; i < state.data.deals.length; i++) {
+        if (state.data.deals[i].id === dealId) { deal = state.data.deals[i]; break; }
+    }
+    if (!deal) return;
+    
+    var tierOptions = '<option value="Starter"' + (deal.tier === 'Starter' ? ' selected' : '') + '>Starter ($750)</option>' +
+        '<option value="Growth"' + (deal.tier === 'Growth' ? ' selected' : '') + '>Growth ($1,250)</option>' +
+        '<option value="Pro"' + (deal.tier === 'Pro' ? ' selected' : '') + '>Pro ($2,000)</option>' +
+        '<option value="Enterprise"' + (deal.tier === 'Enterprise' ? ' selected' : '') + '>Enterprise ($4,200)</option>';
+    
+    var stageOptions = '<option value="Qualified"' + (deal.stage === 'Qualified' ? ' selected' : '') + '>Qualified</option>' +
+        '<option value="Proposal Sent"' + (deal.stage === 'Proposal Sent' ? ' selected' : '') + '>Proposal Sent</option>' +
+        '<option value="Negotiation"' + (deal.stage === 'Negotiation' ? ' selected' : '') + '>Negotiation</option>' +
+        '<option value="Closed Won"' + (deal.stage === 'Closed Won' ? ' selected' : '') + '>Closed Won</option>' +
+        '<option value="Closed Lost"' + (deal.stage === 'Closed Lost' ? ' selected' : '') + '>Closed Lost</option>';
+    
+    var closeDate = deal.closeDate ? deal.closeDate.split('T')[0] : '';
+    
+    var html = '<div class="modal active"><div class="modal-content"><div class="modal-header"><h2>✏️ Edit Deal</h2></div>' +
+        '<div class="form-group"><label>Deal Name *</label><input type="text" id="editDealName" value="' + deal.name + '"></div>' +
+        '<div class="form-group"><label>Tier</label><select id="editDealTier" onchange="updateEditDealValue()">' + tierOptions + '</select></div>' +
+        '<div class="form-group"><label>Value ($)</label><input type="number" id="editDealValue" value="' + deal.value + '"></div>' +
+        '<div class="form-group"><label>Stage</label><select id="editDealStage">' + stageOptions + '</select></div>' +
+        '<div class="form-group"><label>Event Name</label><input type="text" id="editDealEventName" value="' + (deal.eventName || '') + '"></div>' +
+        '<div class="form-group"><label>Close Date</label><input type="date" id="editDealCloseDate" value="' + closeDate + '"></div>' +
+        '<div class="modal-actions"><button class="btn btn-secondary" onclick="openDealDetailsModal(\'' + dealId + '\')">Cancel</button>' +
+        '<button class="btn btn-primary" onclick="saveEditDeal(\'' + dealId + '\')">Save Changes</button></div></div></div>';
+    document.getElementById('modalContainer').innerHTML = html;
+}
+
+function updateEditDealValue() {
+    var tier = document.getElementById('editDealTier').value;
+    var tierPrices = { 'Starter': 750, 'Growth': 1250, 'Pro': 2000, 'Enterprise': 4200 };
+    document.getElementById('editDealValue').value = tierPrices[tier] || 0;
+}
+
+function saveEditDeal(dealId) {
+    var oldDeal = null;
+    for (var i = 0; i < state.data.deals.length; i++) {
+        if (state.data.deals[i].id === dealId) { oldDeal = state.data.deals[i]; break; }
+    }
+    var oldStage = oldDeal ? oldDeal.stage : '';
+    var newStage = document.getElementById('editDealStage').value;
+    
+    var fields = {
+        'Deal Name': document.getElementById('editDealName').value,
+        'Tier': document.getElementById('editDealTier').value,
+        'Value': parseFloat(document.getElementById('editDealValue').value) || 0,
+        'Stage': newStage,
+        'Event Name': document.getElementById('editDealEventName').value,
+        'Close Date': document.getElementById('editDealCloseDate').value || null
+    };
+    
+    if (!fields['Deal Name']) { alert('Deal name is required'); return; }
+    
+    updateInAirtable('Deals', dealId, cleanFields(fields)).then(function() {
+        loadDeals().then(function() {
+            closeModal();
+            renderView('pipeline');
+            
+            // Trigger celebrations for stage changes
+            if (oldStage && newStage !== oldStage && newStage !== 'Closed Lost') {
+                if (newStage === 'Closed Won') {
+                    showCelebration('deal-won', 'You closed the deal! ' + fields['Deal Name'] + ' is now won!');
+                } else {
+                    showCelebration('deal-moved', fields['Deal Name'] + ' moved from ' + oldStage + ' to ' + newStage + '!');
+                }
+            }
+            
+            alert('Deal updated!');
+        });
+    }).catch(function(error) { alert('Error: ' + error.message); });
+}
+
+function deleteDeal(dealId) {
+    if (!confirm('Are you sure you want to delete this deal? This cannot be undone.')) return;
+    
+    deleteFromAirtable('Deals', dealId).then(function() {
+        loadDeals().then(function() {
+            closeModal();
+            renderView('pipeline');
+            alert('Deal deleted');
+        });
+    }).catch(function(error) { alert('Error: ' + error.message); });
 }
 
 function updateDealStage(dealId, newStage) {
